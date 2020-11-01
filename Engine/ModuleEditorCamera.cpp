@@ -8,6 +8,26 @@
 
 ModuleEditorCamera::ModuleEditorCamera()
 {
+	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+
+	nearPlaneDistance = 0.1f;
+	farPlaneDistance = 200.0f;
+
+	frustum.SetViewPlaneDistances(nearPlaneDistance, farPlaneDistance);
+	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
+	frustumPosition = float3(0, 1, -2);
+
+	frustum.SetPos(frustumPosition);
+	frustum.SetFront(float3::unitZ);
+	frustum.SetUp(float3::unitY);
+
+	originalFront = frustum.Front();
+	originalUp = frustum.Up();
+	cameraSpeed = 6;
+	mouseSensitivity = 15;
+	pitch = 0;
+	yaw = 0;
+
 }
 
 // Destructor
@@ -19,12 +39,8 @@ ModuleEditorCamera::~ModuleEditorCamera()
 bool ModuleEditorCamera::Init()
 {
 
-	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
-	frustum.SetViewPlaneDistances(0.1f, 200.0f);
-	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
-	frustum.SetPos(float3(0, 1, -2));
-	frustum.SetFront(float3::unitZ);
-	frustum.SetUp(float3::unitY);
+
+
 
 
 	return true;
@@ -57,10 +73,72 @@ void ModuleEditorCamera::SendProjectionMatrix() {
 	glLoadMatrixf(*GetTransposedProjectionMatrix().v);
 }
 
+float3 ModuleEditorCamera::GetCameraMovementInput() const {
+	float3 val = float3(0, 0, 0);
+
+	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+		val += frustum.Front();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+		val -= frustum.Front();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
+		val -= frustum.WorldRight();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+		val += frustum.WorldRight();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) {
+		val += frustum.Up();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) {
+		val -= frustum.Up();
+	}
+	return val;
+}
+
+float ModuleEditorCamera::UpdateCameraYaw() {
+	yaw -= App->input->GetMouseMotion().x * mouseSensitivity * App->GetDeltaTime();
+	yaw = math::Mod(yaw, 360.0f);
+	return yaw;
+}
+
+float ModuleEditorCamera::UpdateCameraPitch() {
+	pitch += App->input->GetMouseMotion().y * mouseSensitivity * App->GetDeltaTime();
+	pitch = math::Max(math::Min(pitch, 90.0f), -90.0f);
+	return pitch;
+}
+
 // Called every draw update
 update_status ModuleEditorCamera::Update()
 {
+	float speedFactor = App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT ? 6 : 3;
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
+		//SDL_WarpMouseInWindow(App->window->window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
+		float3 cameraMovementInput = GetCameraMovementInput();
+
+		float3x3 yawRotation = float3x3::RotateAxisAngle(float3(0, 1, 0), DEGTORAD * UpdateCameraYaw());
+		float3x3 pitchRotation = float3x3::RotateAxisAngle(float3(1, 0, 0), DEGTORAD * UpdateCameraPitch());
+
+		float3 newFront = yawRotation * pitchRotation * originalFront;
+		float3 newUp = yawRotation * pitchRotation * originalUp;
+		frustum.SetFront(newFront);
+		frustum.SetUp(newUp);
+
+		frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
+	}
+	
+	if (App->input->GetMouseWheelMotion() != 0) {
+		frustumPosition += App->input->GetMouseWheelMotion() * frustum.Front() * speedFactor * 5 * App->GetDeltaTime();
+	}
+
+	frustum.SetPos(frustumPosition);
 	SendViewModelMatrix();
 	SendProjectionMatrix();
 	return UPDATE_CONTINUE;
@@ -84,5 +162,8 @@ bool ModuleEditorCamera::CleanUp()
 
 void ModuleEditorCamera::WindowResized(unsigned width, unsigned height)
 {
+	//frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90.0f), width / height);
+	float newRatio = width / height;
+	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * (newRatio * 90 / 1.3)), newRatio);
 }
 

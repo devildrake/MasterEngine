@@ -3,6 +3,7 @@
 #include<list>
 #include "Globals.h"
 #include "Module.h"
+#include "MathGeoLib/Time/Clock.h"
 
 class ModuleRender;
 class ModuleWindow;
@@ -20,14 +21,14 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
+	float GetDeltaTime();
 
 public:
 	ModuleRender* renderer = nullptr;
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleEditorCamera* editorCamera = nullptr;
-
-	
+	math::tick_t lastTick, newTick;
 
 private:
 

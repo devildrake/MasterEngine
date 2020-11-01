@@ -368,7 +368,6 @@
       <Filter>MathGeoLib\Time</Filter>
     </ClInclude>
     <ClInclude Include="ModuleEditorCamera.h" />
-    <ClInclude Include="Point.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

@@ -5,6 +5,7 @@
 #include "SDL.h"
 #include <glew.h>
 #include "MathGeoLib/Geometry/Frustum.h"
+#include "MathGeoLib/Math/float3x3.h"
 struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;
@@ -24,14 +25,21 @@ public:
 
 	float4x4 GetTransposedProjectionMatrix();
 	float4x4 GetTransposedViewModelMatrix();
-
+	float UpdateCameraYaw();
+	float UpdateCameraPitch();
+	float3 GetCameraMovementInput()const;
 	void SendViewModelMatrix();
 	void SendProjectionMatrix();
 
 private:
+
 	Frustum frustum;
+	float3 frustumPosition;
+	float3 originalFront, originalUp;
+	float cameraSpeed, mouseSensitivity;
+	float pitch, yaw;
+	float nearPlaneDistance, farPlaneDistance;
 	void* context;
 	SDL_GLContext glcontext;
-
 };
 #endif
