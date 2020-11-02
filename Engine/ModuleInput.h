@@ -65,7 +65,7 @@ public:
 	const float3& GetMouseMotion() const;
 	const float3& GetMousePosition() const;
 	const float& GetMouseWheelMotion()const;
-
+	const void MouseLeftWindow();
 private:
 	bool		windowEvents[WE_COUNT];
 	KeyState* keyboard;

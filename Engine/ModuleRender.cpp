@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
-
+#include "ModuleInput.h"
 
 ModuleRender::ModuleRender()
 {
@@ -127,4 +127,5 @@ bool ModuleRender::CleanUp()
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
 }
+
 

@@ -92,11 +92,11 @@ float3 ModuleEditorCamera::GetCameraMovementInput() const {
 		val += frustum.WorldRight();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) {
+	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) {
 		val += frustum.Up();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) {
+	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) {
 		val -= frustum.Up();
 	}
 	return val;
@@ -117,11 +117,14 @@ float ModuleEditorCamera::UpdateCameraPitch() {
 // Called every draw update
 update_status ModuleEditorCamera::Update()
 {
+	SDL_ShowCursor(1);
+
+
+	float3 cameraMovementInput = float3(0, 0, 0);
 	float speedFactor = App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT ? 6 : 3;
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
-		//SDL_WarpMouseInWindow(App->window->window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
-		float3 cameraMovementInput = GetCameraMovementInput();
+		cameraMovementInput = GetCameraMovementInput();
 
 		float3x3 yawRotation = float3x3::RotateAxisAngle(float3(0, 1, 0), DEGTORAD * UpdateCameraYaw());
 		float3x3 pitchRotation = float3x3::RotateAxisAngle(float3(1, 0, 0), DEGTORAD * UpdateCameraPitch());
@@ -133,7 +136,22 @@ update_status ModuleEditorCamera::Update()
 
 		frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
 	}
-	
+
+	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+
+		if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)) {
+			cameraMovementInput = -frustum.WorldRight() * App->input->GetMouseMotion().x * mouseSensitivity * App->GetDeltaTime();
+			cameraMovementInput += frustum.Up() * App->input->GetMouseMotion().y * mouseSensitivity * App->GetDeltaTime();
+
+
+			frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
+		}
+		else {
+			//TO DO Implement orbitMode
+		}
+
+	}
+
 	if (App->input->GetMouseWheelMotion() != 0) {
 		frustumPosition += App->input->GetMouseWheelMotion() * frustum.Front() * speedFactor * 5 * App->GetDeltaTime();
 	}

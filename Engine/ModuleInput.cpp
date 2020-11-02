@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleRender.h"
+#include "ModuleWindow.h"
 #include "SDL/include/SDL.h"
 
 #define MAX_KEYS 300
@@ -48,8 +49,13 @@ update_status ModuleInput::PreUpdate() {
 		case SDL_QUIT:
 			return UPDATE_STOP;
 		case SDL_WINDOWEVENT:
-			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 				App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+			}
+			else if (sdlEvent.window.event == SDL_WINDOWEVENT_LEAVE) {
+				//App->renderer->MouseLeftWindow();
+				MouseLeftWindow();
+			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			mouse_buttons[sdlEvent.button.button - 1] = KEY_DOWN;
@@ -61,10 +67,10 @@ update_status ModuleInput::PreUpdate() {
 
 
 		case SDL_MOUSEMOTION:
-			mouse_motion.x = sdlEvent.motion.xrel / SCREEN_SIZE;
-			mouse_motion.y = sdlEvent.motion.yrel / SCREEN_SIZE;
-			mouse.x = sdlEvent.motion.x / SCREEN_SIZE;
-			mouse.y = sdlEvent.motion.y / SCREEN_SIZE;
+			mouse_motion.x = sdlEvent.motion.xrel;// / SCREEN_SIZE;
+			mouse_motion.y = sdlEvent.motion.yrel;// / SCREEN_SIZE;
+			mouse.x = sdlEvent.motion.x;// / SCREEN_SIZE;
+			mouse.y = sdlEvent.motion.y;// / SCREEN_SIZE;
 			break;
 		case SDL_MOUSEWHEEL:
 			wheel_motion = sdlEvent.wheel.y;
@@ -105,8 +111,6 @@ update_status ModuleInput::PreUpdate() {
 
 	return UPDATE_CONTINUE;
 }
-
-
 // Called every draw update
 update_status ModuleInput::Update()
 {
@@ -116,6 +120,31 @@ update_status ModuleInput::Update()
 	return UPDATE_CONTINUE;
 }
 
+
+const void ModuleInput::MouseLeftWindow() {
+	/*float screenMargin = 40.0f;
+	float3 mousePos = App->input->GetMousePosition();
+
+	if (mousePos.x >= SCREEN_WIDTH / 2 - screenMargin) {
+		SDL_WarpMouseInWindow(App->window->window, screenMargin, mousePos.y);
+	}
+	else if (mousePos.x <= screenMargin) {
+		SDL_WarpMouseInWindow(App->window->window, SCREEN_WIDTH - screenMargin, mousePos.y);
+	}
+
+	if (mousePos.y >= SCREEN_HEIGHT / 2 - screenMargin) {
+		SDL_WarpMouseInWindow(App->window->window, mousePos.x, screenMargin);
+
+	}
+	else if (mousePos.y <= screenMargin) {
+		SDL_WarpMouseInWindow(App->window->window, mousePos.x, SCREEN_HEIGHT - screenMargin);
+
+	}*/
+
+	//LOG("OUT");
+
+	//SDL_WarpMouseInWindow(App->window->window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+}
 
 // Called before quitting
 bool ModuleInput::CleanUp()
