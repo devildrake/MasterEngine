@@ -3,7 +3,8 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleInput.h"
-#include "ModuleEditorCamera.h"
+//#include "ModuleEditorCamera.h"
+#include "ModuleHelloTriangleExcerise.h"
 using namespace std;
 
 Application::Application()
@@ -12,7 +13,9 @@ Application::Application()
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(input = new ModuleInput());
-	modules.push_back(editorCamera = new ModuleEditorCamera());
+	modules.push_back(helloTriangleExcerise = new ModuleHelloTriangleExcercise());
+
+	//modules.push_back(editorCamera = new ModuleEditorCamera());
 	lastTick = newTick = Clock::Tick();
 
 }

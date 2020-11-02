@@ -134,6 +134,7 @@
       <Filter>MathGeoLib\Time</Filter>
     </ClCompile>
     <ClCompile Include="ModuleEditorCamera.cpp" />
+    <ClCompile Include="ModuleHelloTriangleExcerise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -368,6 +369,7 @@
       <Filter>MathGeoLib\Time</Filter>
     </ClInclude>
     <ClInclude Include="ModuleEditorCamera.h" />
+    <ClInclude Include="ModuleHelloTriangleExcerise.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
