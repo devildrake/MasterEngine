@@ -8,26 +8,15 @@
 
 ModuleEditorCamera::ModuleEditorCamera()
 {
-	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
-
 	nearPlaneDistance = 0.1f;
 	farPlaneDistance = 200.0f;
-
-	frustum.SetViewPlaneDistances(nearPlaneDistance, farPlaneDistance);
-	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
 	frustumPosition = float3(0, 1, -2);
-
-	frustum.SetPos(frustumPosition);
-	frustum.SetFront(float3::unitZ);
-	frustum.SetUp(float3::unitY);
-
-	originalFront = frustum.Front();
-	originalUp = frustum.Up();
 	cameraSpeed = 6;
 	mouseSensitivity = 15;
 	pitch = 0;
 	yaw = 0;
-
+	screenMargin = 20.0f;
+	mouseWheelSpeedFactor = 5;
 }
 
 // Destructor
@@ -38,10 +27,15 @@ ModuleEditorCamera::~ModuleEditorCamera()
 // Called before render is available
 bool ModuleEditorCamera::Init()
 {
+	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+	frustum.SetViewPlaneDistances(nearPlaneDistance, farPlaneDistance);
+	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, SCREEN_WIDTH / SCREEN_HEIGHT);
+	frustum.SetPos(frustumPosition);
+	frustum.SetFront(float3::unitZ);
+	frustum.SetUp(float3::unitY);
 
-
-
-
+	originalFront = frustum.Front();
+	originalUp = frustum.Up();
 
 	return true;
 }
@@ -54,11 +48,11 @@ update_status ModuleEditorCamera::PreUpdate()
 }
 
 
-float4x4 ModuleEditorCamera::GetTransposedProjectionMatrix() {
+const float4x4 ModuleEditorCamera::GetTransposedProjectionMatrix() const {
 	return frustum.ProjectionMatrix().Transposed();
 }
 
-float4x4 ModuleEditorCamera::GetTransposedViewModelMatrix() {
+const float4x4 ModuleEditorCamera::GetTransposedViewModelMatrix()const {
 	float4x4 viewMatrix = frustum.ViewMatrix();
 	return viewMatrix.Transposed();
 }
@@ -73,7 +67,7 @@ void ModuleEditorCamera::SendProjectionMatrix() {
 	glLoadMatrixf(*GetTransposedProjectionMatrix().v);
 }
 
-float3 ModuleEditorCamera::GetCameraMovementInput() const {
+const float3 ModuleEditorCamera::GetCameraMovementInput() const {
 	float3 val = float3(0, 0, 0);
 
 	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
@@ -102,47 +96,80 @@ float3 ModuleEditorCamera::GetCameraMovementInput() const {
 	return val;
 }
 
-float ModuleEditorCamera::UpdateCameraYaw() {
-	yaw -= App->input->GetMouseMotion().x * mouseSensitivity * App->GetDeltaTime();
+const float ModuleEditorCamera::UpdateCameraYaw(const float3 mouseMotion) {
+	yaw -= mouseMotion.x * mouseSensitivity * App->GetDeltaTime();
 	yaw = math::Mod(yaw, 360.0f);
 	return yaw;
 }
 
-float ModuleEditorCamera::UpdateCameraPitch() {
-	pitch += App->input->GetMouseMotion().y * mouseSensitivity * App->GetDeltaTime();
+const float ModuleEditorCamera::UpdateCameraPitch(const float3 mouseMotion) {
+	pitch += mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
 	pitch = math::Max(math::Min(pitch, 90.0f), -90.0f);
 	return pitch;
+}
+
+const bool ModuleEditorCamera::WarpMouseTooCloseToEdges(float3 mousePos, float screenMargin)const {
+	bool val = false;
+	if (mousePos.x >= SCREEN_WIDTH - screenMargin) {
+		SDL_WarpMouseInWindow(App->window->window, screenMargin, mousePos.y);
+		mousePos.x = screenMargin;
+		val = true;
+	}
+	else if (mousePos.x <= screenMargin) {
+		SDL_WarpMouseInWindow(App->window->window, SCREEN_WIDTH - screenMargin, mousePos.y);
+		mousePos.x = SCREEN_WIDTH - screenMargin;
+		val = true;
+	}
+	if (mousePos.y >= SCREEN_HEIGHT - screenMargin) {
+		SDL_WarpMouseInWindow(App->window->window, mousePos.x, screenMargin);
+		val = true;
+	}
+	else if (mousePos.y <= screenMargin) {
+		SDL_WarpMouseInWindow(App->window->window, mousePos.x, SCREEN_HEIGHT - screenMargin);
+		val = true;
+	}
+	return val;
+}
+
+void ModuleEditorCamera::ApplyUpdatedPitchYawToFrustum() {
+	const float3 mouseMotion = App->input->GetMouseMotion();
+	float3x3 yawRotation = float3x3::RotateAxisAngle(float3(0, 1, 0), DEGTORAD * UpdateCameraYaw(mouseMotion));
+	float3x3 pitchRotation = float3x3::RotateAxisAngle(float3(1, 0, 0), DEGTORAD * UpdateCameraPitch(mouseMotion));
+
+	float3 newFront = yawRotation * pitchRotation * originalFront;
+	float3 newUp = yawRotation * pitchRotation * originalUp;
+
+	frustum.SetFront(newFront);
+	frustum.SetUp(newUp);
 }
 
 // Called every draw update
 update_status ModuleEditorCamera::Update()
 {
-	SDL_ShowCursor(1);
-
 
 	float3 cameraMovementInput = float3(0, 0, 0);
 	float speedFactor = App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT ? 6 : 3;
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 
-		cameraMovementInput = GetCameraMovementInput();
+		ApplyUpdatedPitchYawToFrustum();
 
-		float3x3 yawRotation = float3x3::RotateAxisAngle(float3(0, 1, 0), DEGTORAD * UpdateCameraYaw());
-		float3x3 pitchRotation = float3x3::RotateAxisAngle(float3(1, 0, 0), DEGTORAD * UpdateCameraPitch());
+		if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
+			App->input->ResetMouseMotion();
+		}
 
-		float3 newFront = yawRotation * pitchRotation * originalFront;
-		float3 newUp = yawRotation * pitchRotation * originalUp;
-		frustum.SetFront(newFront);
-		frustum.SetUp(newUp);
-
-		frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
+		frustumPosition += GetCameraMovementInput() * speedFactor * App->GetDeltaTime();
 	}
 
 	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 
 		if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)) {
-			cameraMovementInput = -frustum.WorldRight() * App->input->GetMouseMotion().x * mouseSensitivity * App->GetDeltaTime();
-			cameraMovementInput += frustum.Up() * App->input->GetMouseMotion().y * mouseSensitivity * App->GetDeltaTime();
+			const float3 mouseMotion = App->input->GetMouseMotion();
+			cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * mouseSensitivity * App->GetDeltaTime();
+			cameraMovementInput += frustum.Up() * mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
 
+			if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
+				App->input->ResetMouseMotion();
+			}
 
 			frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
 		}
@@ -151,9 +178,10 @@ update_status ModuleEditorCamera::Update()
 		}
 
 	}
-
-	if (App->input->GetMouseWheelMotion() != 0) {
-		frustumPosition += App->input->GetMouseWheelMotion() * frustum.Front() * speedFactor * 5 * App->GetDeltaTime();
+	SDL_ShowCursor(!(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT));
+	const float mouseWheelMotion = App->input->GetMouseWheelMotion();
+	if (mouseWheelMotion != 0) {
+		frustumPosition += mouseWheelMotion * frustum.Front() * speedFactor * mouseWheelSpeedFactor * App->GetDeltaTime();
 	}
 
 	frustum.SetPos(frustumPosition);
@@ -171,10 +199,6 @@ update_status ModuleEditorCamera::PostUpdate()
 // Called before quitting
 bool ModuleEditorCamera::CleanUp()
 {
-	LOG("Destroying renderer");
-
-	//Destroy window
-	SDL_GL_DeleteContext(context);
 	return true;
 }
 

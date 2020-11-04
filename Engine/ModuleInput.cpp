@@ -12,6 +12,7 @@ ModuleInput::ModuleInput()
 	keyboard = new KeyState[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
 	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
+	mouseReset = false;
 }
 
 // Destructor
@@ -42,6 +43,9 @@ update_status ModuleInput::PreUpdate() {
 	mouse_motion.x = 0;
 	mouse_motion.y = 0;
 	wheel_motion = 0;
+	//std::string a = std::to_string(mouse.x) + " " + std::to_string(mouse.y);
+	//LOG(a.c_str());
+
 	while (SDL_PollEvent(&sdlEvent) != 0)
 	{
 		switch (sdlEvent.type)
@@ -67,8 +71,21 @@ update_status ModuleInput::PreUpdate() {
 
 
 		case SDL_MOUSEMOTION:
-			mouse_motion.x = sdlEvent.motion.xrel;// / SCREEN_SIZE;
-			mouse_motion.y = sdlEvent.motion.yrel;// / SCREEN_SIZE;
+			if (mouseReset) {
+				mouseReset = false;
+			}
+
+			if (math::Abs(sdlEvent.motion.xrel) < 150)
+			{
+				mouse_motion.x = sdlEvent.motion.xrel;// / SCREEN_SIZE;
+			}
+
+			if (math::Abs(sdlEvent.motion.yrel) < 150)
+			{
+				mouse_motion.y = sdlEvent.motion.yrel;// / SCREEN_SIZE;
+			}
+
+			//LOG(std::to_string(sdlEvent.motion.xrel).c_str());
 			mouse.x = sdlEvent.motion.x;// / SCREEN_SIZE;
 			mouse.y = sdlEvent.motion.y;// / SCREEN_SIZE;
 			break;
@@ -122,6 +139,7 @@ update_status ModuleInput::Update()
 
 
 const void ModuleInput::MouseLeftWindow() {
+	//LOG("MOUSE LEFT WINDOW");
 	/*float screenMargin = 40.0f;
 	float3 mousePos = App->input->GetMousePosition();
 
@@ -172,4 +190,10 @@ const float3& ModuleInput::GetMousePosition() const
 const float3& ModuleInput::GetMouseMotion() const
 {
 	return mouse_motion;
+}
+
+void ModuleInput::ResetMouseMotion() {
+	mouseReset = true;
+	mouse_motion = float3(0, 0, 0);
+	mouse = float3(0, 0, 0);
 }

@@ -66,6 +66,8 @@ public:
 	const float3& GetMousePosition() const;
 	const float& GetMouseWheelMotion()const;
 	const void MouseLeftWindow();
+	void ResetMouseMotion();
+
 private:
 	bool		windowEvents[WE_COUNT];
 	KeyState* keyboard;
@@ -73,6 +75,7 @@ private:
 	float3 mouse_motion;
 	float3 mouse;
 	float wheel_motion;
+	bool mouseReset;
 };
 
 #endif // __MODULEINPUT_H__

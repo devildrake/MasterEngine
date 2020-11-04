@@ -22,15 +22,8 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
-
-	float4x4 GetTransposedProjectionMatrix();
-	float4x4 GetTransposedViewModelMatrix();
-	float UpdateCameraYaw();
-	float UpdateCameraPitch();
-	float3 GetCameraMovementInput()const;
 	void SendViewModelMatrix();
 	void SendProjectionMatrix();
-
 private:
 
 	Frustum frustum;
@@ -41,5 +34,16 @@ private:
 	float nearPlaneDistance, farPlaneDistance;
 	void* context;
 	SDL_GLContext glcontext;
+	float screenMargin;
+	float mouseWheelSpeedFactor;
+private:
+	const float4x4 GetTransposedProjectionMatrix()const;
+	const float4x4 GetTransposedViewModelMatrix()const;
+	const float UpdateCameraYaw(const float3 mouseMotion);
+	const float UpdateCameraPitch(const float3 mouseMotion);
+	const float3 GetCameraMovementInput()const;
+
+	const bool WarpMouseTooCloseToEdges(float3, float)const;
+	void ApplyUpdatedPitchYawToFrustum();
 };
 #endif
