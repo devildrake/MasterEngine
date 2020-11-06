@@ -4,7 +4,7 @@
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 #include "SDL/include/SDL.h"
-
+#include "ModuleEditor.h"
 #define MAX_KEYS 300
 
 ModuleInput::ModuleInput()
@@ -33,18 +33,20 @@ bool ModuleInput::Init()
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-
+	//SDL_SetWindowGrab(App->window->window, SDL_TRUE);
 	return ret;
 }
 
 update_status ModuleInput::PreUpdate() {
-
 	SDL_Event sdlEvent;
 	mouse_motion.x = 0;
 	mouse_motion.y = 0;
 	wheel_motion = 0;
 	//std::string a = std::to_string(mouse.x) + " " + std::to_string(mouse.y);
 	//LOG(a.c_str());
+
+	ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+	//SDL_CaptureMouse(true);
 
 	while (SDL_PollEvent(&sdlEvent) != 0)
 	{
@@ -139,7 +141,7 @@ update_status ModuleInput::Update()
 
 
 const void ModuleInput::MouseLeftWindow() {
-	//LOG("MOUSE LEFT WINDOW");
+	LOG("MOUSE LEFT WINDOW");
 	/*float screenMargin = 40.0f;
 	float3 mousePos = App->input->GetMousePosition();
 

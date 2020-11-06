@@ -11,6 +11,7 @@ class ModuleTextures;
 class ModuleInput;
 class ModuleRenderExercise;
 class ModuleEditorCamera;
+class ModuleEditor;
 class Application
 {
 public:
@@ -28,6 +29,7 @@ public:
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleEditorCamera* editorCamera = nullptr;
+	ModuleEditor* editor = nullptr;
 	math::tick_t lastTick, newTick;
 
 private:

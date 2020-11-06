@@ -34,9 +34,6 @@ bool ModuleEditorCamera::Init()
 	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
 
-	originalFront = frustum.Front();
-	originalUp = frustum.Up();
-
 	return true;
 }
 
@@ -96,16 +93,22 @@ const float3 ModuleEditorCamera::GetCameraMovementInput() const {
 	return val;
 }
 
+
 const float ModuleEditorCamera::UpdateCameraYaw(const float3 mouseMotion) {
+
+	float prevYaw = yaw;
 	yaw -= mouseMotion.x * mouseSensitivity * App->GetDeltaTime();
-	yaw = math::Mod(yaw, 360.0f);
-	return yaw;
+	//yaw = math::Mod(yaw, 360.0f);
+
+	return yaw - prevYaw;
 }
 
 const float ModuleEditorCamera::UpdateCameraPitch(const float3 mouseMotion) {
-	pitch += mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
+
+	float prevPitch = pitch;
+	pitch -= mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
 	pitch = math::Max(math::Min(pitch, 90.0f), -90.0f);
-	return pitch;
+	return pitch - prevPitch;
 }
 
 const bool ModuleEditorCamera::WarpMouseTooCloseToEdges(float3 mousePos, float screenMargin)const {
@@ -131,17 +134,24 @@ const bool ModuleEditorCamera::WarpMouseTooCloseToEdges(float3 mousePos, float s
 	return val;
 }
 
+
 void ModuleEditorCamera::ApplyUpdatedPitchYawToFrustum() {
 	const float3 mouseMotion = App->input->GetMouseMotion();
-	float3x3 yawRotation = float3x3::RotateAxisAngle(float3(0, 1, 0), DEGTORAD * UpdateCameraYaw(mouseMotion));
-	float3x3 pitchRotation = float3x3::RotateAxisAngle(float3(1, 0, 0), DEGTORAD * UpdateCameraPitch(mouseMotion));
 
-	float3 newFront = yawRotation * pitchRotation * originalFront;
-	float3 newUp = yawRotation * pitchRotation * originalUp;
+	float relativeYaw = UpdateCameraYaw(mouseMotion);
+	float relativePitch = UpdateCameraPitch(mouseMotion);
 
-	frustum.SetFront(newFront);
-	frustum.SetUp(newUp);
+	float3x3 yawRotation = float3x3::RotateAxisAngle(float3(0, 1, 0), DEGTORAD * relativeYaw);
+	float3x3 pitchRotation = float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), DEGTORAD * relativePitch);
+
+	float3 newUp = yawRotation * pitchRotation * frustum.Up().Normalized();
+	float3 newFront = yawRotation * pitchRotation * frustum.Front().Normalized();
+
+	frustum.SetUp(newUp.Normalized());
+	frustum.SetFront(newFront.Normalized());
+
 }
+
 
 // Called every draw update
 update_status ModuleEditorCamera::Update()
@@ -153,9 +163,9 @@ update_status ModuleEditorCamera::Update()
 
 		ApplyUpdatedPitchYawToFrustum();
 
-		if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
-			App->input->ResetMouseMotion();
-		}
+		//if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
+		//	App->input->ResetMouseMotion();
+		//}
 
 		frustumPosition += GetCameraMovementInput() * speedFactor * App->GetDeltaTime();
 	}
@@ -167,9 +177,9 @@ update_status ModuleEditorCamera::Update()
 			cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * mouseSensitivity * App->GetDeltaTime();
 			cameraMovementInput += frustum.Up() * mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
 
-			if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
-				App->input->ResetMouseMotion();
-			}
+			//if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
+			//	App->input->ResetMouseMotion();
+			//}
 
 			frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
 		}
@@ -208,4 +218,6 @@ void ModuleEditorCamera::WindowResized(unsigned width, unsigned height)
 	float newRatio = width / height;
 	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * (newRatio * 90 / 1.3)), newRatio);
 }
+
+
 

@@ -28,7 +28,6 @@ private:
 
 	Frustum frustum;
 	float3 frustumPosition;
-	float3 originalFront, originalUp;
 	float cameraSpeed, mouseSensitivity;
 	float pitch, yaw;
 	float nearPlaneDistance, farPlaneDistance;

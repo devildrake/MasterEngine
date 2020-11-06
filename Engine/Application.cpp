@@ -4,6 +4,7 @@
 #include "ModuleRender.h"
 #include "ModuleInput.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleEditor.h"
 using namespace std;
 
 Application::Application()
@@ -13,6 +14,8 @@ Application::Application()
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
+	modules.push_back(editor = new ModuleEditor());
+
 	lastTick = newTick = Clock::Tick();
 
 }

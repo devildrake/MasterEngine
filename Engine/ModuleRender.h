@@ -21,6 +21,7 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
+	SDL_GLContext GetContext();
 private:
 	void* context;
 	SDL_GLContext glcontext;
