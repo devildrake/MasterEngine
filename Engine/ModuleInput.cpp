@@ -45,11 +45,11 @@ update_status ModuleInput::PreUpdate() {
 	//std::string a = std::to_string(mouse.x) + " " + std::to_string(mouse.y);
 	//LOG(a.c_str());
 
-	ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 	//SDL_CaptureMouse(true);
 
 	while (SDL_PollEvent(&sdlEvent) != 0)
 	{
+		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 		switch (sdlEvent.type)
 		{
 		case SDL_QUIT:
@@ -57,6 +57,7 @@ update_status ModuleInput::PreUpdate() {
 		case SDL_WINDOWEVENT:
 			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 				App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+				App->window->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
 			}
 			else if (sdlEvent.window.event == SDL_WINDOWEVENT_LEAVE) {
 				//App->renderer->MouseLeftWindow();
@@ -141,7 +142,7 @@ update_status ModuleInput::Update()
 
 
 const void ModuleInput::MouseLeftWindow() {
-	LOG("MOUSE LEFT WINDOW");
+	//LOG("MOUSE LEFT WINDOW");
 	/*float screenMargin = 40.0f;
 	float3 mousePos = App->input->GetMousePosition();
 
@@ -198,4 +199,8 @@ void ModuleInput::ResetMouseMotion() {
 	mouseReset = true;
 	mouse_motion = float3(0, 0, 0);
 	mouse = float3(0, 0, 0);
+}
+
+const bool ModuleInput::IsMouseOverImGuiWindow()const {
+	return ImGui::GetIO().WantCaptureMouse;
 }

@@ -153,6 +153,7 @@
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ModuleEditor.cpp" />
+    <ClCompile Include="LTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -412,6 +413,7 @@
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="ModuleEditor.h" />
+    <ClInclude Include="LTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

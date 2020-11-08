@@ -171,20 +171,21 @@ update_status ModuleEditorCamera::Update()
 	}
 
 	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+		if (!App->input->IsMouseOverImGuiWindow()) {
+			if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)) {
+				const float3 mouseMotion = App->input->GetMouseMotion();
+				cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * mouseSensitivity * App->GetDeltaTime();
+				cameraMovementInput += frustum.Up() * mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
 
-		if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)) {
-			const float3 mouseMotion = App->input->GetMouseMotion();
-			cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * mouseSensitivity * App->GetDeltaTime();
-			cameraMovementInput += frustum.Up() * mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
+				//if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
+				//	App->input->ResetMouseMotion();
+				//}
 
-			//if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
-			//	App->input->ResetMouseMotion();
-			//}
-
-			frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
-		}
-		else {
-			//TO DO Implement orbitMode
+				frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
+			}
+			else {
+				//TO DO Implement orbitMode
+			}
 		}
 
 	}
@@ -214,9 +215,9 @@ bool ModuleEditorCamera::CleanUp()
 
 void ModuleEditorCamera::WindowResized(unsigned width, unsigned height)
 {
-	//frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90.0f), width / height);
+	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90.0f), width / height);
 	float newRatio = width / height;
-	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * (newRatio * 90 / 1.3)), newRatio);
+	//frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * (newRatio * 90 / 1.3)), newRatio);
 }
 
 

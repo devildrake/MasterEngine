@@ -17,7 +17,7 @@ Application::Application()
 	modules.push_back(editor = new ModuleEditor());
 
 	lastTick = newTick = Clock::Tick();
-
+	SetFrameCap(60);
 }
 
 Application::~Application()
@@ -34,7 +34,6 @@ float Application::GetDeltaTime() {
 
 bool Application::Init()
 {
-	newTick = lastTick = Clock::Tick();
 
 	bool ret = true;
 	for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
@@ -45,8 +44,11 @@ bool Application::Init()
 
 update_status Application::Update()
 {
+	capTimer.start();
+
 	lastTick = newTick;
 	newTick = Clock::Tick();
+
 	update_status ret = UPDATE_CONTINUE;
 
 
@@ -59,7 +61,23 @@ update_status Application::Update()
 	for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
+	int frameTicks = capTimer.getTicks();
+	if (frameTicks < ticksPerFrame)
+	{
+		//Wait remaining time
+		SDL_Delay(ticksPerFrame - frameTicks);
+	}
+
 	return ret;
+}
+
+void Application::SetFrameCap(int newFrameCap) {
+	frameCap = newFrameCap;
+	ticksPerFrame = 1000 / newFrameCap;
+}
+
+inline const int Application::GetFrameCap() const {
+	return frameCap;
 }
 
 bool Application::CleanUp()

@@ -21,7 +21,17 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	void SetFullScreen(bool b);
+	void SetResizable(bool b);
+	void SetBorderless(bool b);
+	void SetFullDesktop(bool b);
+	void WindowResized(unsigned width, unsigned height);
+	void SetBrightness(float newB);
 public:
+
+	int width, height;
+	bool fullscreen, resizable, borderless, fullDtp;
+
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;
 

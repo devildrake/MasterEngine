@@ -67,6 +67,7 @@ public:
 	const float& GetMouseWheelMotion()const;
 	const void MouseLeftWindow();
 	void ResetMouseMotion();
+	const bool IsMouseOverImGuiWindow()const;
 
 private:
 	bool		windowEvents[WE_COUNT];

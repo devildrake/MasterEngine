@@ -17,7 +17,7 @@ bool ModuleWindow::Init()
 	LOG("Init SDL window & surface");
 	bool ret = true;
 
-	if(SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
@@ -25,18 +25,19 @@ bool ModuleWindow::Init()
 	else
 	{
 		//Create window
-		int width = SCREEN_WIDTH;
-		int height = SCREEN_HEIGHT;
-		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
-
-		if(FULLSCREEN == true)
+		width = SCREEN_WIDTH;
+		height = SCREEN_HEIGHT;
+		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+		fullscreen = borderless = fullDtp = false;
+		resizable = true;
+		if (FULLSCREEN == true)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
 		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
-		if(window == NULL)
+		if (window == NULL)
 		{
 			LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			ret = false;
@@ -44,7 +45,7 @@ bool ModuleWindow::Init()
 		else
 		{
 			//Get window surface
-			
+
 			screen_surface = SDL_GetWindowSurface(window);
 		}
 	}
@@ -58,7 +59,7 @@ bool ModuleWindow::CleanUp()
 	LOG("Destroying SDL window and quitting all SDL systems");
 
 	//Destroy window
-	if(window != NULL)
+	if (window != NULL)
 	{
 		SDL_DestroyWindow(window);
 	}
@@ -68,3 +69,34 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
+
+void ModuleWindow::SetFullScreen(bool b) {
+	SDL_SetWindowFullscreen(window, b ? SDL_TRUE : SDL_FALSE);
+	fullscreen = b;
+}
+
+void ModuleWindow::SetResizable(bool b) {
+	SDL_SetWindowResizable(window, b ? SDL_TRUE : SDL_FALSE);
+	resizable = b;
+}
+
+void ModuleWindow::SetBorderless(bool b) {
+	SDL_SetWindowBordered(window, b ? SDL_FALSE : SDL_TRUE);
+	borderless = b;
+}
+
+void ModuleWindow::SetFullDesktop(bool b) {
+	//TODO
+	fullDtp = b;
+}
+
+
+void ModuleWindow::WindowResized(unsigned width, unsigned height)
+{
+	this->width = width;
+	this->height = height;
+}
+
+void ModuleWindow::SetBrightness(float newB) {
+	SDL_SetWindowBrightness(window, newB);
+}

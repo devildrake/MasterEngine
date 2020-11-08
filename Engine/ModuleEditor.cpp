@@ -1,13 +1,16 @@
 #include "ModuleEditor.h"
-#include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ImGui/imconfig.h"
+
+
+
+//#include "ImGui/imconfig.h"
 
 ModuleEditor::ModuleEditor() {
 	showConsole = showConfig = true;
-
-	/*buf = new char[10];
-	f = 0;*/
+	frameCap = 60.0f;
+	brightness = 1.0f;
 }
 
 ModuleEditor::~ModuleEditor() {
@@ -17,18 +20,19 @@ ModuleEditor::~ModuleEditor() {
 bool ModuleEditor::Init() {
 	ImGui::CreateContext();
 
-	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->GetContext());
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->GetContext());
 	ImGui_ImplOpenGL3_Init();
+
+
 
 	return true;
 }
 
 update_status ModuleEditor::PreUpdate() {
-
-
 	return UPDATE_CONTINUE;
-
 }
 
 void MySaveFunction() {
@@ -36,8 +40,6 @@ void MySaveFunction() {
 }
 
 update_status ModuleEditor::Update() {
-
-
 	configMenu.AddFrame(App->GetDeltaTime());
 
 
@@ -46,26 +48,25 @@ update_status ModuleEditor::Update() {
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 
-	//	ImGui::ShowDemoWindow();
-	//ImGui::Text("Hello world %d", 123);
-	//if (ImGui::Button("Save")) {
-	//	MySaveFunction();
-	//}
-
-	//ImGui::InputText("string", buf, sizeof(buf));
-	//ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 	console.Draw("Console", &showConsole);
 	configMenu.Draw("Configuration Menu", &showConfig);
 
-
 	ImGui::Render();
+
+
 	//Context handling
+
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
-
-	//ImGui::Context
-
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();
+		SDL_GLContext backupCurrentContext = SDL_GL_GetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SDL_GL_MakeCurrent(backupCurrentWindow, backupCurrentContext);
+	}
 
 	return UPDATE_CONTINUE;
 

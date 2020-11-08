@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Module.h"
 #include "MathGeoLib/Time/Clock.h"
+#include "LTimer.h"
 
 class ModuleRender;
 class ModuleWindow;
@@ -23,6 +24,9 @@ public:
 	update_status Update();
 	bool CleanUp();
 	float GetDeltaTime();
+	void SetFrameCap(int frameCap);
+	const int GetFrameCap()const;
+
 
 public:
 	ModuleRender* renderer = nullptr;
@@ -30,11 +34,12 @@ public:
 	ModuleInput* input = nullptr;
 	ModuleEditorCamera* editorCamera = nullptr;
 	ModuleEditor* editor = nullptr;
-	math::tick_t lastTick, newTick;
 
 private:
-
+	int frameCap, ticksPerFrame;
 	std::list<Module*> modules;
+	LTimer capTimer;
+	math::tick_t lastTick, newTick;
 
 };
 
