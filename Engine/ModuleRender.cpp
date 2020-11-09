@@ -6,6 +6,7 @@
 
 ModuleRender::ModuleRender()
 {
+	bgColor = float3(0.2f, 0.2f, 0.2f);
 }
 
 // Destructor
@@ -54,7 +55,7 @@ update_status ModuleRender::PreUpdate()
 		&App->window->screen_surface->w, &App->window->screen_surface->h);
 
 	glViewport(0, 0, App->window->screen_surface->w, App->window->screen_surface->h);
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
 	//glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

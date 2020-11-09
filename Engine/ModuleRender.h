@@ -12,6 +12,7 @@ struct SDL_Rect;
 class ModuleRender : public Module
 {
 public:
+	float3 bgColor;
 	ModuleRender();
 	~ModuleRender();
 

@@ -24,18 +24,33 @@ public:
 	void WindowResized(unsigned width, unsigned height);
 	void SendViewModelMatrix();
 	void SendProjectionMatrix();
+	void SetFrustumPos(float3 newPos);
+	Frustum* GetFrustum();
+
+	const float GetNearPlane()const;
+	const float GetFarPlane()const;
+	void SetNearPlane(float);
+	void SetFarPlane(float);
+	void SetAspectRatio(float);
+public:
+	float aspectRatio;
+	float cameraSpeed, rotationSpeed;
+	float zoomSpeed;
+	bool frustumCulling;
 private:
 
 	Frustum frustum;
-	float3 frustumPosition;
-	float cameraSpeed, mouseSensitivity;
 	float pitch, yaw;
-	float nearPlaneDistance, farPlaneDistance;
+
 	void* context;
 	SDL_GLContext glcontext;
 	float screenMargin;
-	float mouseWheelSpeedFactor;
+
 private:
+
+	float3 frustumPosition;
+	float nearPlaneDistance, farPlaneDistance;
+
 	const float4x4 GetTransposedProjectionMatrix()const;
 	const float4x4 GetTransposedViewModelMatrix()const;
 	const float UpdateCameraYaw(const float3 mouseMotion);

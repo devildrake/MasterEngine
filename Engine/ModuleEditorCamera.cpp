@@ -12,11 +12,13 @@ ModuleEditorCamera::ModuleEditorCamera()
 	farPlaneDistance = 200.0f;
 	frustumPosition = float3(0, 1, -2);
 	cameraSpeed = 6;
-	mouseSensitivity = 15;
+	rotationSpeed = 15;
 	pitch = 0;
 	yaw = 0;
 	screenMargin = 20.0f;
-	mouseWheelSpeedFactor = 5;
+	zoomSpeed = 5;
+	frustumCulling = true;
+	aspectRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
 }
 
 // Destructor
@@ -97,7 +99,7 @@ const float3 ModuleEditorCamera::GetCameraMovementInput() const {
 const float ModuleEditorCamera::UpdateCameraYaw(const float3 mouseMotion) {
 
 	float prevYaw = yaw;
-	yaw -= mouseMotion.x * mouseSensitivity * App->GetDeltaTime();
+	yaw -= mouseMotion.x * rotationSpeed * App->GetDeltaTime();
 	//yaw = math::Mod(yaw, 360.0f);
 
 	return yaw - prevYaw;
@@ -106,7 +108,7 @@ const float ModuleEditorCamera::UpdateCameraYaw(const float3 mouseMotion) {
 const float ModuleEditorCamera::UpdateCameraPitch(const float3 mouseMotion) {
 
 	float prevPitch = pitch;
-	pitch -= mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
+	pitch -= mouseMotion.y * rotationSpeed * App->GetDeltaTime();
 	pitch = math::Max(math::Min(pitch, 90.0f), -90.0f);
 	return pitch - prevPitch;
 }
@@ -158,7 +160,7 @@ update_status ModuleEditorCamera::Update()
 {
 
 	float3 cameraMovementInput = float3(0, 0, 0);
-	float speedFactor = App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT ? 6 : 3;
+	float speedFactor = App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT ? cameraSpeed * 3 : cameraSpeed;
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 
 		ApplyUpdatedPitchYawToFrustum();
@@ -174,8 +176,8 @@ update_status ModuleEditorCamera::Update()
 		if (!App->input->IsMouseOverImGuiWindow()) {
 			if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)) {
 				const float3 mouseMotion = App->input->GetMouseMotion();
-				cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * mouseSensitivity * App->GetDeltaTime();
-				cameraMovementInput += frustum.Up() * mouseMotion.y * mouseSensitivity * App->GetDeltaTime();
+				cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * rotationSpeed * App->GetDeltaTime();
+				cameraMovementInput += frustum.Up() * mouseMotion.y * rotationSpeed * App->GetDeltaTime();
 
 				//if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
 				//	App->input->ResetMouseMotion();
@@ -192,7 +194,7 @@ update_status ModuleEditorCamera::Update()
 	SDL_ShowCursor(!(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT));
 	const float mouseWheelMotion = App->input->GetMouseWheelMotion();
 	if (mouseWheelMotion != 0) {
-		frustumPosition += mouseWheelMotion * frustum.Front() * speedFactor * mouseWheelSpeedFactor * App->GetDeltaTime();
+		frustumPosition += mouseWheelMotion * frustum.Front() * zoomSpeed * App->GetDeltaTime();
 	}
 
 	frustum.SetPos(frustumPosition);
@@ -215,10 +217,37 @@ bool ModuleEditorCamera::CleanUp()
 
 void ModuleEditorCamera::WindowResized(unsigned width, unsigned height)
 {
-	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90.0f), width / height);
-	float newRatio = width / height;
-	//frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * (newRatio * 90 / 1.3)), newRatio);
+	SetAspectRatio(width / height);
+	//aspectRatio = width / height;
+	//frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90.0f), aspectRatio);
+	////frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * (newRatio * 90 / 1.3)), newRatio);
 }
 
+void ModuleEditorCamera::SetFrustumPos(float3 newPos) {
+	frustumPosition = newPos;
+	frustum.SetPos(newPos);
+}
 
+Frustum* ModuleEditorCamera::GetFrustum() {
+	return &frustum;
+}
 
+const float ModuleEditorCamera::GetNearPlane()const {
+	return nearPlaneDistance;
+}
+const float ModuleEditorCamera::GetFarPlane()const {
+	return farPlaneDistance;
+}
+void ModuleEditorCamera::SetNearPlane(float n) {
+	nearPlaneDistance = n;
+	frustum.SetViewPlaneDistances(n, farPlaneDistance);
+}
+void ModuleEditorCamera::SetFarPlane(float n) {
+	farPlaneDistance = n;
+	frustum.SetViewPlaneDistances(nearPlaneDistance, n);
+}
+
+void ModuleEditorCamera::SetAspectRatio(float n) {
+	aspectRatio = n;
+	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90.0f), n);
+}
