@@ -13,6 +13,8 @@
 #include <string>
 
 #define FRAMECOUNT 30
+#define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048
+#define GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049
 
 class ModuleEditor :public Module {
 private:
@@ -78,6 +80,52 @@ public:
 		float frames[FRAMECOUNT];
 		float times[FRAMECOUNT];
 		int frameCounter;
+
+		std::string GetCapsString() {
+			std::string capsString = "";
+
+			if (SDL_Has3DNow()) {
+				capsString += "3DNow ";
+			}
+
+			if (SDL_HasAVX()) {
+				capsString += "AVX ";
+			}
+
+			if (SDL_HasAVX2()) {
+				capsString += "AVX2 ";
+			}
+
+			if (SDL_HasAltiVec()) {
+				capsString += "AltiVec ";
+			}
+
+			if (SDL_HasMMX()) {
+				capsString += "MMX ";
+			}
+
+			if (SDL_HasSSE()) {
+				capsString += "SSE ";
+			}
+
+			if (SDL_HasSSE2()) {
+				capsString += "SSE2 ";
+			}
+
+			if (SDL_HasSSE3()) {
+				capsString += "SSE3 ";
+			}
+
+			if (SDL_HasSSE41()) {
+				capsString += "SSE41 ";
+			}
+
+			if (SDL_HasSSE42()) {
+				capsString += "SSE42 ";
+			}
+			return capsString;
+		}
+
 		ConfigMenu() {
 			for (int i = 0; i < FRAMECOUNT; i++) {
 				times[i] = 0;
@@ -122,9 +170,6 @@ public:
 
 				//ImVec2 size = ImGui::GetItemRectSize();
 
-
-
-
 				char title[25];
 				sprintf_s(title, 25, "Framerate %.1f", frames[FRAMECOUNT - 1]);
 
@@ -133,10 +178,6 @@ public:
 				sprintf_s(title, 25, "Milliseconds %0.1f", frames[FRAMECOUNT - 1]);
 
 				ImGui::PlotHistogram("##framerate", times, IM_ARRAYSIZE(times), 0, NULL, 0.0f, 32, ImVec2(310, 100));
-
-
-
-
 			}
 
 
@@ -171,7 +212,7 @@ public:
 				if (ImGui::Checkbox("Borderless", &App->window->borderless)) {
 					App->window->SetBorderless(App->window->borderless);
 				}
-
+				ImGui::SameLine();
 				if (ImGui::Checkbox("Fulldesktop", &App->window->fullDtp)) {
 					App->window->SetFullDesktop(App->window->fullDtp);
 				}
@@ -180,8 +221,78 @@ public:
 			}
 
 			if (ImGui::CollapsingHeader("Hardware")) {
-				ImGui::Text("To Do");
+				//TO DO ACTIVE BOX
+				//SDL_version* version;
+				//SDL_GetVersion(version);
+
+				//ImGui::Text("Version:");
+				//ImGui::SameLine();
+				//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "SDL %d.%d.%d", version->major,version->minor,version->patch);
+
+
+				ImGui::Text("CPUs:");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", SDL_GetCPUCount());
+
+				ImGui::Text("System RAM:");
+				ImGui::SameLine();
+				float ram = SDL_GetSystemRAM() / 1000;
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.1f Gb", ram);
+
+				ImGui::Text("Caps:");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), GetCapsString().c_str(), SDL_GetCPUCount());
+
+				ImGui::Text("GPU:");
+				ImGui::SameLine();
+				char* vendor = reinterpret_cast<char*>((unsigned char*)glGetString(GL_VENDOR));
+				char* version = reinterpret_cast<char*>((unsigned char*)glGetString(GL_VERSION));
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Vendor: %s Driver Version: %s", vendor, version);
+
+				ImGui::Text("Brand:");
+				ImGui::SameLine();
+
+				char* vRamBrand = reinterpret_cast<char*>((unsigned char*)glGetString(GL_RENDERER));
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), vRamBrand);
+
+				GLint total_mem_kb = 0;
+				glGetIntegerv(GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX,
+					&total_mem_kb);
+
+				GLint cur_avail_mem_kb = 0;
+				glGetIntegerv(GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX,
+					&cur_avail_mem_kb);
+
+				ImGui::Text("VRAM budget:");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(total_mem_kb) / 1024 / 1024);
+
+
+				ImGui::Text("VRAM usage:");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)((total_mem_kb - cur_avail_mem_kb)) / 1024 / 1024);
+
+
+				ImGui::Text("VRAM available:");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(cur_avail_mem_kb) / 1024 / 1024);
+
+
+				ImGui::Text("VRAM reserved:");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", 0.0f);
+
+
+				//const GLubyte* vendor = glGetString(GL_VENDOR);
+				//const GLubyte* version = glGetString(GL_VERSION);
+				//const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+				/*
+				SDL_GetCPUCacheLineSize();
+				SDL_GetCPUCount();*/
 			}
+
+
 
 			if (ImGui::CollapsingHeader("Camera")) {
 				//ImGui::Text("To Do");
@@ -211,6 +322,7 @@ public:
 				if (ImGui::InputFloat("Mov Speed", &App->editorCamera->cameraSpeed)) {
 
 				}
+
 
 				//TO DO camera rot speed
 				if (ImGui::InputFloat("Rot Speed", &App->editorCamera->rotationSpeed)) {
