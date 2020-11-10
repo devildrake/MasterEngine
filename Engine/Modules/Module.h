@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Globals.h"
+#include "../Utilities/Globals.h"
 
 class Application;
 
@@ -12,9 +12,9 @@ public:
 	{
 	}
 
-	virtual bool Init() 
+	virtual bool Init()
 	{
-		return true; 
+		return true;
 	}
 
 	virtual update_status PreUpdate()
@@ -32,8 +32,8 @@ public:
 		return UPDATE_CONTINUE;
 	}
 
-	virtual bool CleanUp() 
-	{ 
-		return true; 
+	virtual bool CleanUp()
+	{
+		return true;
 	}
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include "Module.h"
-#include "Globals.h"
+#include "../Utilities/Globals.h"
 #include "SDL.h"
 #include <glew.h>
 #include "ModuleEditorCamera.h"

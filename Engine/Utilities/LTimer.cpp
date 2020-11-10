@@ -1,6 +1,5 @@
 #include "LTimer.h"
 
-
 LTimer::LTimer()
 {
     //Initialize the variables

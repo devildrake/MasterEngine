@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "Application.h"
-#include "ModuleRender.h"
-#include "Globals.h"
+#include "Modules/ModuleRender.h"
+#include "Utilities/Globals.h"
 
 #include "SDL/include/SDL.h"
 #pragma comment( lib, "SDL/lib/x86/SDL2.lib" )
@@ -18,7 +18,7 @@ enum main_states
 
 Application* App = NULL;
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
@@ -63,7 +63,7 @@ int main(int argc, char ** argv)
 			if (update_return == UPDATE_STOP)
 				state = MAIN_FINISH;
 		}
-			break;
+		break;
 
 		case MAIN_FINISH:
 

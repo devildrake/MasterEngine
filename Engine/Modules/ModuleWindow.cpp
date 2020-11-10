@@ -1,9 +1,14 @@
-#include "Globals.h"
-#include "Application.h"
+#include "../Utilities/Globals.h"
+#include "../Application.h"
 #include "ModuleWindow.h"
 
 ModuleWindow::ModuleWindow()
 {
+	width = SCREEN_WIDTH;
+	height = SCREEN_HEIGHT;
+	fullscreen = borderless = fullDtp = false;
+	brightness = 1.0f;
+	resizable = true;
 }
 
 // Destructor
@@ -100,4 +105,12 @@ void ModuleWindow::WindowResized(unsigned width, unsigned height)
 void ModuleWindow::SetBrightness(float newB) {
 	brightness = newB;
 	SDL_SetWindowBrightness(window, newB);
+}
+
+const int ModuleWindow::GetWidth()const
+{
+	return width;
+}
+const int ModuleWindow::GetHeight()const {
+	return height;
 }

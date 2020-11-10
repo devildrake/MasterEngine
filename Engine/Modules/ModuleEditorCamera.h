@@ -1,11 +1,11 @@
 #ifndef MODULE_EDITOR_CAMERA_H
 #define MODULE_EDITOR_CAMERA_H
 #include "Module.h"
-#include "Globals.h"
+#include "../Utilities/Globals.h"
 #include "SDL.h"
 #include <glew.h>
-#include "MathGeoLib/Geometry/Frustum.h"
-#include "MathGeoLib/Math/float3x3.h"
+#include "../MathGeoLib/Geometry/Frustum.h"
+#include "../MathGeoLib/Math/float3x3.h"
 struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;

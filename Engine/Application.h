@@ -1,10 +1,10 @@
 #pragma once
 
 #include<list>
-#include "Globals.h"
-#include "Module.h"
+#include "Utilities/Globals.h"
+#include "Modules/Module.h"
 #include "MathGeoLib/Time/Clock.h"
-#include "LTimer.h"
+#include "Utilities/LTimer.h"
 
 class ModuleRender;
 class ModuleWindow;
@@ -13,6 +13,10 @@ class ModuleInput;
 class ModuleRenderExercise;
 class ModuleEditorCamera;
 class ModuleEditor;
+class ModuleDebugDraw;
+
+//class ModuleHelloTriangleExcercise;
+class ModuleTransformedTriangleExcercise;
 class Application
 {
 public:
@@ -34,7 +38,9 @@ public:
 	ModuleInput* input = nullptr;
 	ModuleEditorCamera* editorCamera = nullptr;
 	ModuleEditor* editor = nullptr;
-
+	ModuleDebugDraw* debugDraw = nullptr;
+	//ModuleHelloTriangleExcercise* triangleExcercise = nullptr;
+	ModuleTransformedTriangleExcercise* transformedTriangleExcercise = nullptr;
 private:
 	int frameCap, ticksPerFrame;
 	std::list<Module*> modules;

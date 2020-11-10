@@ -1,10 +1,14 @@
 #pragma once
 #include "Application.h"
-#include "ModuleWindow.h"
-#include "ModuleRender.h"
-#include "ModuleInput.h"
-#include "ModuleEditorCamera.h"
-#include "ModuleEditor.h"
+#include "Modules/ModuleWindow.h"
+#include "Modules/ModuleRender.h"
+#include "Modules/ModuleInput.h"
+#include "Modules/ModuleEditorCamera.h"
+#include "Modules/ModuleEditor.h"
+//#include "Excercises/ModuleHelloTriangleExcerise.h"
+#include "Excercises/ModuleTransformedTriangleExcercise.h"
+#include "Modules/ModuleDebugDraw.h"
+
 using namespace std;
 
 Application::Application()
@@ -15,7 +19,9 @@ Application::Application()
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(editor = new ModuleEditor());
-
+	//modules.push_back(triangleExcercise = new ModuleHelloTriangleExcercise());
+	modules.push_back(transformedTriangleExcercise = new ModuleTransformedTriangleExcercise());
+	modules.push_back(debugDraw = new ModuleDebugDraw());
 	lastTick = newTick = Clock::Tick();
 	SetFrameCap(60);
 }

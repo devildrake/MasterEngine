@@ -1,9 +1,9 @@
-#include "Globals.h"
-#include "Application.h"
+#include "../Utilities/Globals.h"
+#include "../Application.h"
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
-#include "SDL/include/SDL.h"
+#include "../SDL/include/SDL.h"
 #include "ModuleEditor.h"
 #define MAX_KEYS 300
 
@@ -159,7 +159,6 @@ const void ModuleInput::MouseLeftWindow() {
 	}
 	else if (mousePos.y <= screenMargin) {
 		SDL_WarpMouseInWindow(App->window->window, mousePos.x, SCREEN_HEIGHT - screenMargin);
-
 	}*/
 
 	//LOG("OUT");

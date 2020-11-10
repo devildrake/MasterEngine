@@ -1,11 +1,11 @@
 #ifndef MODULE_EDITOR_H
 #define MODULE_EDITOR_H
 #include "Module.h"
-#include "Globals.h"
-#include "ImGui/imgui.h"
-#include "ImGui/imgui_impl_sdl.h"
-#include "ImGui/imgui_impl_opengl3.h"
-#include "Application.h"
+#include "../Utilities/Globals.h"
+#include "../ImGui/imgui.h"
+#include "../ImGui/imgui_impl_sdl.h"
+#include "../ImGui/imgui_impl_opengl3.h"
+#include "../Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleEditorCamera.h"
@@ -290,89 +290,90 @@ public:
 			}
 
 
+			if (App->editorCamera != nullptr) {
+				if (ImGui::CollapsingHeader("Camera")) {
+					//ImGui::Text("To Do");
+					if (ImGui::Checkbox("Active", &active)) {
 
-			if (ImGui::CollapsingHeader("Camera")) {
-				//ImGui::Text("To Do");
-				if (ImGui::Checkbox("Active", &active)) {
+					}
+					float3 dummyFront;
+					dummyFront = App->editorCamera->GetFrustum()->Front();
+					if (ImGui::InputFloat3("Front", dummyFront.ptr())) {
+						//dummyFront.Normalize();
+						//App->editorCamera->GetFrustum()->SetFront(dummyFront);
+					}
+
+					dummyFront = App->editorCamera->GetFrustum()->Up();
+					if (ImGui::InputFloat3("Up", dummyFront.ptr())) {
+						//dummyFront.Normalize();
+						//App->editorCamera->GetFrustum()->SetUp(dummyFront);
+					}
+					float3 pos = App->editorCamera->GetFrustum()->Pos();
+					if (ImGui::InputFloat3("Pos", pos.ptr())) {
+						App->editorCamera->SetFrustumPos(pos);
+					}
+
+
+
+					//TO DO camera mov speed
+					if (ImGui::InputFloat("Mov Speed", &App->editorCamera->cameraSpeed)) {
+
+					}
+
+
+					//TO DO camera rot speed
+					if (ImGui::InputFloat("Rot Speed", &App->editorCamera->rotationSpeed)) {
+
+					}
+
+					//TO DO ZOOM SPEED
+					if (ImGui::InputFloat("Zoom Speed", &App->editorCamera->zoomSpeed)) {
+
+					}
+
+					if (ImGui::Checkbox("Frustum Culling", &App->editorCamera->frustumCulling)) {
+						//TO DO SET FRUSTUM CULLING
+					}
+
+					//TO DO NEAR PLANE
+					if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
+						App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);
+					}
+
+
+					//TO DO FAR PLANE
+					if (ImGui::InputFloat("Far Plane", &App->editorCamera->farPlaneDistance)) {
+						App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
+					}
+
+					//TO DO ASPECT RATIO
+					if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
+						App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
+					}
+
+					//TO DO BG COLOR
+					if (ImGui::InputFloat3("BG Color", App->renderer->bgColor.ptr())) {
+
+					}
+
+
+					//TO DO CURRENT DUMMY -NOT ASSIGNED YELLOW TEXT-
+					ImGui::Text("Current:");
+					ImGui::SameLine();
+					ImGui::TextColored(ImVec4(1.0, 1.0, 0, 1.0), "Not assigned");
+
+					//TO DO BUTTON PICK ANOTHER
+					if (ImGui::ColorButton("Select other", ImVec4(0.7f, 0.0f, 0.0f, 0.7f))) {
+
+					}
+
+					//TO DO ISACTIVE CAMERA BOX
+					if (ImGui::Checkbox("Is Active Camera", &dummyBool)) {
+
+					}
+
 
 				}
-				float3 dummyFront;
-				dummyFront = App->editorCamera->GetFrustum()->Front();
-				if (ImGui::InputFloat3("Front", dummyFront.ptr())) {
-					//dummyFront.Normalize();
-					//App->editorCamera->GetFrustum()->SetFront(dummyFront);
-				}
-
-				dummyFront = App->editorCamera->GetFrustum()->Up();
-				if (ImGui::InputFloat3("Up", dummyFront.ptr())) {
-					//dummyFront.Normalize();
-					//App->editorCamera->GetFrustum()->SetUp(dummyFront);
-				}
-				float3 pos = App->editorCamera->GetFrustum()->Pos();
-				if (ImGui::InputFloat3("Pos", pos.ptr())) {
-					App->editorCamera->SetFrustumPos(pos);
-				}
-
-
-
-				//TO DO camera mov speed
-				if (ImGui::InputFloat("Mov Speed", &App->editorCamera->cameraSpeed)) {
-
-				}
-
-
-				//TO DO camera rot speed
-				if (ImGui::InputFloat("Rot Speed", &App->editorCamera->rotationSpeed)) {
-
-				}
-
-				//TO DO ZOOM SPEED
-				if (ImGui::InputFloat("Zoom Speed", &App->editorCamera->zoomSpeed)) {
-
-				}
-
-				if (ImGui::Checkbox("Frustum Culling", &App->editorCamera->frustumCulling)) {
-					//TO DO SET FRUSTUM CULLING
-				}
-
-				//TO DO NEAR PLANE
-				if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
-					App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);
-				}
-
-
-				//TO DO FAR PLANE
-				if (ImGui::InputFloat("Far Plane", &App->editorCamera->farPlaneDistance)) {
-					App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
-				}
-
-				//TO DO ASPECT RATIO
-				if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
-					App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
-				}
-
-				//TO DO BG COLOR
-				if (ImGui::InputFloat3("BG Color", App->renderer->bgColor.ptr())) {
-
-				}
-
-
-				//TO DO CURRENT DUMMY -NOT ASSIGNED YELLOW TEXT-
-				ImGui::Text("Current:");
-				ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0, 1.0, 0, 1.0), "Not assigned");
-
-				//TO DO BUTTON PICK ANOTHER
-				if (ImGui::ColorButton("Select other", ImVec4(0.7f, 0.0f, 0.0f, 0.7f))) {
-
-				}
-
-				//TO DO ISACTIVE CAMERA BOX
-				if (ImGui::Checkbox("Is Active Camera", &dummyBool)) {
-
-				}
-
-
 			}
 
 			if (ImGui::CollapsingHeader("About")) {

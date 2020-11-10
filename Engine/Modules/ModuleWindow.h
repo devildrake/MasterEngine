@@ -2,7 +2,7 @@
 #define __ModuleWindow_H__
 
 #include "Module.h"
-#include "SDL/include/SDL.h"
+#include "../SDL/include/SDL.h"
 
 class Application;
 
@@ -27,6 +27,8 @@ public:
 	void SetFullDesktop(bool b);
 	void WindowResized(unsigned width, unsigned height);
 	void SetBrightness(float newB);
+	const int GetWidth()const;
+	const int GetHeight()const;
 public:
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;
@@ -36,8 +38,9 @@ public:
 private:
 	int width, height;
 	bool fullscreen, resizable, borderless, fullDtp;
-	friend class ModuleEditor;
 	float brightness;
+
+	friend class ModuleEditor;
 };
 
 #endif // __ModuleWindow_H__

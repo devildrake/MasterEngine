@@ -3,9 +3,9 @@
 
 #include "Module.h"
 
-#include "SDL/include/SDL_scancode.h"
-#include "MathGeoLib/Math/float3.h"
-#include "MathGeoLib/Math/float4.h"
+#include "../SDL/include/SDL_scancode.h"
+#include "../MathGeoLib/Math/float3.h"
+#include "../MathGeoLib/Math/float4.h"
 #define NUM_MOUSE_BUTTONS 5
 
 enum EventWindow
