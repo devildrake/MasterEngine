@@ -20,8 +20,6 @@ class ModuleEditor :public Module {
 private:
 	bool showConsole;
 	bool showConfig;
-	float brightness;
-
 public:
 	ModuleEditor();
 	~ModuleEditor();
@@ -73,7 +71,6 @@ public:
 		}
 	};
 	struct ConfigMenu {
-
 		std::pair< ImVec2, ImVec2> bounds;
 		bool active;
 		bool dummyBool;
@@ -186,8 +183,8 @@ public:
 					//App->editor->SetConfigActive(active);
 				}
 				ImGui::Text("Icon: *default*");
-				if (ImGui::SliderFloat("Brightness", &App->editor->brightness, 0, 1.0f)) {
-					App->window->SetBrightness(App->editor->brightness);
+				if (ImGui::SliderFloat("Brightness", &App->window->brightness, 0, 1.0f)) {
+					App->window->SetBrightness(App->window->brightness);
 				}
 				if (ImGui::SliderInt("Width", &App->window->width, 640, 1920)) {
 					SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
@@ -339,16 +336,14 @@ public:
 				}
 
 				//TO DO NEAR PLANE
-				float nearPlane = App->editorCamera->GetNearPlane();
-				if (ImGui::InputFloat("Near Plane", &nearPlane)) {
-					App->editorCamera->SetNearPlane(nearPlane);
+				if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
+					App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);
 				}
 
 
 				//TO DO FAR PLANE
-				float farPlane = App->editorCamera->GetFarPlane();
-				if (ImGui::InputFloat("Far Plane", &farPlane)) {
-					App->editorCamera->SetFarPlane(farPlane);
+				if (ImGui::InputFloat("Far Plane", &App->editorCamera->farPlaneDistance)) {
+					App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
 				}
 
 				//TO DO ASPECT RATIO
@@ -399,8 +394,6 @@ public:
 				}
 
 				ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "License: GNU General Public License v3.0");
-
-
 
 			}
 

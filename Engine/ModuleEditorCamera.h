@@ -32,13 +32,9 @@ public:
 	void SetNearPlane(float);
 	void SetFarPlane(float);
 	void SetAspectRatio(float);
-public:
-	float aspectRatio;
-	float cameraSpeed, rotationSpeed;
-	float zoomSpeed;
-	bool frustumCulling;
-private:
 
+private:
+	friend class ModuleEditor;
 	Frustum frustum;
 	float pitch, yaw;
 
@@ -46,11 +42,14 @@ private:
 	SDL_GLContext glcontext;
 	float screenMargin;
 
-private:
-
+	float aspectRatio;
+	float cameraSpeed, rotationSpeed;
+	float zoomSpeed;
+	bool frustumCulling;
 	float3 frustumPosition;
 	float nearPlaneDistance, farPlaneDistance;
 
+private:
 	const float4x4 GetTransposedProjectionMatrix()const;
 	const float4x4 GetTransposedViewModelMatrix()const;
 	const float UpdateCameraYaw(const float3 mouseMotion);

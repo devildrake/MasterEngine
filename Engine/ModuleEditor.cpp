@@ -10,7 +10,6 @@
 ModuleEditor::ModuleEditor() {
 	showConsole = showConfig = true;
 	frameCap = 60.0f;
-	brightness = 1.0f;
 }
 
 ModuleEditor::~ModuleEditor() {
@@ -25,8 +24,6 @@ bool ModuleEditor::Init() {
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->GetContext());
 	ImGui_ImplOpenGL3_Init();
-
-
 
 	return true;
 }

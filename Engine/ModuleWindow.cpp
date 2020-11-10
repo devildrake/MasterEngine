@@ -98,5 +98,6 @@ void ModuleWindow::WindowResized(unsigned width, unsigned height)
 }
 
 void ModuleWindow::SetBrightness(float newB) {
+	brightness = newB;
 	SDL_SetWindowBrightness(window, newB);
 }

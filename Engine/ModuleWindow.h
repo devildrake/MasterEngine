@@ -28,15 +28,16 @@ public:
 	void WindowResized(unsigned width, unsigned height);
 	void SetBrightness(float newB);
 public:
-
-	int width, height;
-	bool fullscreen, resizable, borderless, fullDtp;
-
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface = NULL;
+private:
+	int width, height;
+	bool fullscreen, resizable, borderless, fullDtp;
+	friend class ModuleEditor;
+	float brightness;
 };
 
 #endif // __ModuleWindow_H__
