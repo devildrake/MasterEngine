@@ -17,7 +17,7 @@ GLuint ModuleTexture::LoadTexture(const char* path) {
 
 	ILuint newTexId;
 	GLuint newImage;
-	ilInit(); /* Initialization of DevIL */
+	//ilInit(); /* Initialization of DevIL */
 	ilGenImages(1, &newTexId); /* Generation of one image name */
 	ilBindImage(newTexId); /* Binding of image name */
 	success = ilLoadImage(path); /* Loading of image "image.jpg" */

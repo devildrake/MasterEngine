@@ -37,6 +37,10 @@ bool ModuleInput::Init()
 	return ret;
 }
 
+bool ModuleInput::Start() {
+	return true;
+}
+
 update_status ModuleInput::PreUpdate() {
 	SDL_Event sdlEvent;
 	mouse_motion.x = 0;
