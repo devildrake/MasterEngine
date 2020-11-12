@@ -9,31 +9,30 @@
 #include <SDL_main.h>
 #include <gl/GL.h>
 #include <map>
-class ModuleTexture :public Module {
-
-public:
+#include <string>
+class ModuleTextures :public Module {
+private:
+	std::map < std::string, GLuint> textureMap;
 	ILuint texid; /* ILuint is a 32bit unsigned integer.
-	   Variable texid will be used to store image name. */
+Variable texid will be used to store image name. */
 	ILboolean success; /* ILboolean is type similar to GLboolean and can equal GL_FALSE (0) or GL_TRUE (1)
 	  it can have different value (because it's just typedef of unsigned char), but this sould be
 	  avoided.
 	  Variable success will be used to determine if some function returned success or failure. */
-	GLuint image;
 	int finished;
+	//static DDRenderInterfaceCoreGL* implementation;
+public:
 
-	ModuleTexture();
-	~ModuleTexture();
+	ModuleTextures();
+	~ModuleTextures();
 
 	bool            Init();
 	update_status   PreUpdate();
 	update_status   Update();
 	update_status   PostUpdate();
 	bool            CleanUp();
-	GLuint LoadTexture(const char* path);
-	std::map < const char*, GLuint> textureMap;
-private:
+	GLuint LoadTexture(std::string path);
 
-	//static DDRenderInterfaceCoreGL* implementation;
 };
 
 

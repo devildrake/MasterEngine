@@ -22,13 +22,26 @@ bool ModuleEditor::Init() {
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->GetContext());
-	ImGui_ImplOpenGL3_Init();
+	return true;
+}
 
+bool ModuleEditor::Start() {
+	if (!ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->GetContext())) {
+		return false;
+	}
+	if (!ImGui_ImplOpenGL3_Init()) {
+		return false;
+	}
 	return true;
 }
 
 update_status ModuleEditor::PreUpdate() {
+
+	configMenu.AddFrame(App->GetDeltaTime());
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame(App->window->window);
+	ImGui::NewFrame();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -37,25 +50,17 @@ void MySaveFunction() {
 }
 
 update_status ModuleEditor::Update() {
-	configMenu.AddFrame(App->GetDeltaTime());
-
-
-
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame(App->window->window);
-	ImGui::NewFrame();
-
 	console.Draw("Console", &showConsole);
 	configMenu.Draw("Configuration Menu", &showConfig);
+	return UPDATE_CONTINUE;
+
+}
+update_status ModuleEditor::PostUpdate() {
 
 	ImGui::Render();
-
-
 	//Context handling
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();
@@ -65,10 +70,6 @@ update_status ModuleEditor::Update() {
 		SDL_GL_MakeCurrent(backupCurrentWindow, backupCurrentContext);
 	}
 
-	return UPDATE_CONTINUE;
-
-}
-update_status ModuleEditor::PostUpdate() {
 	return UPDATE_CONTINUE;
 
 }

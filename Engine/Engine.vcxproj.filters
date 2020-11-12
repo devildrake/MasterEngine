@@ -157,8 +157,8 @@
     <ClCompile Include="Excercises\ModuleHelloTriangleExcerise.cpp" />
     <ClCompile Include="Excercises\ModuleTransformedTriangleExcercise.cpp" />
     <ClCompile Include="Modules\ModuleDebugDraw.cpp" />
-    <ClCompile Include="Modules\ModuleTexture.cpp" />
     <ClCompile Include="Excercises\ModuleTransformedTexturedTriangleExcercise.cpp" />
+    <ClCompile Include="Modules\ModuleTextures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -424,7 +424,6 @@
     <ClInclude Include="Utilities\debug_draw.hpp" />
     <ClInclude Include="Utilities\debugdraw.h" />
     <ClInclude Include="Modules\ModuleDebugDraw.h" />
-    <ClInclude Include="Modules\ModuleTexture.h" />
     <ClInclude Include="DevIL\include\IL\devil_cpp_wrapper.hpp" />
     <ClInclude Include="DevIL\include\IL\devil_internal_exports.h" />
     <ClInclude Include="DevIL\include\IL\il.h" />
@@ -507,6 +506,7 @@
     <ClInclude Include="Assimp\include\assimp\Vertex.h" />
     <ClInclude Include="Assimp\include\assimp\XMLTools.h" />
     <ClInclude Include="Assimp\include\assimp\ZipArchiveIOSystem.h" />
+    <ClInclude Include="Modules\ModuleTextures.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

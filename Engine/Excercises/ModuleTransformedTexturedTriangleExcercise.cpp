@@ -6,9 +6,12 @@
 #include "../Modules/ModuleEditorCamera.h"
 #include "../Application.h"
 #include "../Utilities/debug_draw.hpp"
-#include "../Modules/ModuleTexture.h"
+#include "../Modules/ModuleTextures.h"
 ModuleTransformedTexturedTriangleExcercise::ModuleTransformedTexturedTriangleExcercise() {
+	info = new ILinfo();
 
+
+	ui = ExcerciseUI();
 }
 
 ModuleTransformedTexturedTriangleExcercise::~ModuleTransformedTexturedTriangleExcercise() {
@@ -45,9 +48,14 @@ bool ModuleTransformedTexturedTriangleExcercise::Init() {
 
 	float3 pos = App->editorCamera->GetFrustum()->Pos();
 	App->editorCamera->GetFrustum()->SetFront(math::vec(0, 0, -1.0f));
-	//model.Translate(pos - float3(0, 0, 10));
 
 	trianglePos = pos - float3(0, 0, 10);
+
+	return true;
+}
+
+bool ModuleTransformedTexturedTriangleExcercise::Start() {
+	texture = App->textures->LoadTexture("Lenna.png");
 
 	return true;
 }
@@ -57,7 +65,10 @@ update_status ModuleTransformedTexturedTriangleExcercise::PreUpdate() {
 
 }
 update_status ModuleTransformedTexturedTriangleExcercise::Update() {
+
 	RenderVBO(vbo);
+	iluGetImageInfo(info);
+	ui.Draw(info);
 
 	return UPDATE_CONTINUE;
 }
@@ -72,14 +83,13 @@ bool ModuleTransformedTexturedTriangleExcercise::CleanUp() {
 }
 
 unsigned ModuleTransformedTexturedTriangleExcercise::CreeateQuadVBO() {
-
 	float vtx_data[] = {
-			0.5f,  0.5f, 0.0f,	1.0f, 0.0f, // top right
-			0.5f, -0.5f, 0.0f,	1.0f, 1.0f, // bottom right
-			-0.5f,  0.5f, 0.0f,	0.0f, 0.0f,  // top left 
-			0.5f, -0.5f, 0.0f,	1.0f, 1.0f, // bottom right
-			-0.5f, -0.5f, 0.0f,	0.0f, 1.0f, // bottom left
-			-0.5f,  0.5f, 0.0f,	0.0f, 0.0f  // top left 
+			0.5f,  0.5f, 0.0f,	1.0f, 1.0f, // top right
+			0.5f, -0.5f, 0.0f,	1.0f, 0.0f, // bottom right
+			-0.5f,  0.5f, 0.0f,	0.0f, 1.0f,  // top left 
+			0.5f, -0.5f, 0.0f,	1.0f, 0.0f, // bottom right
+			-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, // bottom left
+			-0.5f,  0.5f, 0.0f,	0.0f, 1.0f  // top left 
 	};
 
 	/*
@@ -91,12 +101,12 @@ unsigned ModuleTransformedTexturedTriangleExcercise::CreeateQuadVBO() {
 			-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, // bottom left
 			-0.5f,  0.5f, 0.0f,	0.0f, 1.0f  // top left
 	};*/
-
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
+	unsigned newVbo;
+	glGenBuffers(1, &newVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, newVbo); // set vbo active
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
 
-	return vbo;
+	return newVbo;
 }
 unsigned ModuleTransformedTexturedTriangleExcercise::CreateTriangleVBO()
 {
@@ -173,28 +183,22 @@ void ModuleTransformedTexturedTriangleExcercise::RenderVBO(unsigned vbo)
 	glEnableVertexAttribArray(1);
 
 
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-
-	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3));
-
-	// 1 triangle to draw = 3 vertices
-
 	float4x4 model, view, projection;
 
 	projection = App->editorCamera->GetFrustum()->ProjectionMatrix();
 	view = App->editorCamera->GetFrustum()->ViewMatrix();
 
 	model = float4x4::identity;
-
-	float4x4 translateMat = float4x4::Translate(trianglePos);
-	model = translateMat * model;
+	model.SetTranslatePart(trianglePos);
+	//float4x4 translateMat = float4x4::Translate(trianglePos);
+	//model = translateMat * model;
 
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "view"), 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "proj"), 1, GL_TRUE, &projection[0][0]);
 
-	glBindTexture(GL_TEXTURE_2D, App->texture->image);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glUniform1i(glGetUniformLocation(shaderID, "mytexture"), 0);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
