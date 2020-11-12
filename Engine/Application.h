@@ -8,15 +8,18 @@
 
 class ModuleRender;
 class ModuleWindow;
-class ModuleTextures;
+class ModuleTexture;
 class ModuleInput;
 class ModuleRenderExercise;
 class ModuleEditorCamera;
 class ModuleEditor;
 class ModuleDebugDraw;
 
+
 //class ModuleHelloTriangleExcercise;
-class ModuleTransformedTriangleExcercise;
+//class ModuleTransformedTriangleExcercise;
+class ModuleTransformedTexturedTriangleExcercise;
+
 class Application
 {
 public:
@@ -40,7 +43,10 @@ public:
 	ModuleEditor* editor = nullptr;
 	ModuleDebugDraw* debugDraw = nullptr;
 	//ModuleHelloTriangleExcercise* triangleExcercise = nullptr;
-	ModuleTransformedTriangleExcercise* transformedTriangleExcercise = nullptr;
+	//ModuleTransformedTriangleExcercise* transformedTriangleExcercise = nullptr;
+	ModuleTransformedTexturedTriangleExcercise* transformedTexturedTriangleExcercise = nullptr;
+
+	ModuleTexture* texture = nullptr;
 private:
 	int frameCap, ticksPerFrame;
 	std::list<Module*> modules;

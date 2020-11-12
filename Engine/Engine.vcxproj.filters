@@ -157,6 +157,8 @@
     <ClCompile Include="Excercises\ModuleHelloTriangleExcerise.cpp" />
     <ClCompile Include="Excercises\ModuleTransformedTriangleExcercise.cpp" />
     <ClCompile Include="Modules\ModuleDebugDraw.cpp" />
+    <ClCompile Include="Modules\ModuleTexture.cpp" />
+    <ClCompile Include="Excercises\ModuleTransformedTexturedTriangleExcercise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -422,6 +424,16 @@
     <ClInclude Include="Utilities\debug_draw.hpp" />
     <ClInclude Include="Utilities\debugdraw.h" />
     <ClInclude Include="Modules\ModuleDebugDraw.h" />
+    <ClInclude Include="Modules\ModuleTexture.h" />
+    <ClInclude Include="DevIL\include\IL\devil_cpp_wrapper.hpp" />
+    <ClInclude Include="DevIL\include\IL\devil_internal_exports.h" />
+    <ClInclude Include="DevIL\include\IL\il.h" />
+    <ClInclude Include="DevIL\include\IL\il_wrap.h" />
+    <ClInclude Include="DevIL\include\IL\ilu.h" />
+    <ClInclude Include="DevIL\include\IL\ilu_region.h" />
+    <ClInclude Include="DevIL\include\IL\ilut.h" />
+    <ClInclude Include="DevIL\include\IL\ilut_config.h" />
+    <ClInclude Include="Excercises\ModuleTransformedTexturedTriangleExcercise.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
