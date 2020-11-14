@@ -616,13 +616,14 @@ update_status  ModuleDebugDraw::PreUpdate() {
 update_status ModuleDebugDraw::Update()
 {
 	dd::xzSquareGrid(-200, 200, 0.0f, 1.0f, dd::colors::Gray);
+	dd::axisTriad(ddMat4x4::identity, 0.1f, 1.0f);
 	Draw(App->editorCamera->GetFrustum()->ViewMatrix(), App->editorCamera->GetFrustum()->ProjectionMatrix(), App->window->GetWidth(), App->window->GetHeight());
 
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleDebugDraw::PostUpdate() {
-		return UPDATE_CONTINUE;
+	return UPDATE_CONTINUE;
 }
 
 void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height)

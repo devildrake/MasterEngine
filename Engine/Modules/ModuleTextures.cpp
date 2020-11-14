@@ -1,15 +1,43 @@
 #include "ModuleTextures.h"
-
 #include "IL/ilu.h"
 
 ModuleTextures::ModuleTextures() {
-
+	wrapMode = GL_REPEAT;
+	minFilter = magFilter = GL_LINEAR;
 }
 ModuleTextures::~ModuleTextures() {
 
 }
 
+void ModuleTextures::SetMinMode(GLenum anEnum) {
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, anEnum);
+	minFilter = anEnum;
+}
+
+void ModuleTextures::SetMagMode(GLenum anEnum) {
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, anEnum);
+	magFilter = anEnum;
+}
+
+void ModuleTextures::SetWrapMode(GLenum anEnum) {
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, anEnum);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, anEnum);
+	wrapMode = anEnum;
+}
+
+
+GLenum ModuleTextures::GetWrapMode() {
+	return wrapMode;
+}
+GLenum ModuleTextures::GetMinFilter() {
+	return minFilter;
+}
+GLenum ModuleTextures::GetMagFilter() {
+	return magFilter;
+}
+
 GLuint ModuleTextures::LoadTexture(std::string path) {
+	ILboolean success;
 
 	if (textureMap[path] != NULL) {
 		return textureMap[path];
@@ -17,7 +45,6 @@ GLuint ModuleTextures::LoadTexture(std::string path) {
 
 	ILuint newImageID;
 	GLuint newTextureID;
-	//ilInit(); /* Initialization of DevIL */
 	ilGenImages(1, &newImageID); /* Generation of one image name */
 	ilBindImage(newImageID); /* Binding of image name */
 	success = ilLoadImage(path.c_str()); /* Loading of image "image.jpg" */
@@ -27,16 +54,14 @@ GLuint ModuleTextures::LoadTexture(std::string path) {
 		  unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
 		if (!success)
 		{
-			/* Error occured */
+			// Error occured 
 			return false;
 		}
-		glGenTextures(1, &newTextureID); /* Texture name generation */
-		glBindTexture(GL_TEXTURE_2D, newTextureID); /* Binding of texture name */
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear
-		  interpolation for magnification filter */
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear
-		  interpolation for minifying filter */
-		  //
+
+		glGenTextures(1, &newTextureID);  
+		glBindTexture(GL_TEXTURE_2D, newTextureID); 
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 
 		ILinfo info = ILinfo();
 		iluGetImageInfo(&info);
@@ -48,6 +73,8 @@ GLuint ModuleTextures::LoadTexture(std::string path) {
 		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
 			ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
 			ilGetData()); /* Texture specification */
+		
+		glGenerateMipmap(GL_TEXTURE_2D);
 
 		textureMap[path] = newTextureID;
 

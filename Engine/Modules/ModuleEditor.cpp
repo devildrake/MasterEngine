@@ -3,8 +3,6 @@
 #include "ModuleRender.h"
 #include "../ImGui/imconfig.h"
 
-
-
 //#include "ImGui/imconfig.h"
 
 ModuleEditor::ModuleEditor() {
@@ -52,6 +50,7 @@ void MySaveFunction() {
 update_status ModuleEditor::Update() {
 	console.Draw("Console", &showConsole);
 	configMenu.Draw("Configuration Menu", &showConfig);
+	//ImGui::ShowDemoWindow();
 	return UPDATE_CONTINUE;
 
 }
@@ -61,6 +60,7 @@ update_status ModuleEditor::PostUpdate() {
 	//Context handling
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();

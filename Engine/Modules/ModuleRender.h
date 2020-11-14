@@ -13,6 +13,7 @@ class ModuleRender : public Module
 {
 public:
 	float3 bgColor;
+public:
 	ModuleRender();
 	~ModuleRender();
 

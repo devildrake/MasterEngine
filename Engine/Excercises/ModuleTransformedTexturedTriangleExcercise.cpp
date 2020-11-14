@@ -4,9 +4,9 @@
 #include "SDL.h"
 #include <string>
 #include "../Modules/ModuleEditorCamera.h"
-#include "../Application.h"
 #include "../Utilities/debug_draw.hpp"
 #include "../Modules/ModuleTextures.h"
+
 ModuleTransformedTexturedTriangleExcercise::ModuleTransformedTexturedTriangleExcercise() {
 	info = new ILinfo();
 
@@ -31,25 +31,19 @@ bool ModuleTransformedTexturedTriangleExcercise::Init() {
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr,
 		true);
 #endif
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 
 	char* fragmentShaderSource = LoadShaderSource("transformedTexturedTriangleExFrag.fs");
 	char* vertexShaderSource = LoadShaderSource("transformedTexturedTriangleExVert.vs");
-	//std::string fragmentShaderSourceString(fragmentShaderSource);
-	//std::string vertexShaderSourceString(vertexShaderSource);
-
 
 	fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 	vertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderSource);
 	shaderID = CreateProgram(vertexShader, fragmentShader);
 
-	vbo = CreeateQuadVBO();//CreateTriangleVBO();
+	vbo = CreateQuadVBO();//CreateTriangleVBO();
 
-	float3 pos = App->editorCamera->GetFrustum()->Pos();
-	App->editorCamera->GetFrustum()->SetFront(math::vec(0, 0, -1.0f));
+	App->editorCamera->GetFrustum()->SetFront(math::vec(0, 0, 1.0f));
 
-	trianglePos = pos - float3(0, 0, 10);
+	trianglePos = App->editorCamera->GetFrustum()->Pos() + App->editorCamera->GetFrustum()->Front();
 
 	return true;
 }
@@ -82,25 +76,22 @@ bool ModuleTransformedTexturedTriangleExcercise::CleanUp() {
 	return true;
 }
 
-unsigned ModuleTransformedTexturedTriangleExcercise::CreeateQuadVBO() {
+unsigned ModuleTransformedTexturedTriangleExcercise::CreateQuadVBO() {
+
 	float vtx_data[] = {
-			0.5f,  0.5f, 0.0f,	1.0f, 1.0f, // top right
-			0.5f, -0.5f, 0.0f,	1.0f, 0.0f, // bottom right
-			-0.5f,  0.5f, 0.0f,	0.0f, 1.0f,  // top left 
-			0.5f, -0.5f, 0.0f,	1.0f, 0.0f, // bottom right
-			-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, // bottom left
-			-0.5f,  0.5f, 0.0f,	0.0f, 1.0f  // top left 
+		0.5f,  0.5f, 0.0f,	1.0f, 1.0f, // top right
+		0.5f, -0.5f, 0.0f,	1.0f, 0.0f, // bottom right
+		-0.5f,  0.5f, 0.0f,	0.0f, 1.0f,  // top left 
+		0.5f, -0.5f, 0.0f,	1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,	0.0f, 1.0f  // top left 
 	};
 
-	/*
-	float vtx_data[] = {
-			0.5f,  0.5f, 0.0f,	1.0f, 1.0f, // top right
-			0.5f, -0.5f, 0.0f,	1.0f, 0.0f, // bottom right
-			-0.5f,  0.5f, 0.0f,	0.0f, 1.0f,  // top left
-			0.5f, -0.5f, 0.0f,	1.0f, 0.0f, // bottom right
-			-0.5f, -0.5f, 0.0f,	0.0f, 0.0f, // bottom left
-			-0.5f,  0.5f, 0.0f,	0.0f, 1.0f  // top left
-	};*/
+	for (int i = 0; i < 6 * 5; i++)
+	{
+		vtx_data[i] *= 10.0f;
+	}
+
 	unsigned newVbo;
 	glGenBuffers(1, &newVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, newVbo); // set vbo active
@@ -110,36 +101,13 @@ unsigned ModuleTransformedTexturedTriangleExcercise::CreeateQuadVBO() {
 }
 unsigned ModuleTransformedTexturedTriangleExcercise::CreateTriangleVBO()
 {
-	//float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
-
-//	float vtx_data[] = {
-//-1.0f, -1.0f, 0.0f, // ← v0 pos
-//1.0f, -1.0f, 0.0f, // ← v1 pos
-//0.0f, 1.0f, 0.0f, // ← v2 pos
-//
-//0.0f, 0.0f, // ← v0 texcoord
-//1.0f, 0.0f, // ← v1 texcoord
-//0.5f, 1.0f // ← v2 texcoord
-//};
+ 
 	float vtx_data[] = {
 		-1.0f, -1.0f, 0.0f	,		0.0f, 0.0f,
 		1.0f, -1.0f, 0.0f	,		1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f	, 		0.5f, 1.0f
 	};
-
-	//Manually Flipped
-	//	float vtx_data[] = {
-	//	-1.0f, -1.0f, 0.0f	,		0.0f, 1.0f,
-	//	1.0f, -1.0f, 0.0f	,		1.0f, 1.0f,
-	//	0.0f, 1.0f, 0.0f	, 		0.5f, 0.0f
-	//};
-
-
-	//float vtx_data[] = {
-	//-1.0f, 1.0f,   0.0f,	0, 0,
-	//1.0f, 1.0f,    0.0f,	1, 0,
-	//- 1.0f, -1.0f, 0.0f, 0, 1.0f };
-
+ 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
@@ -153,18 +121,6 @@ void ModuleTransformedTexturedTriangleExcercise::DestroyVBO(unsigned vbo)
 	glDeleteBuffers(1, &vbo);
 }
 
-//// This function must be called each frame for drawing the triangles
-//void ModuleTransformedTriangleExcercise::RenderVBO(unsigned vbo)
-//{
-//	glUseProgram(shaderID);
-//	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//	glEnableVertexAttribArray(0);
-//	// size = 3 float per vertex
-//	// stride = 0 is equivalent to stride = sizeof(float)*3
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-//	// 1 triangle to draw = 3 vertices
-//	glDrawArrays(GL_TRIANGLES, 0, 3);
-//}
 
  //This function must be called each frame for drawing the triangles
 void ModuleTransformedTexturedTriangleExcercise::RenderVBO(unsigned vbo)
@@ -172,8 +128,6 @@ void ModuleTransformedTexturedTriangleExcercise::RenderVBO(unsigned vbo)
 	glUseProgram(shaderID);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
-	// size = 3 float per vertex
-	// stride = 0 is equivalent to stride = sizeof(float)*3
 
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -182,7 +136,6 @@ void ModuleTransformedTexturedTriangleExcercise::RenderVBO(unsigned vbo)
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-
 	float4x4 model, view, projection;
 
 	projection = App->editorCamera->GetFrustum()->ProjectionMatrix();
@@ -190,8 +143,7 @@ void ModuleTransformedTexturedTriangleExcercise::RenderVBO(unsigned vbo)
 
 	model = float4x4::identity;
 	model.SetTranslatePart(trianglePos);
-	//float4x4 translateMat = float4x4::Translate(trianglePos);
-	//model = translateMat * model;
+	model.Scale(float3(10.0f, 10.0f, 10.0f));
 
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "view"), 1, GL_TRUE, &view[0][0]);
@@ -201,8 +153,12 @@ void ModuleTransformedTexturedTriangleExcercise::RenderVBO(unsigned vbo)
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glUniform1i(glGetUniformLocation(shaderID, "mytexture"), 0);
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, App->textures->GetWrapMode());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, App->textures->GetWrapMode());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, App->textures->GetMagFilter());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, App->textures->GetMinFilter());
+
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	//sglDrawArrays(GL_TRIANGLES, 3, 3);
 }
 
 char* ModuleTransformedTexturedTriangleExcercise::LoadShaderSource(const char* shader_file_name)
@@ -249,6 +205,44 @@ unsigned ModuleTransformedTexturedTriangleExcercise::CompileShader(unsigned type
 		}
 	}
 	return shader_id;
+}
+
+unsigned ModuleTransformedTexturedTriangleExcercise::CreateProgram(const char* vtx_shader_name, const char* frg_shader_name) {
+
+	char* fragmentShaderSource = LoadShaderSource(vtx_shader_name);
+	char* vertexShaderSource = LoadShaderSource(frg_shader_name);
+
+	unsigned int frgt = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+	unsigned int vtx = CompileShader(GL_VERTEX_SHADER, vertexShaderSource);
+
+	unsigned program_id = glCreateProgram();
+	glAttachShader(program_id, vtx);
+	glAttachShader(program_id, frgt);
+	glLinkProgram(program_id);
+	int res;
+	glGetProgramiv(program_id, GL_LINK_STATUS, &res);
+	if (res == GL_FALSE)
+	{
+		int len = 0;
+		glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &len);
+		if (len > 0)
+		{
+			int written = 0;
+
+			char* info = (char*)malloc(len);
+
+			glGetProgramInfoLog(program_id, len, &written, info);
+#if _DEBUG
+			LOG("Program Log Info: %s", info);
+#endif
+
+			free(info);
+		}
+	}
+
+	glDeleteShader(vtx);
+	glDeleteShader(frgt);
+	return program_id;
 }
 
 unsigned ModuleTransformedTexturedTriangleExcercise::CreateProgram(unsigned vtx_shader, unsigned frg_shader)
