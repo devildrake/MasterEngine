@@ -51,12 +51,46 @@ update_status ModuleInput::PreUpdate() {
 
 	//SDL_CaptureMouse(true);
 
+	memset(windowEvents, false, WE_COUNT * sizeof(bool));
+
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+
+	for (int i = 0; i < MAX_KEYS; ++i)
+	{
+		if (keys[i] == 1)
+		{
+			if (keyboard[i] == KEY_IDLE)
+				keyboard[i] = KEY_DOWN;
+			else
+				keyboard[i] = KEY_REPEAT;
+		}
+		else
+		{
+			if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
+				keyboard[i] = KEY_UP;
+			else
+				keyboard[i] = KEY_IDLE;
+		}
+	}
+
+	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
+	{
+		if (mouse_buttons[i] == KEY_DOWN)
+			mouse_buttons[i] = KEY_REPEAT;
+
+		if (mouse_buttons[i] == KEY_UP)
+			mouse_buttons[i] = KEY_IDLE;
+	}
+
+
 	while (SDL_PollEvent(&sdlEvent) != 0)
 	{
 		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 		switch (sdlEvent.type)
 		{
 		case SDL_QUIT:
+			windowEvents[WE_QUIT] = true;
+
 			return UPDATE_STOP;
 		case SDL_WINDOWEVENT:
 			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
@@ -66,6 +100,9 @@ update_status ModuleInput::PreUpdate() {
 			else if (sdlEvent.window.event == SDL_WINDOWEVENT_LEAVE) {
 				//App->renderer->MouseLeftWindow();
 				MouseLeftWindow();
+			}
+			else if (sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
+				windowEvents[WE_QUIT] = true;
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
@@ -100,38 +137,10 @@ update_status ModuleInput::PreUpdate() {
 			wheel_motion = sdlEvent.wheel.y;
 			break;
 		}
-
-
-
-	}
-	const Uint8* keys = SDL_GetKeyboardState(NULL);
-
-	for (int i = 0; i < MAX_KEYS; ++i)
-	{
-		if (keys[i] == 1)
-		{
-			if (keyboard[i] == KEY_IDLE)
-				keyboard[i] = KEY_DOWN;
-			else
-				keyboard[i] = KEY_REPEAT;
-		}
-		else
-		{
-			if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
-				keyboard[i] = KEY_UP;
-			else
-				keyboard[i] = KEY_IDLE;
-		}
 	}
 
-	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
-	{
-		if (mouse_buttons[i] == KEY_DOWN)
-			mouse_buttons[i] = KEY_REPEAT;
-
-		if (mouse_buttons[i] == KEY_UP)
-			mouse_buttons[i] = KEY_IDLE;
-	}
+	if ((GetKey(SDL_SCANCODE_LALT) == KEY_DOWN && GetKey(SDL_SCANCODE_F4) == KEY_DOWN) || windowEvents[WE_QUIT] == true)
+		return UPDATE_STOP;
 
 	return UPDATE_CONTINUE;
 }

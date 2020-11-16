@@ -67,7 +67,7 @@ void Mesh::CreateVAO()
 
 void Mesh::Draw(const std::vector<unsigned>& model_textures)
 {
-	unsigned program = App->renderer->default_program;
+	unsigned program = App->renderer->GetDefaultShaderID();
 	const float4x4& view = App->editorCamera->GetFrustum()->ViewMatrix();
 	const float4x4& proj = App->editorCamera->GetFrustum()->ProjectionMatrix();
 	float4x4 model = float4x4::identity;

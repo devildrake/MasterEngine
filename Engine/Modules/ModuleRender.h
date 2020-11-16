@@ -5,16 +5,13 @@
 #include <glew.h>
 #include "ModuleEditorCamera.h"
 #include "../Model.h"
-
+#include "../Shader.h"
 struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;
 
 class ModuleRender : public Module
 {
-public:
-	float3 bgColor;
-	unsigned default_program;
 public:
 	ModuleRender();
 	~ModuleRender();
@@ -27,17 +24,13 @@ public:
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
 	SDL_GLContext GetContext();
-
-
-
-
-	char* LoadShaderSource(const char* shader_file_name);
-	unsigned	CompileShader(unsigned type, const char* source);
-	unsigned	CreateProgram(unsigned vtx_shader, unsigned frg_shader);
-
+	friend class ModuleEditor;
+	unsigned GetDefaultShaderID();
 private:
 	void* context;
+	float3 bgColor;
+
 	SDL_GLContext glcontext;
 	std::vector<Model> models;
-
+	Shader* default_shader;
 };

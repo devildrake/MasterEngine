@@ -38,7 +38,6 @@ public:
 		void Log(const char* msg) {
 			msgs.push_back(msg);
 		}
-
 		void Draw(const char* consoleName, bool* p_open) {
 			ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 

@@ -12,6 +12,8 @@ ModuleRender::ModuleRender()
 // Destructor
 ModuleRender::~ModuleRender()
 {
+	if (default_shader != nullptr)
+		delete default_shader;
 }
 
 // Called before render is available
@@ -21,10 +23,10 @@ bool ModuleRender::Init()
 
 	//glewInit();
 
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // desired version
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // desired version
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // we want a double buffer
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // we want to have a depth buffer with 24 bits
@@ -49,102 +51,12 @@ bool ModuleRender::Init()
 	return true;
 }
 
-
-char* ModuleRender::LoadShaderSource(const char* shader_file_name)
-{
-	char* data = nullptr;
-	FILE* file = nullptr;
-	fopen_s(&file, shader_file_name, "rb");
-	if (file)
-	{
-		fseek(file, 0, SEEK_END);
-		int size = ftell(file);
-
-		fseek(file, 0, SEEK_SET);
-
-		data = (char*)malloc(size + 1);
-		fread(data, 1, size, file);
-		data[size] = 0;
-		fclose(file);
-	}
-	return data;
-}
-
-
-unsigned ModuleRender::CompileShader(unsigned type, const char* source) {
-	unsigned shader_id = glCreateShader(type);
-	glShaderSource(shader_id, 1, &source, 0);
-	glCompileShader(shader_id);
-	int res = GL_FALSE;
-	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
-	if (res == GL_FALSE)
-	{
-		int len = 0;
-		glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0)
-		{
-			int written = 0;
-			char* info = (char*)malloc(len);
-			glGetShaderInfoLog(shader_id, len, &written, info);
-#if _DEBUG
-			LOG("Log Info: %s", info);
-#endif
-
-			free(info);
-		}
-	}
-	return shader_id;
-}
-
-unsigned ModuleRender::CreateProgram(unsigned vtx_shader, unsigned frg_shader)
-{
-	unsigned program_id = glCreateProgram();
-	glAttachShader(program_id, vtx_shader);
-	glAttachShader(program_id, frg_shader);
-	glLinkProgram(program_id);
-	int res;
-	glGetProgramiv(program_id, GL_LINK_STATUS, &res);
-	if (res == GL_FALSE)
-	{
-		int len = 0;
-		glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0)
-		{
-			int written = 0;
-
-			char* info = (char*)malloc(len);
-
-			glGetProgramInfoLog(program_id, len, &written, info);
-#if _DEBUG
-			LOG("Program Log Info: %s", info);
-#endif
-
-			free(info);
-		}
-	}
-
-	glDeleteShader(vtx_shader);
-	glDeleteShader(frg_shader);
-	return program_id;
-}
-
-
 bool ModuleRender::Start() {
 	Model aModel;
 	aModel.Load("BakerHouse.fbx");
 	models.push_back(aModel);
 
-	char* fragmentShaderSource = LoadShaderSource("texturedModelFrag.fs");
-	char* vertexShaderSource = LoadShaderSource("texturedModelVert.vs");
-	//std::string fragmentShaderSourceString(fragmentShaderSource);
-	//std::string vertexShaderSourceString(vertexShaderSource);
-
-
-	unsigned fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-	unsigned vertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderSource);
-	default_program = CreateProgram(vertexShader, fragmentShader);
-
-
+	default_shader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
 	return true;
 }
 
@@ -161,6 +73,9 @@ update_status ModuleRender::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
+unsigned ModuleRender::GetDefaultShaderID() {
+	return default_shader->GetID();
+}
 
 // Called every draw update
 update_status ModuleRender::Update()
