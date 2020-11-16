@@ -4,9 +4,24 @@
 #include "Utilities/Globals.h"
 #include "Application.h"
 #include "Modules/ModuleTextures.h"
+
+Model::Model(const char* file_name) {
+	Load(file_name);
+}
+
+Model::~Model() {
+	materials.clear();
+
+	for (int i = 0; i < meshes.size(); ++i) {
+		delete meshes[i];
+	}
+
+	meshes.clear();
+}
+
 void Model::Draw() {
 	for (int i = 0; i < meshes.size(); ++i) {
-		meshes[i].Draw(materials);
+		meshes[i]->Draw(materials);
 	}
 }
 
@@ -26,7 +41,7 @@ void Model::Load(const char* file_name)
 		meshes.reserve(scene->mNumMeshes);
 
 		for (int i = 0; i < scene->mNumMeshes; ++i) {
-			meshes.push_back(Mesh(scene->mMeshes[i]));
+			meshes.push_back(new Mesh(scene->mMeshes[i]));
 		}
 
 		// TODO: LoadTextures(scene->mMaterials, scene->mNumMaterials);

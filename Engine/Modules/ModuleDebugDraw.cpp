@@ -1,6 +1,6 @@
 #include "../Utilities/Globals.h"
 #include "ModuleDebugDraw.h"
-
+#include "../Application.h"
 #define DEBUG_DRAW_IMPLEMENTATION
 #include "../Utilities/debugdraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
 #include "../Modules/ModuleEditorCamera.h"

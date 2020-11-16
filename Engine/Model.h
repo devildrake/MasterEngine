@@ -7,8 +7,10 @@ class Model {
 
 private:
 	std::vector<unsigned> materials;
-	std::vector<Mesh> meshes;
+	std::vector<Mesh*> meshes;
 public:
+	Model(const char* file_name);
+	~Model();
 	void Load(const char* file_name);
 	void LoadMaterials(const aiScene* scene);
 	void Draw();

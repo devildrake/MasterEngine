@@ -12,6 +12,7 @@ private:
 
 public:
 	Mesh(const aiMesh* mesh);
+	~Mesh();
 	void LoadVBO(const aiMesh* mesh);
 	void LoadEBO(const aiMesh* mesh);
 	void CreateVAO();

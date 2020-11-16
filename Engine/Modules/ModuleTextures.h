@@ -2,16 +2,9 @@
 #define _MODULE_TEXTURE_H_
 #include "Module.h"
 #include "glew.h"
-
 #include "../Application.h"
-//#include <IL/ilut.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include <SDL_main.h>
-//#include <gl/GL.h>
 #include <map>
 #include <string>
-#include <IL/il.h>
 
 class ModuleTextures :public Module {
 private:
@@ -21,7 +14,7 @@ private:
 public:
 
 	ModuleTextures();
-	~ModuleTextures();
+	~ModuleTextures(); 
 
 	bool            Init();
 	update_status   PreUpdate();

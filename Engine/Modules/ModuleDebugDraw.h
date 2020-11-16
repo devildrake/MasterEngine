@@ -2,7 +2,6 @@
 #define _MODULE_DEBUGDRAW_H_
 
 #include "Module.h"
-#include "../Application.h"
 #include "../MathGeoLib/Math/float4x4.h"
 
 class DDRenderInterfaceCoreGL;

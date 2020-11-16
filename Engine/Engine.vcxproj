@@ -222,6 +222,7 @@
     <ClInclude Include="DevIL\include\IL\il_wrap.h" />
     <ClInclude Include="Excercises\ModuleTransformedTexturedTriangleExcercise.h" />
     <ClInclude Include="Excercises\ModuleTransformedTriangleExcercise.h" />
+    <ClInclude Include="Leaks.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Modules\ModuleTextures.h" />

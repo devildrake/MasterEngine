@@ -12,6 +12,13 @@ Mesh::Mesh(const aiMesh* mesh) {
 	CreateVAO();
 }
 
+Mesh::~Mesh() {
+	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ebo);
+	glDeleteVertexArrays(1, &vao);
+}
+
+
 void Mesh::LoadVBO(const aiMesh* mesh)
 {
 	glGenBuffers(1, &vbo);

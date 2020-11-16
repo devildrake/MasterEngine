@@ -3,6 +3,7 @@
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include <glew.h>
 
 ModuleRender::ModuleRender()
 {
@@ -52,9 +53,8 @@ bool ModuleRender::Init()
 }
 
 bool ModuleRender::Start() {
-	Model aModel;
-	aModel.Load("BakerHouse.fbx");
-	models.push_back(aModel);
+
+	models.push_back(new Model("BakerHouse.fbx"));
 
 	default_shader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
 	return true;
@@ -73,60 +73,16 @@ update_status ModuleRender::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-unsigned ModuleRender::GetDefaultShaderID() {
+const unsigned ModuleRender::GetDefaultShaderID() const {
 	return default_shader->GetID();
 }
 
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	//Hardcoded grid drawing
-	//Draws are called
-	//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//glLineWidth(1.0f);
-	//float d = 200.0f;
-	//glBegin(GL_LINES);
-	//for (float i = -d; i <= d; i += 1.0f)
-	//{
-	//	glVertex3f(i, 0.0f, -d);
-	//	glVertex3f(i, 0.0f, d);
-	//	glVertex3f(-d, 0.0f, i);
-	//	glVertex3f(d, 0.0f, i);
-	//}
-	//glEnd();
-
-	//glLineWidth(2.0f);
-	//glBegin(GL_LINES);
-	//// red X
-	//glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	//glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-	//glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-	//glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-	//// green Y
-	//glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-	//glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-	//glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	//glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	//glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-
-	//// blue Z
-	//glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	//glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-	//glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-	//glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-	//glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-
-	//glEnd();
-	//glLineWidth(1.0f);
-
-	//if (App->editorCamera != nullptr) {
-	//	App->editorCamera->SendViewModelMatrix();
-	//	App->editorCamera->SendProjectionMatrix();
-	//}
-
-	for (int i = 0; i < models.size(); ++i) {
-		models[i].Draw();
+	for (std::vector<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
+		(*it)->Draw();
 	}
 
 	return UPDATE_CONTINUE;
@@ -142,6 +98,10 @@ update_status ModuleRender::PostUpdate()
 bool ModuleRender::CleanUp()
 {
 	LOG("Destroying renderer");
+
+	for (int i = 0; i < models.size(); ++i) {
+		delete models[i];
+	}
 
 	//Destroy window
 	SDL_GL_DeleteContext(context);

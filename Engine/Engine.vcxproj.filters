@@ -513,6 +513,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Leaks.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
