@@ -159,6 +159,8 @@
     <ClCompile Include="Modules\ModuleDebugDraw.cpp" />
     <ClCompile Include="Excercises\ModuleTransformedTexturedTriangleExcercise.cpp" />
     <ClCompile Include="Modules\ModuleTextures.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -507,6 +509,8 @@
     <ClInclude Include="Assimp\include\assimp\XMLTools.h" />
     <ClInclude Include="Assimp\include\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="Modules\ModuleTextures.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

@@ -20,7 +20,7 @@ Application::Application()
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(textures = new ModuleTextures());
-	modules.push_back(transformedTexturedTriangleExcercise = new ModuleTransformedTexturedTriangleExcercise());
+	//modules.push_back(transformedTexturedTriangleExcercise = new ModuleTransformedTexturedTriangleExcercise());
 	modules.push_back(editor = new ModuleEditor());
 	//modules.push_back(triangleExcercise = new ModuleHelloTriangleExcercise());
 	//modules.push_back(transformedTriangleExcercise = new ModuleTransformedTriangleExcercise());

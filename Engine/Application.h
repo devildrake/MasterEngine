@@ -53,7 +53,6 @@ private:
 	std::list<Module*> modules;
 	LTimer capTimer;
 	math::tick_t lastTick, newTick;
-
 };
 
 extern Application* App;
