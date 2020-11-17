@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "glew.h"
 #include "Utilities/Globals.h"
+#include "Leaks.h"
 
 Shader::Shader(const char* vertex_shader_file_name, const char* fragment_shader_file_name) {
 	char* vsSource = LoadShaderSource(vertex_shader_file_name);
@@ -10,11 +11,14 @@ Shader::Shader(const char* vertex_shader_file_name, const char* fragment_shader_
 	id = CreateProgram(vertexShader, fragmentShader);
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+	delete vsSource;
+	delete fsSource;
 }
 
 
 Shader::~Shader() {
-
+	glUseProgram(0);
+	glDeleteProgram(id);
 }
 
 unsigned Shader::GetID() {

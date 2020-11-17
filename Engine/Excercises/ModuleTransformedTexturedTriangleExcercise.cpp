@@ -6,16 +6,15 @@
 #include "../Modules/ModuleEditorCamera.h"
 #include "../Utilities/debug_draw.hpp"
 #include "../Modules/ModuleTextures.h"
+#include "../Leaks.h"
 
 ModuleTransformedTexturedTriangleExcercise::ModuleTransformedTexturedTriangleExcercise() {
 	info = new ILinfo();
-
-
 	ui = ExcerciseUI();
 }
 
 ModuleTransformedTexturedTriangleExcercise::~ModuleTransformedTexturedTriangleExcercise() {
-
+	delete info;
 }
 
 #if _DEBUG
@@ -101,13 +100,13 @@ unsigned ModuleTransformedTexturedTriangleExcercise::CreateQuadVBO() {
 }
 unsigned ModuleTransformedTexturedTriangleExcercise::CreateTriangleVBO()
 {
- 
+
 	float vtx_data[] = {
 		-1.0f, -1.0f, 0.0f	,		0.0f, 0.0f,
 		1.0f, -1.0f, 0.0f	,		1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f	, 		0.5f, 1.0f
 	};
- 
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
@@ -122,7 +121,7 @@ void ModuleTransformedTexturedTriangleExcercise::DestroyVBO(unsigned vbo)
 }
 
 
- //This function must be called each frame for drawing the triangles
+//This function must be called each frame for drawing the triangles
 void ModuleTransformedTexturedTriangleExcercise::RenderVBO(unsigned vbo)
 {
 	glUseProgram(shaderID);

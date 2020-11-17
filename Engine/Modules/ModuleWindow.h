@@ -40,7 +40,7 @@ private:
 	bool fullscreen, resizable, borderless, fullDtp;
 	float brightness;
 
-	friend class ModuleEditor;
+	friend class ConfigWindow;
 };
 
 #endif // __ModuleWindow_H__

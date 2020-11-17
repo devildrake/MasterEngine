@@ -162,6 +162,8 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ConsoleWindow.cpp" />
+    <ClCompile Include="ConfigWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -514,6 +516,9 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Leaks.h" />
+    <ClInclude Include="ImGuiWindow.h" />
+    <ClInclude Include="ConsoleWindow.h" />
+    <ClInclude Include="ConfigWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

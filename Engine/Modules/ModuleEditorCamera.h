@@ -34,7 +34,7 @@ public:
 	void SetAspectRatio(float);
 
 private:
-	friend class ModuleEditor;
+	friend class ConfigWindow;
 	Frustum frustum;
 	float pitch, yaw;
 

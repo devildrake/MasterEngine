@@ -1,6 +1,7 @@
 #include "../Utilities/Globals.h"
 #include "../Application.h"
 #include "ModuleWindow.h"
+#include "../Leaks.h"
 
 ModuleWindow::ModuleWindow()
 {

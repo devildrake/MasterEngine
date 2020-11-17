@@ -4,6 +4,7 @@
 #include "Utilities/Globals.h"
 #include "Application.h"
 #include "Modules/ModuleTextures.h"
+#include "Leaks.h"
 
 Model::Model(const char* file_name) {
 	Load(file_name);

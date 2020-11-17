@@ -25,13 +25,16 @@ public:
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
 	SDL_GLContext GetContext();
-	friend class ModuleEditor;
 	const unsigned GetDefaultShaderID()const;
+	friend class ConfigWindow;
+
+	//bool AddModel(Model* model);
+	//bool RemoveModel(Model* model);
+
 private:
 	void* context;
 	float3 bgColor;
-
-	SDL_GLContext glcontext;
 	std::vector<Model*> models;
+	SDL_GLContext glcontext;
 	Shader* default_shader;
 };

@@ -4,6 +4,7 @@
 #include "../Modules/ModuleEditorCamera.h"
 #include "../Application.h"
 #include "../Utilities/debug_draw.hpp"
+#include "../Leaks.h"
 
 ModuleTransformedTriangleExcercise::ModuleTransformedTriangleExcercise() {
 

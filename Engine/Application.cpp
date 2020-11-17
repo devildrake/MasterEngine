@@ -7,9 +7,11 @@
 #include "Modules/ModuleEditor.h"
 //#include "Excercises/ModuleHelloTriangleExcerise.h"
 //#include "Excercises/ModuleTransformedTriangleExcercise.h"
-#include "Excercises/ModuleTransformedTexturedTriangleExcercise.h"
+//#include "Excercises/ModuleTransformedTexturedTriangleExcercise.h"
 #include "Modules/ModuleDebugDraw.h"
 #include "Modules/ModuleTextures.h"
+#include "Leaks.h"
+
 using namespace std;
 
 Application::Application()

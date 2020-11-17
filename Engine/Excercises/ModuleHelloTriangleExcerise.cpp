@@ -1,6 +1,7 @@
 #include "ModuleHelloTriangleExcerise.h"
 #include "SDL.h"
 #include <string>
+#include "../Leaks.h"
 
 ModuleHelloTriangleExcercise::ModuleHelloTriangleExcercise() {
 

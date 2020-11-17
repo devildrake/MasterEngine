@@ -3,6 +3,7 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include "../Leaks.h"
 
 #define DEGTORAD 3.14159/180
 

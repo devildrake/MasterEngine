@@ -2,16 +2,24 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "../ImGui/imconfig.h"
+#include "../Leaks.h"
+
 
 //#include "ImGui/imconfig.h"
+//
+//ModuleEditor::ModuleEditor() : console(ConsoleWindow("Console")), configMenu(ConfigWindow("Configuration")) {
+//	//console = new ConsoleWindow("Console");
+//	frameCap = 60.0f;
+//}
 
 ModuleEditor::ModuleEditor() {
-	showConsole = showConfig = true;
+	console = new ConsoleWindow("Console");
+	configMenu = new ConfigWindow("Configuration");
 	frameCap = 60.0f;
 }
 
 ModuleEditor::~ModuleEditor() {
-
+	//delete console;
 }
 
 bool ModuleEditor::Init() {
@@ -35,7 +43,7 @@ bool ModuleEditor::Start() {
 
 update_status ModuleEditor::PreUpdate() {
 
-	configMenu.AddFrame(App->GetDeltaTime());
+	configMenu->AddFrame(App->GetDeltaTime());
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
@@ -43,13 +51,9 @@ update_status ModuleEditor::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
-void MySaveFunction() {
-	LOG("JIBIRI");
-}
-
 update_status ModuleEditor::Update() {
-	console.Draw("Console", &showConsole);
-	configMenu.Draw("Configuration Menu", &showConfig);
+	console->Draw();
+	configMenu->Draw();
 	//ImGui::ShowDemoWindow();
 	return UPDATE_CONTINUE;
 
@@ -77,5 +81,17 @@ bool ModuleEditor::CleanUp() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+
+	delete console;
+	delete configMenu;
+	console = nullptr;
+	configMenu = nullptr;
+	//console.~ConsoleWindow();
 	return true;
 }
+
+ConsoleWindow* ModuleEditor::GetConsole() {
+	return console;
+}
+
+//MyType const& MyClass::getMyType() const { return mMyType; }

@@ -1,5 +1,6 @@
 #include "ModuleTextures.h"
 #include "IL/ilu.h"
+#include "../Leaks.h"
 
 ModuleTextures::ModuleTextures() {
 	wrapMode = GL_REPEAT;

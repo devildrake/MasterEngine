@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include <glew.h>
+#include "../Leaks.h"
 
 ModuleRender::ModuleRender()
 {
@@ -53,10 +54,9 @@ bool ModuleRender::Init()
 }
 
 bool ModuleRender::Start() {
-
-	models.push_back(new Model("BakerHouse.fbx"));
-
 	default_shader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
+	Model* houseModel = new Model("BakerHouse.fbx");
+	models.push_back(houseModel);
 	return true;
 }
 
@@ -88,6 +88,28 @@ update_status ModuleRender::Update()
 	return UPDATE_CONTINUE;
 }
 
+//
+//bool ModuleRender::AddModel(Model* model) {
+//	modelsToDraw.push_back(model);
+//	return true;
+//}
+//
+//bool ModuleRender::RemoveModel(Model* model) {
+//	if (model == nullptr) return true;
+//
+//	std::vector<Model*>::iterator it = modelsToDraw.begin();
+//	bool found = false;
+//	while (!found && it != modelsToDraw.end()) {
+//		if ((*it) == model) {
+//			modelsToDraw.erase(it);
+//			found = true;
+//		}
+//		++it;
+//	}
+//
+//	return found;
+//}
+
 update_status ModuleRender::PostUpdate()
 {
 	SDL_GL_SwapWindow(App->window->window);
@@ -99,8 +121,15 @@ bool ModuleRender::CleanUp()
 {
 	LOG("Destroying renderer");
 
-	for (int i = 0; i < models.size(); ++i) {
-		delete models[i];
+	for (std::vector<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
+		delete* it;
+	}
+	models.clear();
+
+	if (default_shader != nullptr)
+	{
+		delete default_shader;
+		default_shader = nullptr;
 	}
 
 	//Destroy window
