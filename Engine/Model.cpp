@@ -1,9 +1,9 @@
 #include "Model.h"
-#include <assimp/cimport.h>
-#include <assimp/postprocess.h>
 #include "Utilities/Globals.h"
 #include "Application.h"
 #include "Modules/ModuleTextures.h"
+#include <assimp/cimport.h>
+#include <assimp/postprocess.h>
 #include "Leaks.h"
 
 Model::Model(const char* file_name) {
@@ -13,16 +13,16 @@ Model::Model(const char* file_name) {
 Model::~Model() {
 	materials.clear();
 
-	for (int i = 0; i < meshes.size(); ++i) {
-		delete meshes[i];
+	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
+		delete* it;
 	}
 
 	meshes.clear();
 }
 
 void Model::Draw() {
-	for (int i = 0; i < meshes.size(); ++i) {
-		meshes[i]->Draw(materials);
+	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
+		(*it)->Draw(materials);
 	}
 }
 
@@ -36,12 +36,12 @@ void Model::Load(const char* file_name)
 	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
 	if (scene)
 	{
-		for (int i = 0; i < scene->mNumMaterials; ++i) {
+		for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
 			materials.push_back(App->textures->LoadTexture(nameAsPNG(scene->mMaterials[i]->GetName()).c_str()));
 		}
 		meshes.reserve(scene->mNumMeshes);
 
-		for (int i = 0; i < scene->mNumMeshes; ++i) {
+		for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
 			meshes.push_back(new Mesh(scene->mMeshes[i]));
 		}
 

@@ -4,8 +4,6 @@
 #include "Module.h"
 #include "../SDL/include/SDL.h"
 
-class Application;
-
 class ModuleWindow : public Module
 {
 public:

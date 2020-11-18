@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditorCamera.h"
+#include <assimp/mesh.h>
 #include "Leaks.h"
 
 

@@ -12,12 +12,16 @@ public:
 	{
 	}
 
+	virtual ~Module() {
+
+	}
+
 	virtual bool Init()
 	{
 		return true;
 	}
 
-	virtual bool Start() 
+	virtual bool Start()
 	{
 		return true;
 	}

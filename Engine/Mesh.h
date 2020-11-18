@@ -1,9 +1,9 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <assimp/mesh.h>
 #include <vector>
 
+class aiMesh;
 
 class Mesh {
 private:

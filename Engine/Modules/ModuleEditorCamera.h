@@ -2,7 +2,7 @@
 #define MODULE_EDITOR_CAMERA_H
 #include "Module.h"
 #include "../Utilities/Globals.h"
-#include "SDL.h"
+#include <SDL.h>
 #include <glew.h>
 #include "../MathGeoLib/Geometry/Frustum.h"
 #include "../MathGeoLib/Math/float3x3.h"
@@ -13,6 +13,7 @@ struct SDL_Rect;
 class ModuleEditorCamera : public Module
 {
 public:
+	
 	ModuleEditorCamera();
 	~ModuleEditorCamera();
 

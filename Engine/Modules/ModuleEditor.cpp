@@ -3,8 +3,12 @@
 #include "ModuleRender.h"
 #include "../ImGui/imconfig.h"
 #include "../Leaks.h"
-
-
+#include "../ConsoleWindow.h"
+#include "../ConfigWindow.h"
+#include "../Application.h"
+#include "ModuleWindow.h"
+#include "ModuleRender.h"
+#include "ModuleEditorCamera.h"
 //#include "ImGui/imconfig.h"
 //
 //ModuleEditor::ModuleEditor() : console(ConsoleWindow("Console")), configMenu(ConfigWindow("Configuration")) {

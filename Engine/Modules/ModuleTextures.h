@@ -2,7 +2,6 @@
 #define _MODULE_TEXTURE_H_
 #include "Module.h"
 #include "glew.h"
-#include "../Application.h"
 #include <map>
 #include <string>
 

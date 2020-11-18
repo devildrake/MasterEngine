@@ -4,6 +4,8 @@
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include <glew.h>
+#include "../Model.h"
+#include "../Shader.h"
 #include "../Leaks.h"
 
 ModuleRender::ModuleRender()
