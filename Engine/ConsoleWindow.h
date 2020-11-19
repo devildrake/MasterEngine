@@ -12,7 +12,7 @@ public:
 	~ConsoleWindow();
 	void Draw();
 	void Log(const char* msg);
-
+	friend class ModuleEditor;
 };
 
 #endif

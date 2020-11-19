@@ -9,6 +9,7 @@
 
 class ConfigWindow;
 class ConsoleWindow;
+class EditorMainMenu;
 
 class ModuleWindow;
 class ModuleRender;
@@ -20,8 +21,9 @@ class ModuleEditorCamera;
 
 class ModuleEditor :public Module {
 private:
-	ConfigWindow* configMenu;
+	ConfigWindow* configWindow;
 	ConsoleWindow* console;
+	EditorMainMenu* mainMenu;
 	int frameCap;
 public:
 	ModuleEditor();
@@ -35,6 +37,16 @@ public:
 	bool CleanUp();
 	friend class ConfigWindow;
 	ConsoleWindow* GetConsole();
+
+#ifdef _WIN32
+#include <shellapi.h>
+	static void open_url(const std::string& url)
+	{
+		ShellExecute(GetActiveWindow(),
+			"open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	}
+#endif
+
 };
 
 #endif

@@ -16,6 +16,7 @@ ConsoleWindow::~ConsoleWindow() {
 }
 
 void ConsoleWindow::Draw() {
+	if (!isOpen)return;
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin(windowName, &isOpen))

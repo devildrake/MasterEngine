@@ -22,6 +22,7 @@ public:
 	void Draw();
 	std::string GetCapsString();
 	void AddFrame(float deltaTime);
+	friend class ModuleEditor;
 
 };
 

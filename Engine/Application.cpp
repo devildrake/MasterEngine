@@ -18,7 +18,6 @@ Application::Application()
 {
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
-	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(textures = new ModuleTextures());
@@ -26,6 +25,8 @@ Application::Application()
 	modules.push_back(editor = new ModuleEditor());
 	//modules.push_back(triangleExcercise = new ModuleHelloTriangleExcercise());
 	//modules.push_back(transformedTriangleExcercise = new ModuleTransformedTriangleExcercise());
+	modules.push_back(renderer = new ModuleRender());
+
 	modules.push_back(debugDraw = new ModuleDebugDraw());
 	lastTick = newTick = Clock::Tick();
 	SetFrameCap(60);

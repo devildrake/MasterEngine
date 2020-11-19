@@ -76,6 +76,7 @@ void ConfigWindow::AddFrame(float deltaTime) {
 }
 
 void ConfigWindow::Draw() {
+	if (!isOpen)return;
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 
 	bounds.first = ImGui::GetWindowContentRegionMin();

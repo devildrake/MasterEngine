@@ -164,6 +164,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="ConfigWindow.cpp" />
+    <ClCompile Include="EditorMainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -519,6 +520,7 @@
     <ClInclude Include="ImGuiWindow.h" />
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="ConfigWindow.h" />
+    <ClInclude Include="EditorMainMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

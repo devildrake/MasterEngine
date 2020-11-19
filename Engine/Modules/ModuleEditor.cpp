@@ -9,6 +9,8 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleInput.h";
+#include "../EditorMainMenu.h"
 //#include "ImGui/imconfig.h"
 //
 //ModuleEditor::ModuleEditor() : console(ConsoleWindow("Console")), configMenu(ConfigWindow("Configuration")) {
@@ -16,9 +18,12 @@
 //	frameCap = 60.0f;
 //}
 
+
+
 ModuleEditor::ModuleEditor() {
 	console = new ConsoleWindow("Console");
-	configMenu = new ConfigWindow("Configuration");
+	configWindow = new ConfigWindow("Configuration");
+	mainMenu = new EditorMainMenu(&console->isOpen, &configWindow->isOpen);
 	frameCap = 60.0f;
 }
 
@@ -47,21 +52,19 @@ bool ModuleEditor::Start() {
 
 update_status ModuleEditor::PreUpdate() {
 
-	configMenu->AddFrame(App->GetDeltaTime());
+	configWindow->AddFrame(App->GetDeltaTime());
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 
 	return UPDATE_CONTINUE;
 }
-
 update_status ModuleEditor::Update() {
-	console->Draw();
-	configMenu->Draw();
-	//ImGui::ShowDemoWindow();
-	return UPDATE_CONTINUE;
 
-}
+	console->Draw();
+	configWindow->Draw();
+ 	return 	mainMenu->Draw();
+ }
 update_status ModuleEditor::PostUpdate() {
 
 	ImGui::Render();
@@ -87,9 +90,11 @@ bool ModuleEditor::CleanUp() {
 	ImGui::DestroyContext();
 
 	delete console;
-	delete configMenu;
+	delete configWindow;
+	delete mainMenu;
 	console = nullptr;
-	configMenu = nullptr;
+	configWindow = nullptr;
+	mainMenu = nullptr;
 	//console.~ConsoleWindow();
 	return true;
 }
