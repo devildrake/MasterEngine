@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "Mesh.h"
 #include <glew.h>
 #include "MathGeoLib/MathGeoLib.h"
 #include "Application.h"
@@ -6,6 +7,7 @@
 #include "Modules/ModuleEditorCamera.h"
 #include <assimp/mesh.h>
 #include "Leaks.h"
+#include "Modules/ModuleTextures.h"
 
 
 Mesh::Mesh(const aiMesh* mesh) {
@@ -14,10 +16,29 @@ Mesh::Mesh(const aiMesh* mesh) {
 	CreateVAO();
 }
 
+Mesh::Mesh(const aiMesh* mesh, const char* matname) {
+	texture_path = std::string(matname);
+	LoadVBO(mesh);
+	LoadEBO(mesh);
+	CreateVAO();
+}
+
+
 Mesh::~Mesh() {
+
+	ReleaseTextures();
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);
+}
+
+void Mesh::ReleaseTextures() {
+	App->textures->ReleaseTexture(texture_path);
+}
+
+void Mesh::SetTexture(int index, std::string path) {
+	texture_path = path;
+	material_index = index;
 }
 
 
@@ -85,9 +106,16 @@ void Mesh::Draw(const std::vector<unsigned>& model_textures)
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&proj);
 	glActiveTexture(GL_TEXTURE0);
+	//material_index = 0;
+	//glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
 	material_index = 0;
-	glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
-	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
+	for (std::vector<unsigned>::const_iterator it = model_textures.begin(); it != model_textures.end(); ++it) {
+		glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
+		glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
+		material_index++;
+	}
+	//glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
+	//glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);

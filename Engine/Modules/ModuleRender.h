@@ -3,7 +3,7 @@
 #include "SDL.h"
 #include "../Utilities/Globals.h"
 #include "../MathGeoLib/Math/float3.h"
-
+#include <list>
 class Shader;
 class Model;
 
@@ -30,7 +30,8 @@ public:
 private:
 	void* context;
 	float3 bgColor;
-	std::vector<Model*> models;
+	Model* currentModel;
+	std::list<Model*> models;
 	SDL_GLContext glcontext;
 	Shader* default_shader;
 };

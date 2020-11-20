@@ -26,6 +26,14 @@ void ModuleTextures::SetWrapMode(GLenum anEnum) {
 	wrapMode = anEnum;
 }
 
+void ModuleTextures::ReleaseTexture(std::string path) {
+	if (textureMap.size() > 0) {
+		if (textureMap.find(path) != textureMap.end()) {
+			glDeleteTextures(1, &textureMap[path]);
+			textureMap.erase(path);
+		}
+	}
+}
 
 GLenum ModuleTextures::GetWrapMode() {
 	return wrapMode;
@@ -43,7 +51,7 @@ GLuint ModuleTextures::LoadTexture(std::string path) {
 	if (textureMap[path] != NULL) {
 		return textureMap[path];
 	}
-
+	
 	ILuint newImageID;
 	GLuint newTextureID;
 	ilGenImages(1, &newImageID); /* Generation of one image name */
@@ -59,10 +67,10 @@ GLuint ModuleTextures::LoadTexture(std::string path) {
 			return false;
 		}
 
-		glGenTextures(1, &newTextureID);  
-		glBindTexture(GL_TEXTURE_2D, newTextureID); 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+		glGenTextures(1, &newTextureID);
+		glBindTexture(GL_TEXTURE_2D, newTextureID);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		ILinfo info = ILinfo();
 		iluGetImageInfo(&info);
@@ -74,7 +82,7 @@ GLuint ModuleTextures::LoadTexture(std::string path) {
 		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
 			ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
 			ilGetData()); /* Texture specification */
-		
+
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		textureMap[path] = newTextureID;
@@ -113,7 +121,9 @@ update_status ModuleTextures::PostUpdate() {
 bool  ModuleTextures::CleanUp() {
 
 	for (std::map < std::string, GLuint>::iterator it = textureMap.begin(); it != textureMap.end(); ++it) {
-		ilDeleteImage((*it).second);
+		//glDelete
+		glDeleteTextures(1, &(*it).second);
+		//ilDeleteImage((*it).second);
 	}
 
 	textureMap.clear();

@@ -7,9 +7,9 @@
 #include "../Model.h"
 #include "../Shader.h"
 #include "../Leaks.h"
+#include <assimp/cimport.h>
 
-ModuleRender::ModuleRender()
-{
+ModuleRender::ModuleRender() {
 	bgColor = float3(0.2f, 0.2f, 0.2f);
 }
 
@@ -18,6 +18,11 @@ ModuleRender::~ModuleRender()
 {
 	if (default_shader != nullptr)
 		delete default_shader;
+}
+
+void myCallback(const char* msg, char* userData) {
+	LOG(msg);
+	//printIntoMyFile(msg);
 }
 
 // Called before render is available
@@ -49,6 +54,11 @@ bool ModuleRender::Init()
 	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 
+
+
+	struct aiLogStream stream;
+	stream.callback = myCallback;
+	aiAttachLogStream(&stream);
 	glEnable(GL_DEPTH_TEST); // Enable depth test
 	glEnable(GL_CULL_FACE); // Enable cull backward faces
 	glFrontFace(GL_CCW); // Front faces will be counter clockwise
@@ -57,8 +67,10 @@ bool ModuleRender::Init()
 
 bool ModuleRender::Start() {
 	default_shader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
-	Model* houseModel = new Model("BakerHouse.fbx");
-	models.push_back(houseModel);
+	App->input->SetLastFileDroppedOnWindow("BakerHouse.fbx");
+	//currentModel = new Model("PenguinBaseMesh.obj");
+	currentModel = new Model("BakerHouse.fbx");
+	models.push_back(currentModel);
 	return true;
 }
 
@@ -79,11 +91,37 @@ const unsigned ModuleRender::GetDefaultShaderID() const {
 	return default_shader->GetID();
 }
 
+
+
 // Called every draw update
 update_status ModuleRender::Update()
 {
+	const char* lastFile = App->input->GetLastFileDroppedOnWindow();
 
-	for (std::vector<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
+	if (lastFile != nullptr) {
+
+		if (currentModel->GetFileName() != lastFile) {
+
+			Model* newModel = new Model();
+			if (Model::SceneFound(lastFile)) {
+				models.remove(currentModel);
+				delete currentModel;
+				if (newModel->Load(lastFile)) {
+					currentModel = newModel;
+					models.push_back(currentModel);
+				}
+				else {
+					currentModel = nullptr;
+					delete newModel;
+				}
+			}
+			else {
+				delete newModel;
+			}
+		}
+	}
+
+	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
 		(*it)->Draw();
 	}
 
@@ -123,7 +161,7 @@ bool ModuleRender::CleanUp()
 {
 	LOG("Destroying renderer");
 
-	for (std::vector<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
+	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
 		delete* it;
 	}
 	models.clear();
@@ -134,6 +172,7 @@ bool ModuleRender::CleanUp()
 		default_shader = nullptr;
 	}
 
+	aiDetachAllLogStreams();
 	//Destroy window
 	SDL_GL_DeleteContext(context);
 	return true;

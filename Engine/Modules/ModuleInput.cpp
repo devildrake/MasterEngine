@@ -43,6 +43,14 @@ bool ModuleInput::Start() {
 	return true;
 }
 
+const char* ModuleInput::GetLastFileDroppedOnWindow() const {
+	return lastFileDroppedOnWindow;
+}
+
+void ModuleInput::SetLastFileDroppedOnWindow(char* newF) {
+	lastFileDroppedOnWindow = newF;
+}
+
 update_status ModuleInput::PreUpdate() {
 	SDL_Event sdlEvent;
 	mouse_motion.x = 0;
@@ -52,6 +60,11 @@ update_status ModuleInput::PreUpdate() {
 	//LOG(a.c_str());
 
 	//SDL_CaptureMouse(true);
+
+	if (lastFileDroppedOnWindow != nullptr) {
+		SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
+		lastFileDroppedOnWindow = nullptr;
+	}
 
 	memset(windowEvents, false, WE_COUNT * sizeof(bool));
 
@@ -90,9 +103,26 @@ update_status ModuleInput::PreUpdate() {
 		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 		switch (sdlEvent.type)
 		{
+		case (SDL_DROPFILE): {      // In case if dropped file
+			//// Shows directory of dropped file
+			//SDL_ShowSimpleMessageBox(
+			//	SDL_MESSAGEBOX_INFORMATION,
+			//	"File dropped on window",
+			//	dropped_filedir,
+			//	App->window->window
+			//);
+
+			if (lastFileDroppedOnWindow != nullptr) {
+				SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
+				lastFileDroppedOnWindow = nullptr;
+			}
+			lastFileDroppedOnWindow = sdlEvent.drop.file;
+
+
+			break;
+		}
 		case SDL_QUIT:
 			windowEvents[WE_QUIT] = true;
-
 			return UPDATE_STOP;
 		case SDL_WINDOWEVENT:
 			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
@@ -146,6 +176,7 @@ update_status ModuleInput::PreUpdate() {
 
 	return UPDATE_CONTINUE;
 }
+
 // Called every draw update
 update_status ModuleInput::Update()
 {
@@ -184,6 +215,11 @@ const void ModuleInput::MouseLeftWindow() {
 // Called before quitting
 bool ModuleInput::CleanUp()
 {
+
+	if (lastFileDroppedOnWindow != nullptr) {
+		SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
+	}
+
 	LOG("Quitting SDL event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 

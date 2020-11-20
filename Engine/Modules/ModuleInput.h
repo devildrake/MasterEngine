@@ -68,9 +68,11 @@ public:
 	const void MouseLeftWindow();
 	void ResetMouseMotion();
 	const bool IsMouseOverImGuiWindow()const;
-
+	const char* GetLastFileDroppedOnWindow() const;
+	void SetLastFileDroppedOnWindow(char* newF);
 private:
-	bool		windowEvents[WE_COUNT];
+	bool windowEvents[WE_COUNT];
+	char* lastFileDroppedOnWindow = nullptr;
 	KeyState* keyboard;
 	KeyState	mouse_buttons[NUM_MOUSE_BUTTONS];
 	float3 mouse_motion;

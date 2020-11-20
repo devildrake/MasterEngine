@@ -13,9 +13,9 @@ private:
 public:
 
 	ModuleTextures();
-	~ModuleTextures(); 
-
-	bool            Init();
+	~ModuleTextures();
+	void ReleaseTexture(std::string path);
+	bool Init();
 	update_status   PreUpdate();
 	update_status   Update();
 	update_status   PostUpdate();
@@ -23,8 +23,8 @@ public:
 	GLuint LoadTexture(std::string path);
 	void SetWrapMode(GLenum anEnum);
 	void SetMinMode(GLenum anEnum);
-	void SetMagMode(GLenum anEnum);	
-	
+	void SetMagMode(GLenum anEnum);
+
 	GLenum GetWrapMode();
 	GLenum GetMinFilter();
 	GLenum GetMagFilter();
