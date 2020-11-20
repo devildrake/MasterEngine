@@ -13,7 +13,7 @@ struct SDL_Rect;
 class ModuleEditorCamera : public Module
 {
 public:
-	
+
 	ModuleEditorCamera();
 	~ModuleEditorCamera();
 
@@ -33,12 +33,12 @@ public:
 	void SetNearPlane(float);
 	void SetFarPlane(float);
 	void SetAspectRatio(float);
-
+	void FocusOn(float3, float);
 private:
 	friend class ConfigWindow;
 	Frustum frustum;
 	float pitch, yaw;
-
+	float focusDistance;
 	void* context;
 	SDL_GLContext glcontext;
 	float screenMargin;

@@ -95,7 +95,6 @@ bool ModuleEditor::CleanUp() {
 	console = nullptr;
 	configWindow = nullptr;
 	mainMenu = nullptr;
-	//console.~ConsoleWindow();
 	return true;
 }
 
