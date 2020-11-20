@@ -34,7 +34,6 @@ public:
 	void SetFrameCap(int frameCap);
 	const int GetFrameCap()const;
 
-
 public:
 	ModuleRender* renderer = nullptr;
 	ModuleWindow* window = nullptr;

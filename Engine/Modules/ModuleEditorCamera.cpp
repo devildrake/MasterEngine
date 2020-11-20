@@ -175,16 +175,34 @@ update_status ModuleEditorCamera::Update()
 
 	if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)) {
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
-			float distanceToOrbit = frustumPosition.Distance(orbitTargetPos);
-			float3 movementInput = float3::zero;
-			movementInput += frustum.WorldRight() * mouseMotion.x;
-			movementInput += frustum.Up() * mouseMotion.y;
-			frustumPosition += movementInput * speedFactor * App->GetDeltaTime();
-			float3 newVecToTarget = orbitTargetPos - frustumPosition;
-			frustumPosition = orbitTargetPos - newVecToTarget.Normalized() * distanceToOrbit;
-			float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToTarget.Normalized(), frustum.Up(), float3::unitY);
-			frustum.SetFront((lookAtMat * frustum.Front()).Normalized());
-			frustum.SetUp(lookAtMat * frustum.Up());
+
+			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) {
+				if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+
+					float3 mouseMotion = App->input->GetMouseMotion();
+
+					float orbitDistance = 8.0f;
+					float3 orbitTargetPos = float3::zero;
+
+					frustumPosition += frustum.WorldRight() * mouseMotion.x * App->GetDeltaTime() * speedFactor;
+					frustumPosition += frustum.Up() * mouseMotion.y * App->GetDeltaTime() * speedFactor;
+
+
+					float3 newVecToItem = (orbitTargetPos - frustumPosition).Normalized();
+
+					frustumPosition = orbitTargetPos - newVecToItem * orbitDistance;
+
+					newVecToItem = (orbitTargetPos - frustumPosition).Normalized();
+
+					float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToItem, frustum.Up(), float3::unitY);
+
+					frustum.SetFront(lookAtMat * frustum.Front());
+					frustum.SetUp(lookAtMat * frustum.Up());
+
+
+				}
+			}
+
 			showCursor = false;
 		}
 		else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
@@ -239,7 +257,6 @@ update_status ModuleEditorCamera::Update()
 
 update_status ModuleEditorCamera::PostUpdate()
 {
-	//SDL_GL_SwapWindow(App->window->window);
 	return UPDATE_CONTINUE;
 }
 
@@ -251,10 +268,7 @@ bool ModuleEditorCamera::CleanUp()
 
 void ModuleEditorCamera::WindowResized(unsigned width, unsigned height)
 {
-	SetAspectRatio(width / height);
-	//aspectRatio = width / height;
-	//frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90.0f), aspectRatio);
-	////frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * (newRatio * 90 / 1.3)), newRatio);
+	SetAspectRatio((float)width / (float)height);
 }
 
 void ModuleEditorCamera::SetFrustumPos(float3 newPos) {
@@ -283,5 +297,5 @@ void ModuleEditorCamera::SetFarPlane(float n) {
 
 void ModuleEditorCamera::SetAspectRatio(float n) {
 	aspectRatio = n;
-	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90.0f), n);
+	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90), n);
 }

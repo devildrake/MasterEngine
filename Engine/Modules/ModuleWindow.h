@@ -19,14 +19,11 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	void SetFullScreen(bool b);
-	void SetResizable(bool b);
-	void SetBorderless(bool b);
-	void SetFullDesktop(bool b);
 	void WindowResized(unsigned width, unsigned height);
 	void SetBrightness(float newB);
 	const int GetWidth()const;
 	const int GetHeight()const;
+	void SetFlag(SDL_WindowFlags flag);
 public:
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;
@@ -39,6 +36,7 @@ private:
 	float brightness;
 
 	friend class ConfigWindow;
+	friend class EditorMainMenu;
 };
 
 #endif // __ModuleWindow_H__

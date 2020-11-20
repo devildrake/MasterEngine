@@ -3,9 +3,11 @@
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
+#include "ModuleEditorCamera.h"
 #include "../SDL/include/SDL.h"
 #include "ModuleEditor.h"
 #include "../Leaks.h"
+
 
 #define MAX_KEYS 300
 
@@ -126,8 +128,17 @@ update_status ModuleInput::PreUpdate() {
 			return UPDATE_STOP;
 		case SDL_WINDOWEVENT:
 			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-				App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-				App->window->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+				if (App->renderer != nullptr) {
+					App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+				}
+				if (App->window != nullptr) {
+					App->window->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+				}
+
+				if (App->editorCamera != nullptr) {
+					App->editorCamera->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+
+				}
 			}
 			else if (sdlEvent.window.event == SDL_WINDOWEVENT_LEAVE) {
 				//App->renderer->MouseLeftWindow();

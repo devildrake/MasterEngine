@@ -76,24 +76,25 @@ bool ModuleWindow::CleanUp()
 }
 
 
-void ModuleWindow::SetFullScreen(bool b) {
-	SDL_SetWindowFullscreen(window, b ? SDL_TRUE : SDL_FALSE);
-	fullscreen = b;
-}
+void ModuleWindow::SetFlag(SDL_WindowFlags flag) {
 
-void ModuleWindow::SetResizable(bool b) {
-	SDL_SetWindowResizable(window, b ? SDL_TRUE : SDL_FALSE);
-	resizable = b;
-}
+	switch (flag) {
+	case SDL_WINDOW_BORDERLESS:
+		SDL_SetWindowBordered(window, borderless ? SDL_FALSE : SDL_TRUE);
+		break;
+	case SDL_WINDOW_FULLSCREEN:
+		SDL_SetWindowFullscreen(window, fullscreen ? SDL_TRUE : SDL_FALSE);
+		break;
+	case SDL_WINDOW_RESIZABLE:
+		SDL_SetWindowResizable(window, !resizable ? SDL_TRUE : SDL_FALSE);
+		break;
+	case SDL_WINDOW_FULLSCREEN_DESKTOP:
+		SDL_SetWindowFullscreen(window, fullscreen ? SDL_TRUE : SDL_FALSE);
+		break;
+	default:
+		break;
+	}
 
-void ModuleWindow::SetBorderless(bool b) {
-	SDL_SetWindowBordered(window, b ? SDL_FALSE : SDL_TRUE);
-	borderless = b;
-}
-
-void ModuleWindow::SetFullDesktop(bool b) {
-	//TODO
-	fullDtp = b;
 }
 
 

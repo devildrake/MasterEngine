@@ -10,7 +10,7 @@
 class ConfigWindow :public ImGuiWindow {
 private:
 	std::pair< ImVec2, ImVec2> bounds;
-	bool active;
+	bool applicationHeaderActive, windowHeaderActive, hardwareHeaderActive, cameraHeaderActive;
 	bool dummyBool;
 	float frames[FRAMECOUNT];
 	float times[FRAMECOUNT];

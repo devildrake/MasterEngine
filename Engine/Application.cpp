@@ -99,6 +99,8 @@ void Application::SetFrameCap(int newFrameCap) {
 	ticksPerFrame = 1000 / newFrameCap;
 }
 
+
+
 inline const int Application::GetFrameCap() const {
 	return frameCap;
 }

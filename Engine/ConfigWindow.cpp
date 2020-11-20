@@ -56,7 +56,7 @@ std::string ConfigWindow::GetCapsString() {
 	return capsString;
 }
 
-ConfigWindow::ConfigWindow(const char* aConfigName) : ImGuiWindow(aConfigName), active(true), dummyBool(true) {
+ConfigWindow::ConfigWindow(const char* aConfigName) : ImGuiWindow(aConfigName), hardwareHeaderActive(true), dummyBool(true), cameraHeaderActive(true), windowHeaderActive(true), applicationHeaderActive(true) {
 	for (int i = 0; i < FRAMECOUNT; i++) {
 		times[i] = 0;
 		frames[i] = 0;
@@ -89,232 +89,239 @@ void ConfigWindow::Draw() {
 	}
 	ImGui::Text("Options");
 
+
 	if (ImGui::CollapsingHeader("Application")) {
+		if (ImGui::Checkbox("Active", &applicationHeaderActive)) {}
 
-		ImGui::Text("Options");
+		if (applicationHeaderActive) {
+			ImGui::Text("Options");
 
-		static char appNameBuff[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
-		static char organizationBuff[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
-		//static char buf[32] = u8"NIHONGO"; // <- this is how you would write it with C++11, using real kanjis
-		ImGui::InputText("App Name", appNameBuff, IM_ARRAYSIZE(appNameBuff));
-		ImGui::InputText("Organization", organizationBuff, IM_ARRAYSIZE(organizationBuff));
+			static char appNameBuff[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
+			static char organizationBuff[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
+			//static char buf[32] = u8"NIHONGO"; // <- this is how you would write it with C++11, using real kanjis
+			ImGui::InputText("App Name", appNameBuff, IM_ARRAYSIZE(appNameBuff));
+			ImGui::InputText("Organization", organizationBuff, IM_ARRAYSIZE(organizationBuff));
 
-		if (ImGui::SliderInt("Max Fps", &App->editor->frameCap, 30, 90)) {
-			App->SetFrameCap(App->editor->frameCap);
+			if (ImGui::SliderInt("Max Fps", &App->editor->frameCap, 30, 90)) {
+				App->SetFrameCap(App->editor->frameCap);
+			}
+			//const float values[60];
+
+			//ImVec2 size = ImGui::GetItemRectSize();
+
+			char title[25];
+			sprintf_s(title, 25, "Framerate %.1f", frames[FRAMECOUNT - 1]);
+
+			ImGui::PlotHistogram("##framerate", frames, IM_ARRAYSIZE(frames), 0, NULL, 0.0f, 100.0f, ImVec2(310, 100));
+
+			sprintf_s(title, 25, "Milliseconds %0.1f", frames[FRAMECOUNT - 1]);
+
+			ImGui::PlotHistogram("##framerate", times, IM_ARRAYSIZE(times), 0, NULL, 0.0f, 32, ImVec2(310, 100));
 		}
-		//const float values[60];
-
-		//ImVec2 size = ImGui::GetItemRectSize();
-
-		char title[25];
-		sprintf_s(title, 25, "Framerate %.1f", frames[FRAMECOUNT - 1]);
-
-		ImGui::PlotHistogram("##framerate", frames, IM_ARRAYSIZE(frames), 0, NULL, 0.0f, 100.0f, ImVec2(310, 100));
-
-		sprintf_s(title, 25, "Milliseconds %0.1f", frames[FRAMECOUNT - 1]);
-
-		ImGui::PlotHistogram("##framerate", times, IM_ARRAYSIZE(times), 0, NULL, 0.0f, 32, ImVec2(310, 100));
 	}
 
-
 	if (ImGui::CollapsingHeader("Window")) {
-		if (ImGui::Checkbox("Active", &active)) {
-			//App->editor->SetConfigActive(active);
-		}
-		ImGui::Text("Icon: *default*");
-		if (ImGui::SliderFloat("Brightness", &App->window->brightness, 0, 1.0f)) {
-			App->window->SetBrightness(App->window->brightness);
-		}
-		if (ImGui::SliderInt("Width", &App->window->width, 640, 1920)) {
-			SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
-			App->renderer->WindowResized(App->window->width, App->window->height);
-		}
-		if (ImGui::SliderInt("Height", &App->window->height, 480, 1080)) {
-			SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
-			App->renderer->WindowResized(App->window->width, App->window->height);
-		}
+		if (ImGui::Checkbox("Active", &windowHeaderActive)) {}
+		if (windowHeaderActive) {
+			ImGui::Text("Icon: *default*");
+			if (ImGui::SliderFloat("Brightness", &App->window->brightness, 0, 1.0f)) {
+				App->window->SetBrightness(App->window->brightness);
+			}
+			if (ImGui::SliderInt("Width", &App->window->width, 640, 1920)) {
+				SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
+				App->renderer->WindowResized(App->window->width, App->window->height);
+			}
+			if (ImGui::SliderInt("Height", &App->window->height, 480, 1080)) {
+				SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
+				App->renderer->WindowResized(App->window->width, App->window->height);
+			}
 
-		ImGui::Text("Refresh rate: ");
-		ImGui::TextColored(ImVec4(255, 255, 0, 1), "%d", 59);
+			ImGui::Text("Refresh rate: ");
+			ImGui::TextColored(ImVec4(255, 255, 0, 1), "%d", 59);
 
-		if (ImGui::Checkbox("FullScreen", &App->window->fullscreen)) {
-			App->window->SetFullScreen(App->window->fullscreen);
-		}
-		ImGui::SameLine();
-		if (ImGui::Checkbox("Resizable", &App->window->resizable)) {
-			App->window->SetResizable(App->window->resizable);
-		}
+			if (ImGui::Checkbox("FullScreen", &App->window->fullscreen)) {
+				App->window->SetFlag(SDL_WINDOW_FULLSCREEN);
+			}
+			ImGui::SameLine();
+			if (ImGui::Checkbox("Resizable", &App->window->resizable)) {
+				App->window->SetFlag(SDL_WINDOW_RESIZABLE);
+			}
 
-		if (ImGui::Checkbox("Borderless", &App->window->borderless)) {
-			App->window->SetBorderless(App->window->borderless);
-		}
-		ImGui::SameLine();
-		if (ImGui::Checkbox("Fulldesktop", &App->window->fullDtp)) {
-			App->window->SetFullDesktop(App->window->fullDtp);
-		}
+			if (ImGui::Checkbox("Borderless", &App->window->borderless)) {
+				App->window->SetFlag(SDL_WINDOW_BORDERLESS);
+			}
+			ImGui::SameLine();
+			if (ImGui::Checkbox("Fulldesktop", &App->window->fullscreen)) {
+				App->window->SetFlag(SDL_WINDOW_FULLSCREEN_DESKTOP);
+			}
 
 
+		}
 	}
 
 	if (ImGui::CollapsingHeader("Hardware")) {
-		//TO DO ACTIVE BOX
-		//SDL_version* version;
-		//SDL_GetVersion(version);
+		if (ImGui::Checkbox("Active", &hardwareHeaderActive)) {}
+		if (hardwareHeaderActive) {
+			//TO DO ACTIVE BOX
+			//SDL_version* version;
+			//SDL_GetVersion(version);
 
-		//ImGui::Text("Version:");
-		//ImGui::SameLine();
-		//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "SDL %d.%d.%d", version->major,version->minor,version->patch);
-
-
-		ImGui::Text("CPUs:");
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", SDL_GetCPUCount());
-
-		ImGui::Text("System RAM:");
-		ImGui::SameLine();
-		float ram = SDL_GetSystemRAM() / 1000;
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.1f Gb", ram);
-
-		ImGui::Text("Caps:");
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), GetCapsString().c_str(), SDL_GetCPUCount());
-
-		ImGui::Text("GPU:");
-		ImGui::SameLine();
-		char* vendor = reinterpret_cast<char*>((unsigned char*)glGetString(GL_VENDOR));
-		char* version = reinterpret_cast<char*>((unsigned char*)glGetString(GL_VERSION));
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Vendor: %s Driver Version: %s", vendor, version);
-
-		ImGui::Text("Brand:");
-		ImGui::SameLine();
-
-		char* vRamBrand = reinterpret_cast<char*>((unsigned char*)glGetString(GL_RENDERER));
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), vRamBrand);
-
-		GLint total_mem_kb = 0;
-		glGetIntegerv(GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX,
-			&total_mem_kb);
-
-		GLint cur_avail_mem_kb = 0;
-		glGetIntegerv(GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX,
-			&cur_avail_mem_kb);
-
-		ImGui::Text("VRAM budget:");
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(total_mem_kb) / 1024 / 1024);
+			//ImGui::Text("Version:");
+			//ImGui::SameLine();
+			//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "SDL %d.%d.%d", version->major,version->minor,version->patch);
 
 
-		ImGui::Text("VRAM usage:");
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)((total_mem_kb - cur_avail_mem_kb)) / 1024 / 1024);
+			ImGui::Text("CPUs:");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", SDL_GetCPUCount());
+
+			ImGui::Text("System RAM:");
+			ImGui::SameLine();
+			float ram = SDL_GetSystemRAM() / 1000;
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.1f Gb", ram);
+
+			ImGui::Text("Caps:");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), GetCapsString().c_str(), SDL_GetCPUCount());
+
+			ImGui::Text("GPU:");
+			ImGui::SameLine();
+			char* vendor = reinterpret_cast<char*>((unsigned char*)glGetString(GL_VENDOR));
+			char* version = reinterpret_cast<char*>((unsigned char*)glGetString(GL_VERSION));
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Vendor: %s Driver Version: %s", vendor, version);
+
+			ImGui::Text("Brand:");
+			ImGui::SameLine();
+
+			char* vRamBrand = reinterpret_cast<char*>((unsigned char*)glGetString(GL_RENDERER));
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), vRamBrand);
+
+			GLint total_mem_kb = 0;
+			glGetIntegerv(GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX,
+				&total_mem_kb);
+
+			GLint cur_avail_mem_kb = 0;
+			glGetIntegerv(GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX,
+				&cur_avail_mem_kb);
+
+			ImGui::Text("VRAM budget:");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(total_mem_kb) / 1024 / 1024);
 
 
-		ImGui::Text("VRAM available:");
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(cur_avail_mem_kb) / 1024 / 1024);
+			ImGui::Text("VRAM usage:");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)((total_mem_kb - cur_avail_mem_kb)) / 1024 / 1024);
 
 
-		ImGui::Text("VRAM reserved:");
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", 0.0f);
+			ImGui::Text("VRAM available:");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(cur_avail_mem_kb) / 1024 / 1024);
 
 
-		//const GLubyte* vendor = glGetString(GL_VENDOR);
-		//const GLubyte* version = glGetString(GL_VERSION);
-		//const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+			ImGui::Text("VRAM reserved:");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", 0.0f);
 
-		/*
-		SDL_GetCPUCacheLineSize();
-		SDL_GetCPUCount();*/
+
+			//const GLubyte* vendor = glGetString(GL_VENDOR);
+			//const GLubyte* version = glGetString(GL_VERSION);
+			//const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+			/*
+			SDL_GetCPUCacheLineSize();
+			SDL_GetCPUCount();*/
+		}
 	}
 
 
 	if (App->editorCamera != nullptr) {
 		if (ImGui::CollapsingHeader("Camera")) {
 			//ImGui::Text("To Do");
-			if (ImGui::Checkbox("Active", &active)) {
+			if (ImGui::Checkbox("Active", &cameraHeaderActive)) {}
+
+			if (cameraHeaderActive) {
+
+				float3 dummyFront;
+				dummyFront = App->editorCamera->GetFrustum()->Front();
+				if (ImGui::InputFloat3("Front", dummyFront.ptr())) {
+					//dummyFront.Normalize();
+					//App->editorCamera->GetFrustum()->SetFront(dummyFront);
+				}
+
+				dummyFront = App->editorCamera->GetFrustum()->Up();
+				if (ImGui::InputFloat3("Up", dummyFront.ptr())) {
+					//dummyFront.Normalize();
+					//App->editorCamera->GetFrustum()->SetUp(dummyFront);
+				}
+				float3 pos = App->editorCamera->GetFrustum()->Pos();
+				if (ImGui::InputFloat3("Pos", pos.ptr())) {
+					App->editorCamera->SetFrustumPos(pos);
+				}
+
+
+
+				//TO DO camera mov speed
+				if (ImGui::InputFloat("Mov Speed", &App->editorCamera->cameraSpeed)) {
+
+				}
+
+
+				//TO DO camera rot speed
+				if (ImGui::InputFloat("Rot Speed", &App->editorCamera->rotationSpeed)) {
+
+				}
+
+				//TO DO ZOOM SPEED
+				if (ImGui::InputFloat("Zoom Speed", &App->editorCamera->zoomSpeed)) {
+
+				}
+
+				if (ImGui::Checkbox("Frustum Culling", &App->editorCamera->frustumCulling)) {
+					//TO DO SET FRUSTUM CULLING
+				}
+
+				//TO DO NEAR PLANE
+				if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
+					App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);
+				}
+
+
+				//TO DO FAR PLANE
+				if (ImGui::InputFloat("Far Plane", &App->editorCamera->farPlaneDistance)) {
+					App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
+				}
+
+				//TO DO ASPECT RATIO
+				if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
+					App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
+				}
+
+				//TO DO BG COLOR
+				if (ImGui::InputFloat3("BG Color", App->renderer->bgColor.ptr())) {
+
+				}
+
+
+				//TO DO CURRENT DUMMY -NOT ASSIGNED YELLOW TEXT-
+				ImGui::Text("Current:");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0, 1.0, 0, 1.0), "Not assigned");
+
+				//TO DO BUTTON PICK ANOTHER
+				if (ImGui::ColorButton("Select other", ImVec4(0.7f, 0.0f, 0.0f, 0.7f))) {
+
+				}
+
+				//TO DO ISACTIVE CAMERA BOX
+				if (ImGui::Checkbox("Is Active Camera", &dummyBool)) {
+
+				}
+
 
 			}
-			float3 dummyFront;
-			dummyFront = App->editorCamera->GetFrustum()->Front();
-			if (ImGui::InputFloat3("Front", dummyFront.ptr())) {
-				//dummyFront.Normalize();
-				//App->editorCamera->GetFrustum()->SetFront(dummyFront);
-			}
-
-			dummyFront = App->editorCamera->GetFrustum()->Up();
-			if (ImGui::InputFloat3("Up", dummyFront.ptr())) {
-				//dummyFront.Normalize();
-				//App->editorCamera->GetFrustum()->SetUp(dummyFront);
-			}
-			float3 pos = App->editorCamera->GetFrustum()->Pos();
-			if (ImGui::InputFloat3("Pos", pos.ptr())) {
-				App->editorCamera->SetFrustumPos(pos);
-			}
-
-
-
-			//TO DO camera mov speed
-			if (ImGui::InputFloat("Mov Speed", &App->editorCamera->cameraSpeed)) {
-
-			}
-
-
-			//TO DO camera rot speed
-			if (ImGui::InputFloat("Rot Speed", &App->editorCamera->rotationSpeed)) {
-
-			}
-
-			//TO DO ZOOM SPEED
-			if (ImGui::InputFloat("Zoom Speed", &App->editorCamera->zoomSpeed)) {
-
-			}
-
-			if (ImGui::Checkbox("Frustum Culling", &App->editorCamera->frustumCulling)) {
-				//TO DO SET FRUSTUM CULLING
-			}
-
-			//TO DO NEAR PLANE
-			if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
-				App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);
-			}
-
-
-			//TO DO FAR PLANE
-			if (ImGui::InputFloat("Far Plane", &App->editorCamera->farPlaneDistance)) {
-				App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
-			}
-
-			//TO DO ASPECT RATIO
-			if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
-				App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
-			}
-
-			//TO DO BG COLOR
-			if (ImGui::InputFloat3("BG Color", App->renderer->bgColor.ptr())) {
-
-			}
-
-
-			//TO DO CURRENT DUMMY -NOT ASSIGNED YELLOW TEXT-
-			ImGui::Text("Current:");
-			ImGui::SameLine();
-			ImGui::TextColored(ImVec4(1.0, 1.0, 0, 1.0), "Not assigned");
-
-			//TO DO BUTTON PICK ANOTHER
-			if (ImGui::ColorButton("Select other", ImVec4(0.7f, 0.0f, 0.0f, 0.7f))) {
-
-			}
-
-			//TO DO ISACTIVE CAMERA BOX
-			if (ImGui::Checkbox("Is Active Camera", &dummyBool)) {
-
-			}
-
-
 		}
 	}
-
 	if (ImGui::CollapsingHeader("About")) {
 		ImGui::Text("Current:");
 		static char engineNameBuff[32] = "Master Engine";

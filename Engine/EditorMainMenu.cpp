@@ -34,8 +34,12 @@ update_status EditorMainMenu::Draw() {
 
 				SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "About", messageBuff, App->window->window);
 			}
-
-
+			if (App->window->fullscreen) {
+				if (ImGui::MenuItem("Exit FullScreen", "ALT + F")) {
+					App->window->fullscreen = !App->window->fullscreen;
+					App->window->SetFlag(SDL_WINDOW_FULLSCREEN);
+				}
+			}
 
 			if (ImGui::MenuItem("Exit", "ALT + F4")) {
 				return UPDATE_STOP;
