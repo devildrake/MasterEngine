@@ -11,6 +11,7 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleInput.h";
 #include "../EditorMainMenu.h"
+#include "../PropertiesWindow.h"
 //#include "ImGui/imconfig.h"
 //
 //ModuleEditor::ModuleEditor() : console(ConsoleWindow("Console")), configMenu(ConfigWindow("Configuration")) {
@@ -22,8 +23,7 @@
 
 ModuleEditor::ModuleEditor() {
 	console = new ConsoleWindow("Console");
-	configWindow = new ConfigWindow("Configuration");
-	mainMenu = new EditorMainMenu(&console->isOpen, &configWindow->isOpen);
+
 	frameCap = 60.0f;
 }
 
@@ -47,6 +47,10 @@ bool ModuleEditor::Start() {
 	if (!ImGui_ImplOpenGL3_Init()) {
 		return false;
 	}
+
+	configWindow = new ConfigWindow("Configuration");
+	mainMenu = new EditorMainMenu(&console->isOpen, &configWindow->isOpen);
+	propertiesWindow = new PropertiesWindow("Properties");
 	return true;
 }
 
@@ -63,8 +67,9 @@ update_status ModuleEditor::Update() {
 
 	console->Draw();
 	configWindow->Draw();
- 	return 	mainMenu->Draw();
- }
+	propertiesWindow->Draw();
+	return 	mainMenu->Draw();
+}
 update_status ModuleEditor::PostUpdate() {
 
 	ImGui::Render();

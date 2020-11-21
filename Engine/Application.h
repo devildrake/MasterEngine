@@ -1,10 +1,10 @@
 #pragma once
 
-#include <list>
 #include "Utilities/Globals.h"
 #include "Modules/Module.h"
 #include "MathGeoLib/Time/Clock.h"
 #include "Utilities/LTimer.h"
+#include <list>
 
 class ModuleRender;
 class ModuleWindow;
@@ -14,6 +14,7 @@ class ModuleRenderExercise;
 class ModuleEditorCamera;
 class ModuleEditor;
 class ModuleDebugDraw;
+class ModuleScene;
 
 //class ModuleHelloTriangleExcercise;
 //class ModuleTransformedTriangleExcercise;
@@ -41,6 +42,7 @@ public:
 	ModuleEditorCamera* editorCamera = nullptr;
 	ModuleEditor* editor = nullptr;
 	ModuleDebugDraw* debugDraw = nullptr;
+	ModuleScene* scene = nullptr;
 	//ModuleHelloTriangleExcercise* triangleExcercise = nullptr;
 	//ModuleTransformedTriangleExcercise* transformedTriangleExcercise = nullptr;
 	//ModuleTransformedTexturedTriangleExcercise* transformedTexturedTriangleExcercise = nullptr;

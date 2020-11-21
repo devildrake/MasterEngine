@@ -165,6 +165,8 @@
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="ConfigWindow.cpp" />
     <ClCompile Include="EditorMainMenu.cpp" />
+    <ClCompile Include="PropertiesWindow.cpp" />
+    <ClCompile Include="Modules\ModuleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -521,6 +523,8 @@
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="ConfigWindow.h" />
     <ClInclude Include="EditorMainMenu.h" />
+    <ClInclude Include="PropertiesWindow.h" />
+    <ClInclude Include="Modules\ModuleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

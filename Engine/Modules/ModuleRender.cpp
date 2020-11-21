@@ -65,12 +65,25 @@ bool ModuleRender::Init()
 	return true;
 }
 
+void ModuleRender::AddModel(Model* m) {
+	if (m == nullptr)return;
+	models.push_back(m);
+}
+
+void ModuleRender::RemoveModel(Model* m) {
+	if (m == nullptr)return;
+	models.remove(m);
+}
+
 bool ModuleRender::Start() {
 	default_shader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
 	App->input->SetLastFileDroppedOnWindow("BakerHouse.fbx");
+
+	//currentModel = new Model("BakerHouse.fbx");
+
+	//AddModel(currentModel);
+
 	//currentModel = new Model("PenguinBaseMesh.obj");
-	currentModel = new Model("BakerHouse.fbx");
-	models.push_back(currentModel);
 	return true;
 }
 
@@ -96,30 +109,31 @@ const unsigned ModuleRender::GetDefaultShaderID() const {
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	const char* lastFile = App->input->GetLastFileDroppedOnWindow();
 
-	if (lastFile != nullptr) {
+	//const char* lastFile = App->input->GetLastFileDroppedOnWindow();
 
-		if (currentModel->GetFileName() != lastFile) {
+	//if (lastFile != nullptr) {
 
-			Model* newModel = new Model();
-			if (Model::SceneFound(lastFile)) {
-				models.remove(currentModel);
-				delete currentModel;
-				if (newModel->Load(lastFile)) {
-					currentModel = newModel;
-					models.push_back(currentModel);
-				}
-				else {
-					currentModel = nullptr;
-					delete newModel;
-				}
-			}
-			else {
-				delete newModel;
-			}
-		}
-	}
+	//	if (currentModel->GetFileName() != lastFile) {
+
+	//		Model* newModel = new Model();
+	//		if (Model::SceneFound(lastFile)) {
+	//			App->renderer->RemoveModel(currentModel);
+	//			delete currentModel;
+	//			if (newModel->Load(lastFile)) {
+	//				currentModel = newModel;
+	//				App->renderer->AddModel(currentModel);
+	//			}
+	//			else {
+	//				currentModel = nullptr;
+	//				delete newModel;
+	//			}
+	//		}
+	//		else {
+	//			delete newModel;
+	//		}
+	//	}
+	//}
 
 	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
 		(*it)->Draw();
@@ -162,7 +176,9 @@ bool ModuleRender::CleanUp()
 	LOG("Destroying renderer");
 
 	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
-		delete* it;
+		if (*it != nullptr){
+			delete* it;
+		}
 	}
 	models.clear();
 

@@ -6,7 +6,7 @@
 #include <assimp/postprocess.h>
 #include "Leaks.h"
 
-Model::Model(const char* new_file) {
+Model::Model(const char* new_file) :position(float3::zero), scale(float3::one), rotation(float3::zero) {
 	Load(new_file);
 }
 
@@ -20,6 +20,50 @@ Model::~Model() {
 	meshes.clear();
 }
 
+void Model::SetRotation(float3 newRot) {
+	rotation = newRot;
+}
+
+void Model::SetScale(float3 newScale) {
+	scale = newScale;
+}
+
+void Model::SetPos(float3 newPos) {
+	position = newPos;
+}
+
+const float3 Model::Position()const {
+	return position;
+}
+
+const float3 Model::Scale()const {
+	return scale;
+}
+
+const float3 Model::Rotation()const {
+	return rotation;
+}
+
+const int Model::GetVertices() const {
+	int temp = 0;
+
+	for (std::vector<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
+		temp += (*it)->GetVertices();
+	}
+
+	return temp;
+}
+
+const int Model::GetTris()const {
+	int temp = 0;
+
+	for (std::vector<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
+		temp += (*it)->GetTris();
+	}
+
+	return temp;
+}
+
 const bool Model::SceneFound(const char* file_name) {
 	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
 	return scene;
@@ -31,7 +75,7 @@ const std::string Model::GetFileName()const {
 
 void Model::Draw() {
 	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
-		(*it)->Draw(materials);
+		(*it)->Draw(materials, position, scale, rotation);
 	}
 }
 
@@ -43,8 +87,6 @@ std::string nameAsPNG(aiString name) {
 Model::Model() {
 
 }
-
-
 
 const bool Model::Load(const char* file_name)
 {

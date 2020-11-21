@@ -1,7 +1,6 @@
 #include "Mesh.h"
 #include "Mesh.h"
 #include <glew.h>
-#include "MathGeoLib/MathGeoLib.h"
 #include "Application.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditorCamera.h"
@@ -39,6 +38,14 @@ void Mesh::ReleaseTextures() {
 void Mesh::SetTexture(int index, std::string path) {
 	texture_path = path;
 	material_index = index;
+}
+
+const int Mesh::GetTris()const {
+	return num_vertices;
+}
+
+const int Mesh::GetVertices()const {
+	return num_faces;
 }
 
 
@@ -80,6 +87,7 @@ void Mesh::LoadEBO(const aiMesh* mesh)
 	}
 	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 	num_indices = mesh->mNumFaces * 3;
+	num_faces = mesh->mNumFaces;
 }
 
 void Mesh::CreateVAO()
@@ -95,12 +103,15 @@ void Mesh::CreateVAO()
 	glBindVertexArray(0);
 }
 
-void Mesh::Draw(const std::vector<unsigned>& model_textures)
+void Mesh::Draw(const std::vector<unsigned>& model_textures, float3 pos, float3 scale, float3 rotation)
 {
 	unsigned program = App->renderer->GetDefaultShaderID();
 	const float4x4& view = App->editorCamera->GetFrustum()->ViewMatrix();
 	const float4x4& proj = App->editorCamera->GetFrustum()->ProjectionMatrix();
 	float4x4 model = float4x4::identity;
+	model = float4x4::RotateX(DegToRad(rotation.x)) * float4x4::RotateY(DegToRad(rotation.y)) * float4x4::RotateZ(DegToRad(rotation.z)) * float4x4::Translate(pos) * float4x4::Scale(scale) * model;
+
+
 	glUseProgram(program);
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&model);
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);

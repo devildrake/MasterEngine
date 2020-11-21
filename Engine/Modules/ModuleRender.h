@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MODULE_RENDER_H
+#define MODULE_RENDER_H
 #include "Module.h"
 #include "SDL.h"
 #include "../Utilities/Globals.h"
@@ -23,15 +24,17 @@ public:
 	SDL_GLContext GetContext();
 	const unsigned GetDefaultShaderID()const;
 	friend class ConfigWindow;
-
+	void AddModel(Model* m);
+	void RemoveModel(Model* m);
 	//bool AddModel(Model* model);
 	//bool RemoveModel(Model* model);
 
 private:
+
 	void* context;
 	float3 bgColor;
-	Model* currentModel;
 	std::list<Model*> models;
 	SDL_GLContext glcontext;
 	Shader* default_shader;
 };
+#endif
