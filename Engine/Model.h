@@ -3,13 +3,11 @@
 #include <vector>
 #include "Mesh.h"
 #include <assimp/scene.h>
-#include "MathGeoLib/Math/float3.h"
+#include "Transform.h"
 class Model {
 
 private:
-	float3 position;
-	float3 scale;
-	float3 rotation;
+	Transform transform;
 	std::vector<unsigned> materials;
 	std::vector<Mesh*> meshes;
 	std::string file_name;

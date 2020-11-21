@@ -233,6 +233,7 @@
     <ClInclude Include="Modules\ModuleTextures.h" />
     <ClInclude Include="PropertiesWindow.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Utilities\debugdraw.h" />
     <ClInclude Include="Utilities\debug_draw.hpp" />
     <ClInclude Include="Utilities\Globals.h" />
@@ -348,6 +349,7 @@
     <ClCompile Include="Modules\ModuleTextures.cpp" />
     <ClCompile Include="PropertiesWindow.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities\log.cpp" />
     <ClCompile Include="Utilities\LTimer.cpp" />
     <ClCompile Include="Main.cpp" />

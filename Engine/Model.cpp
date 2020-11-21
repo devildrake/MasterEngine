@@ -6,7 +6,7 @@
 #include <assimp/postprocess.h>
 #include "Leaks.h"
 
-Model::Model(const char* new_file) :position(float3::zero), scale(float3::one), rotation(float3::zero) {
+Model::Model(const char* new_file) :transform(Transform()) {
 	Load(new_file);
 }
 
@@ -21,27 +21,27 @@ Model::~Model() {
 }
 
 void Model::SetRotation(float3 newRot) {
-	rotation = newRot;
+	transform.rotation = newRot;
 }
 
 void Model::SetScale(float3 newScale) {
-	scale = newScale;
+	transform.scale = newScale;
 }
 
 void Model::SetPos(float3 newPos) {
-	position = newPos;
+	transform.position = newPos;
 }
 
 const float3 Model::Position()const {
-	return position;
+	return transform.position;
 }
 
 const float3 Model::Scale()const {
-	return scale;
+	return transform.scale;
 }
 
 const float3 Model::Rotation()const {
-	return rotation;
+	return transform.rotation;
 }
 
 const int Model::GetVertices() const {
@@ -75,7 +75,7 @@ const std::string Model::GetFileName()const {
 
 void Model::Draw() {
 	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
-		(*it)->Draw(materials, position, scale, rotation);
+		(*it)->Draw(materials, transform);
 	}
 }
 

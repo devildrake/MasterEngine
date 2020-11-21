@@ -10,7 +10,6 @@
 #include "glew.h"
 #include "Leaks.h"
 
-
 std::string ConfigWindow::GetCapsString() {
 	std::string capsString = "";
 
@@ -56,17 +55,24 @@ std::string ConfigWindow::GetCapsString() {
 	return capsString;
 }
 
-ConfigWindow::ConfigWindow(const char* aConfigName) : ImGuiWindow(aConfigName), hardwareHeaderActive(true), dummyBool(true), cameraHeaderActive(true), windowHeaderActive(true), applicationHeaderActive(true) {
+ConfigWindow::ConfigWindow(const char* aConfigName) : ImGuiWindow(aConfigName), hardwareHeaderActive(true), cameraHeaderActive(true), windowHeaderActive(true), applicationHeaderActive(true) {
 	for (int i = 0; i < FRAMECOUNT; i++) {
 		times[i] = 0;
 		frames[i] = 0;
 	}
 	frameCounter = 0;
+	SDL_GetVersion(&sdl_version);
+	imgui_version = ImGui::GetVersion();
+	glew_version = (const char*)glewGetString(GLEW_VERSION);
+
+	SDL_DisplayMode mode;
+	SDL_GetDisplayMode(0, 0, &mode);
+	refresh_rate = mode.refresh_rate;
 }
+
 
 ConfigWindow::~ConfigWindow() {
 	windowName = "";
-	//windowName.clear();
 }
 
 void ConfigWindow::AddFrame(float deltaTime) {
@@ -98,25 +104,21 @@ void ConfigWindow::Draw() {
 
 			static char appNameBuff[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
 			static char organizationBuff[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
-			//static char buf[32] = u8"NIHONGO"; // <- this is how you would write it with C++11, using real kanjis
 			ImGui::InputText("App Name", appNameBuff, IM_ARRAYSIZE(appNameBuff));
 			ImGui::InputText("Organization", organizationBuff, IM_ARRAYSIZE(organizationBuff));
 
 			if (ImGui::SliderInt("Max Fps", &App->editor->frameCap, 30, 90)) {
 				App->SetFrameCap(App->editor->frameCap);
 			}
-			//const float values[60];
-
-			//ImVec2 size = ImGui::GetItemRectSize();
-
-			char title[25];
-			sprintf_s(title, 25, "Framerate %.1f", frames[FRAMECOUNT - 1]);
 
 			ImGui::PlotHistogram("##framerate", frames, IM_ARRAYSIZE(frames), 0, NULL, 0.0f, 100.0f, ImVec2(310, 100));
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "FrameRate");
 
-			sprintf_s(title, 25, "Milliseconds %0.1f", frames[FRAMECOUNT - 1]);
+			ImGui::PlotHistogram("##times", times, IM_ARRAYSIZE(times), 0, NULL, 0.0f, 32, ImVec2(310, 100));
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Times");
 
-			ImGui::PlotHistogram("##framerate", times, IM_ARRAYSIZE(times), 0, NULL, 0.0f, 32, ImVec2(310, 100));
 		}
 	}
 
@@ -137,7 +139,8 @@ void ConfigWindow::Draw() {
 			}
 
 			ImGui::Text("Refresh rate: ");
-			ImGui::TextColored(ImVec4(255, 255, 0, 1), "%d", 59);
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(255, 255, 0, 1), "%d", refresh_rate);
 
 			if (ImGui::Checkbox("FullScreen", &App->window->fullscreen)) {
 				App->window->SetFlag(SDL_WINDOW_FULLSCREEN);
@@ -162,14 +165,6 @@ void ConfigWindow::Draw() {
 	if (ImGui::CollapsingHeader("Hardware")) {
 		if (ImGui::Checkbox("Active", &hardwareHeaderActive)) {}
 		if (hardwareHeaderActive) {
-			//TO DO ACTIVE BOX
-			//SDL_version* version;
-			//SDL_GetVersion(version);
-
-			//ImGui::Text("Version:");
-			//ImGui::SameLine();
-			//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "SDL %d.%d.%d", version->major,version->minor,version->patch);
-
 
 			ImGui::Text("CPUs:");
 			ImGui::SameLine();
@@ -204,6 +199,10 @@ void ConfigWindow::Draw() {
 			glGetIntegerv(GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX,
 				&cur_avail_mem_kb);
 
+			//GLint reserved_mem_kb = 0;
+			//glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &reserved_mem_kb);
+
+
 			ImGui::Text("VRAM budget:");
 			ImGui::SameLine();
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(total_mem_kb) / 1024 / 1024);
@@ -219,18 +218,10 @@ void ConfigWindow::Draw() {
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(cur_avail_mem_kb) / 1024 / 1024);
 
 
-			ImGui::Text("VRAM reserved:");
-			ImGui::SameLine();
-			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", 0.0f);
+			//ImGui::Text("VRAM reserved:");
+			//ImGui::SameLine();
+			//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(reserved_mem_kb) / 1024 / 1024);
 
-
-			//const GLubyte* vendor = glGetString(GL_VENDOR);
-			//const GLubyte* version = glGetString(GL_VERSION);
-			//const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-			/*
-			SDL_GetCPUCacheLineSize();
-			SDL_GetCPUCount();*/
 		}
 	}
 
@@ -297,33 +288,12 @@ void ConfigWindow::Draw() {
 					App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
 				}
 
-				//TO DO BG COLOR
-				if (ImGui::InputFloat3("BG Color", App->renderer->bgColor.ptr())) {
-
-				}
-
-
-				//TO DO CURRENT DUMMY -NOT ASSIGNED YELLOW TEXT-
-				ImGui::Text("Current:");
-				ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0, 1.0, 0, 1.0), "Not assigned");
-
-				//TO DO BUTTON PICK ANOTHER
-				if (ImGui::ColorButton("Select other", ImVec4(0.7f, 0.0f, 0.0f, 0.7f))) {
-
-				}
-
-				//TO DO ISACTIVE CAMERA BOX
-				if (ImGui::Checkbox("Is Active Camera", &dummyBool)) {
-
-				}
-
+				ImGui::ColorEdit3("BG Color", App->renderer->bgColor.ptr());
 
 			}
 		}
 	}
 	if (ImGui::CollapsingHeader("About")) {
-		ImGui::Text("Current:");
 		static char engineNameBuff[32] = "Master Engine";
 		static char descBuff[128] = "Engine made for the master's degree at UPC";
 		static char authorBuff[32] = "By David Sierra";
@@ -333,11 +303,13 @@ void ConfigWindow::Draw() {
 		ImGui::InputText("Author", authorBuff, IM_ARRAYSIZE(authorBuff));
 
 		if (ImGui::CollapsingHeader("Libraries used")) {
-			ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "Glew 2.1.0");
-			ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "MathGeoLib v1.5");
-			ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "ImGui Docking 1.79");
-			ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "SDL 2.0");
+			ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "Glew Version %s", glew_version);
 
+			ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "MathGeoLib v1.5");
+
+			ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "ImGui version %s", imgui_version);
+
+			ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "SDL version %d.%d.%d", sdl_version.major, sdl_version.major, sdl_version.patch);
 		}
 
 		ImGui::TextColored(ImVec4(1.0, 1.0, 0.0, 1), "License: GNU General Public License v3.0");

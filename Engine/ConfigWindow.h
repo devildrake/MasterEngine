@@ -3,19 +3,22 @@
 #include "ImGuiWindow.h"
 #include <vector>
 #include <string>
+#include <SDL.h>
 
-#define FRAMECOUNT 30
+#define FRAMECOUNT 60
 
 
 class ConfigWindow :public ImGuiWindow {
 private:
 	std::pair< ImVec2, ImVec2> bounds;
 	bool applicationHeaderActive, windowHeaderActive, hardwareHeaderActive, cameraHeaderActive;
-	bool dummyBool;
 	float frames[FRAMECOUNT];
 	float times[FRAMECOUNT];
 	int frameCounter;
-
+	SDL_version sdl_version;
+	const char* imgui_version;
+	const char* glew_version;
+	int refresh_rate;
 public:
 	ConfigWindow(const char* windowName);
 	~ConfigWindow();

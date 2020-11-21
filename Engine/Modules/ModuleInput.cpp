@@ -128,17 +128,19 @@ update_status ModuleInput::PreUpdate() {
 			return UPDATE_STOP;
 		case SDL_WINDOWEVENT:
 			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-				if (App->renderer != nullptr) {
-					App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-				}
-				if (App->window != nullptr) {
-					App->window->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+				if (sdlEvent.window.windowID == SDL_GetWindowID(App->window->window)) {
+					if (App->renderer != nullptr) {
+						App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+					}
+					if (App->window != nullptr) {
+						App->window->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+					}
+
+					if (App->editorCamera != nullptr) {
+						App->editorCamera->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+					}
 				}
 
-				if (App->editorCamera != nullptr) {
-					App->editorCamera->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-
-				}
 			}
 			else if (sdlEvent.window.event == SDL_WINDOWEVENT_LEAVE) {
 				//App->renderer->MouseLeftWindow();

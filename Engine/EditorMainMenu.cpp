@@ -3,7 +3,7 @@
 #include "SDL/include/SDL.h"
 #include "Application.h"
 #include "Modules/ModuleWindow.h"
-EditorMainMenu::EditorMainMenu(bool* consoleWindowOpen, bool* configWindowOpen) : consoleOpen(consoleWindowOpen), configOpen(configWindowOpen) {
+EditorMainMenu::EditorMainMenu(bool* consoleWindowOpen, bool* configWindowOpen, bool* propertiesWindowOpen) : consoleOpen(consoleWindowOpen), configOpen(configWindowOpen), propertiesOpen(propertiesWindowOpen) {
 
 }
 
@@ -19,6 +19,8 @@ update_status EditorMainMenu::Draw() {
 				if (ImGui::MenuItem("Console Window", "CTRL+Y", consoleOpen)) {}
 			if (configOpen != nullptr)
 				if (ImGui::MenuItem("Configuration Window", "CTRL+U", configOpen)) {}
+			if (propertiesOpen != nullptr)
+				if (ImGui::MenuItem("Properties Window", "CTRL+P", propertiesOpen)) {}
 
 #ifdef _WIN32
 			if (ImGui::MenuItem("Open Github repository", "")) {

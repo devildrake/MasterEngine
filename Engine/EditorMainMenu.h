@@ -9,8 +9,9 @@ class EditorMainMenu {
 private:
 	bool* consoleOpen = nullptr;
 	bool* configOpen = nullptr;
+	bool* propertiesOpen = nullptr;
 public:
-	EditorMainMenu(bool* consoleWindowOpen, bool* configWindowOpen);
+	EditorMainMenu(bool* consoleWindowOpen, bool* configWindowOpen, bool* propertiesWindowOpen);
 	update_status Draw();
 };
 

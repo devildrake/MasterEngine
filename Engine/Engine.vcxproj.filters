@@ -167,6 +167,7 @@
     <ClCompile Include="EditorMainMenu.cpp" />
     <ClCompile Include="PropertiesWindow.cpp" />
     <ClCompile Include="Modules\ModuleScene.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -525,6 +526,7 @@
     <ClInclude Include="EditorMainMenu.h" />
     <ClInclude Include="PropertiesWindow.h" />
     <ClInclude Include="Modules\ModuleScene.h" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

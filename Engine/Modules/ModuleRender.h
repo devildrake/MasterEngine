@@ -26,8 +26,6 @@ public:
 	friend class ConfigWindow;
 	void AddModel(Model* m);
 	void RemoveModel(Model* m);
-	//bool AddModel(Model* model);
-	//bool RemoveModel(Model* model);
 
 private:
 

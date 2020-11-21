@@ -12,20 +12,8 @@
 #include "ModuleInput.h";
 #include "../EditorMainMenu.h"
 #include "../PropertiesWindow.h"
-//#include "ImGui/imconfig.h"
-//
-//ModuleEditor::ModuleEditor() : console(ConsoleWindow("Console")), configMenu(ConfigWindow("Configuration")) {
-//	//console = new ConsoleWindow("Console");
-//	frameCap = 60.0f;
-//}
 
-
-
-ModuleEditor::ModuleEditor() {
-	console = new ConsoleWindow("Console");
-
-	frameCap = 60.0f;
-}
+ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr) {}
 
 ModuleEditor::~ModuleEditor() {
 	//delete console;
@@ -49,8 +37,9 @@ bool ModuleEditor::Start() {
 	}
 
 	configWindow = new ConfigWindow("Configuration");
-	mainMenu = new EditorMainMenu(&console->isOpen, &configWindow->isOpen);
 	propertiesWindow = new PropertiesWindow("Properties");
+	mainMenu = new EditorMainMenu(&console->isOpen, &configWindow->isOpen, &propertiesWindow->isOpen);
+
 	return true;
 }
 
@@ -73,7 +62,7 @@ update_status ModuleEditor::Update() {
 update_status ModuleEditor::PostUpdate() {
 
 	ImGui::Render();
-	//Context handling
+	//ImGuiContext handling
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -96,15 +85,15 @@ bool ModuleEditor::CleanUp() {
 
 	delete console;
 	delete configWindow;
+	delete propertiesWindow;
 	delete mainMenu;
 	console = nullptr;
 	configWindow = nullptr;
 	mainMenu = nullptr;
+	propertiesWindow = nullptr;
 	return true;
 }
 
 ConsoleWindow* ModuleEditor::GetConsole() {
 	return console;
 }
-
-//MyType const& MyClass::getMyType() const { return mMyType; }

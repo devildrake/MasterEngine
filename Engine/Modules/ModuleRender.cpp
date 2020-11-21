@@ -78,12 +78,6 @@ void ModuleRender::RemoveModel(Model* m) {
 bool ModuleRender::Start() {
 	default_shader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
 	App->input->SetLastFileDroppedOnWindow("BakerHouse.fbx");
-
-	//currentModel = new Model("BakerHouse.fbx");
-
-	//AddModel(currentModel);
-
-	//currentModel = new Model("PenguinBaseMesh.obj");
 	return true;
 }
 
@@ -94,7 +88,6 @@ update_status ModuleRender::PreUpdate()
 
 	glViewport(0, 0, App->window->screen_surface->w, App->window->screen_surface->h);
 	glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
-	//glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return UPDATE_CONTINUE;
@@ -110,59 +103,12 @@ const unsigned ModuleRender::GetDefaultShaderID() const {
 update_status ModuleRender::Update()
 {
 
-	//const char* lastFile = App->input->GetLastFileDroppedOnWindow();
-
-	//if (lastFile != nullptr) {
-
-	//	if (currentModel->GetFileName() != lastFile) {
-
-	//		Model* newModel = new Model();
-	//		if (Model::SceneFound(lastFile)) {
-	//			App->renderer->RemoveModel(currentModel);
-	//			delete currentModel;
-	//			if (newModel->Load(lastFile)) {
-	//				currentModel = newModel;
-	//				App->renderer->AddModel(currentModel);
-	//			}
-	//			else {
-	//				currentModel = nullptr;
-	//				delete newModel;
-	//			}
-	//		}
-	//		else {
-	//			delete newModel;
-	//		}
-	//	}
-	//}
-
 	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
 		(*it)->Draw();
 	}
 
 	return UPDATE_CONTINUE;
 }
-
-//
-//bool ModuleRender::AddModel(Model* model) {
-//	modelsToDraw.push_back(model);
-//	return true;
-//}
-//
-//bool ModuleRender::RemoveModel(Model* model) {
-//	if (model == nullptr) return true;
-//
-//	std::vector<Model*>::iterator it = modelsToDraw.begin();
-//	bool found = false;
-//	while (!found && it != modelsToDraw.end()) {
-//		if ((*it) == model) {
-//			modelsToDraw.erase(it);
-//			found = true;
-//		}
-//		++it;
-//	}
-//
-//	return found;
-//}
 
 update_status ModuleRender::PostUpdate()
 {
@@ -176,7 +122,7 @@ bool ModuleRender::CleanUp()
 	LOG("Destroying renderer");
 
 	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
-		if (*it != nullptr){
+		if (*it != nullptr) {
 			delete* it;
 		}
 	}

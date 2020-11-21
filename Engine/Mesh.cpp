@@ -7,7 +7,7 @@
 #include <assimp/mesh.h>
 #include "Leaks.h"
 #include "Modules/ModuleTextures.h"
-
+#include "Transform.h"
 
 Mesh::Mesh(const aiMesh* mesh) {
 	LoadVBO(mesh);
@@ -103,13 +103,14 @@ void Mesh::CreateVAO()
 	glBindVertexArray(0);
 }
 
-void Mesh::Draw(const std::vector<unsigned>& model_textures, float3 pos, float3 scale, float3 rotation)
+void Mesh::Draw(const std::vector<unsigned>& model_textures, Transform transform)
 {
 	unsigned program = App->renderer->GetDefaultShaderID();
 	const float4x4& view = App->editorCamera->GetFrustum()->ViewMatrix();
 	const float4x4& proj = App->editorCamera->GetFrustum()->ProjectionMatrix();
 	float4x4 model = float4x4::identity;
-	model = float4x4::RotateX(DegToRad(rotation.x)) * float4x4::RotateY(DegToRad(rotation.y)) * float4x4::RotateZ(DegToRad(rotation.z)) * float4x4::Translate(pos) * float4x4::Scale(scale) * model;
+	model = float4x4::RotateX(DegToRad(transform.rotation.x)) * float4x4::RotateY(DegToRad(transform.rotation.y)) * float4x4::RotateZ(DegToRad(transform.rotation.z)) * float4x4::Translate(transform.position) * float4x4::Scale(transform.scale) * model;
+
 
 
 	glUseProgram(program);
