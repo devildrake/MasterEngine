@@ -10,6 +10,8 @@ struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;
 
+class Model;
+
 class ModuleEditorCamera : public Module
 {
 public:
@@ -27,13 +29,14 @@ public:
 	void SendProjectionMatrix();
 	void SetFrustumPos(float3 newPos);
 	Frustum* GetFrustum();
-
 	const float GetNearPlane()const;
 	const float GetFarPlane()const;
 	void SetNearPlane(float);
 	void SetFarPlane(float);
 	void SetAspectRatio(float);
-	void FocusOn(float3, float);
+	void FocusOn(Model* m, float);
+	void SetTargetModel(Model* m);
+
 private:
 	friend class ConfigWindow;
 	Frustum frustum;
@@ -49,7 +52,7 @@ private:
 	bool frustumCulling;
 	float3 frustumPosition;
 	float nearPlaneDistance, farPlaneDistance;
-
+	Model* targetModel = nullptr;
 private:
 	const float4x4 GetTransposedProjectionMatrix()const;
 	const float4x4 GetTransposedViewModelMatrix()const;
@@ -59,5 +62,7 @@ private:
 
 	const bool WarpMouseTooCloseToEdges(float3, float)const;
 	void ApplyUpdatedPitchYawToFrustum();
+	const float GetDistanceBasedOnBoundingBox(Model* m, float distanceFactor)const;
+
 };
 #endif

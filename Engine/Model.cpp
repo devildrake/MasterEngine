@@ -5,6 +5,8 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include "Leaks.h"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
 
 Model::Model(const char* new_file) :transform(Transform()) {
 	Load(new_file);
@@ -88,12 +90,200 @@ Model::Model() {
 
 }
 
+void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPath, std::string modelPath) {
+	const char* matName = mat->GetName().C_Str();
+	aiReturn ret;
+	aiString materialNameA;
+	GLuint tex;
+	ret = mat->Get(AI_MATKEY_NAME, materialNameA);//Get the material name (pass by reference)
+
+
+	int lastSlash = 0;
+	for (int i = modelPath.size(); i > 0 && lastSlash == 0; --i) {
+		if (modelPath[i] == '\\') {
+			lastSlash = i;
+		}
+	}
+
+
+
+	bool success = false;
+	if (ret == AI_SUCCESS) {
+
+	}
+
+	if (mat->GetTexture(aiTextureType_NONE, 0, &file) == AI_SUCCESS) {
+		LOG("%s was found to be a NONE type texture", matName);
+	}
+	else if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Diffuse texture", matName);
+		*materialPath = file.C_Str();
+		success = App->textures->LoadTexture(file.C_Str(), &tex);
+		std::string withModelPath = modelPath.substr(0, lastSlash) + "\\" + file.C_Str();
+		std::string withTexturesFolderPath = App->textures->GetTexturesFolderName() + "\\" + file.C_Str();
+		if (!success) {
+			success = App->textures->LoadTexture(withModelPath, &tex);
+			*materialPath = withModelPath;
+
+		}
+		if (!success) {
+			success = App->textures->LoadTexture(withTexturesFolderPath, &tex);
+			*materialPath = withTexturesFolderPath;
+
+		}
+
+	}
+	else if (mat->GetTexture(aiTextureType_SPECULAR, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Specular texture", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_AMBIENT, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Ambient texture", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_EMISSIVE, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Emissive", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_HEIGHT, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as HeightMap", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_NORMALS, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Normals", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_SHININESS, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Shininess", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_OPACITY, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Opacity", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_DISPLACEMENT, 0, &file) == AI_SUCCESS) {
+		LOG("Loaded %s as Displacement", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_LIGHTMAP, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as LightMap", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_REFLECTION, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Reflection ", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_BASE_COLOR, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Base Color", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Normal camera", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_EMISSION_COLOR, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Emission color", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_METALNESS, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Metalness ", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Diffuse roughness", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Ambient Oclussion", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	else if (mat->GetTexture(aiTextureType_UNKNOWN, 0, &file) == AI_SUCCESS) {
+		LOG("Trying to load  %s as Unknown texture", matName);
+		*materialPath = file.C_Str();
+		if (App->textures->LoadTexture(file.C_Str(), &tex)) {
+			success = true;
+		}
+	}
+	//else {
+	//	LOG("Trying to load a hardcoded .png with material name %s", matName);
+	//	*materialPath = nameAsPNG(aiString(matName));
+
+	//	std::string actualFilePath = file.C_Str() + *materialPath;
+
+	//	if (App->textures->LoadTexture(*materialPath, &tex)) {
+	//		success = true;
+	//	}
+	//}
+
+	if (!success) {
+		LOG("Failed to load %s", matName);
+	}
+	else {
+		materials.push_back(tex);
+	}
+
+}
+
 const bool Model::Load(const char* file_name)
 {
 
 	LOG("Trying to load %s...", file_name);
 
-	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
+	//const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(file_name, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
+
+	boundingBox.first = float3(10000, 10000, 10000);
+	boundingBox.second = float3(0, 0, 0);
+
 	if (scene)
 	{
 		this->file_name = file_name;
@@ -103,123 +293,8 @@ const bool Model::Load(const char* file_name)
 
 		for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
 
-			LOG("Trying to load %s...", scene->mMaterials[i]->GetName().C_Str());
-
-			//materialName = scene->mMaterials[i]->GetName();
-			//materialPath = nameAsPNG(materialName);
-
-			//materials.push_back(App->textures->LoadTexture(nameAsPNG(materialName).c_str()));
-
-
-			//materials.push_back(App->textures->LoadTexture(scene->mMaterials[i]->GetName().C_Str()));
-			aiMaterial* mat = scene->mMaterials[i];
-
-			if (scene->mMaterials[i]->GetTexture(aiTextureType_NONE, 0, &file) == AI_SUCCESS) {
-				LOG("%s was found to be a NONE type texture", scene->mMaterials[i]->GetName().C_Str());
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Diffuse texture", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_SPECULAR, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Specular texture", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_AMBIENT, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Ambient texture", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_EMISSIVE, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Emissive", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_HEIGHT, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as HeightMap", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_NORMALS, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Normals", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_SHININESS, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Shininess", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_OPACITY, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Opacity", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_DISPLACEMENT, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Displacement", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_LIGHTMAP, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as LightMap", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_REFLECTION, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Reflection ", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_BASE_COLOR, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Base Color", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Normal camera", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_EMISSION_COLOR, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Emission color", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_METALNESS, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Metalness ", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Diffuse roughness", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Ambient Oclussion", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else if (scene->mMaterials[i]->GetTexture(aiTextureType_UNKNOWN, 0, &file) == AI_SUCCESS) {
-				LOG("Loaded %s as Unknown texture", scene->mMaterials[i]->GetName().C_Str());
-				materialPath = file.C_Str();
-				materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			}
-			else {
-				LOG("Loaded a hardcoded .png with material name %s", scene->mMaterials[i]->GetName().C_Str());
-				aiString materialName = scene->mMaterials[i]->GetName();
-				materialPath = nameAsPNG(materialName);
-				materials.push_back(App->textures->LoadTexture(nameAsPNG(materialName).c_str()));
-			}
-
-			//else if (scene->mMaterials[i]->GetTexture(aiTextureType_UNKNOWN, 0, &file) == AI_SUCCESS) {
-			//	materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			//}
-			//else {
-			//	materials.push_back(App->textures->LoadTexture(file.C_Str()));
-			//}
+			//PREVIOUSLY METHOD A 
+			LoadMaterial(scene->mMaterials[i], file, &materialPath, file_name);
 
 		}
 		meshes.reserve(scene->mNumMeshes);
@@ -227,10 +302,30 @@ const bool Model::Load(const char* file_name)
 		for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
 			meshes.push_back(new Mesh(scene->mMeshes[i], materialPath.c_str()));
 
+			if (scene->mMeshes[i]->mAABB.mMin.x < boundingBox.first.x) {
+				boundingBox.first.x = scene->mMeshes[i]->mAABB.mMin.x;
+			}
+			if (scene->mMeshes[i]->mAABB.mMin.y < boundingBox.first.y) {
+				boundingBox.first.y = scene->mMeshes[i]->mAABB.mMin.y;
+			}
+			if (scene->mMeshes[i]->mAABB.mMin.z < boundingBox.first.z) {
+				boundingBox.first.z = scene->mMeshes[i]->mAABB.mMin.z;
+			}
+
+
+
+			if (scene->mMeshes[i]->mAABB.mMax.x > boundingBox.second.x) {
+				boundingBox.second.x = scene->mMeshes[i]->mAABB.mMax.x;
+			}
+			if (scene->mMeshes[i]->mAABB.mMax.y > boundingBox.second.y) {
+				boundingBox.second.y = scene->mMeshes[i]->mAABB.mMax.y;
+			}
+			if (scene->mMeshes[i]->mAABB.mMax.z > boundingBox.second.z) {
+				boundingBox.second.z = scene->mMeshes[i]->mAABB.mMax.z;
+			}
+
 		}
 		return true;
-		// TODO: LoadTextures(scene->mMaterials, scene->mNumMaterials);
-		// TODO: LoadMeshes(scene->mMeshes, scene->mNumMeshes);
 	}
 	else
 	{
@@ -239,16 +334,6 @@ const bool Model::Load(const char* file_name)
 	return false;
 }
 
-
-void Model::LoadMaterials(const aiScene* scene)
-{
-	aiString file;
-	materials.reserve(scene->mNumMaterials);
-	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
-	{
-		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
-		{
-			materials.push_back(App->textures->LoadTexture(file.data));
-		}
-	}
+const std::pair<float3, float3> Model::BoundingBox()const {
+	return std::pair<float3, float3>(float3(boundingBox.first.x * transform.scale.x, boundingBox.first.y * transform.scale.y, boundingBox.first.z * transform.scale.z), float3(boundingBox.second.x * transform.scale.x, boundingBox.second.y * transform.scale.y, boundingBox.second.z * transform.scale.z));
 }

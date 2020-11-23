@@ -3,8 +3,8 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include "../Model.h"
 #include "../Leaks.h"
-
 #define DEGTORAD 3.14159/180
 
 ModuleEditorCamera::ModuleEditorCamera()
@@ -19,8 +19,7 @@ ModuleEditorCamera::ModuleEditorCamera()
 	screenMargin = 20.0f;
 	zoomSpeed = 5;
 	frustumCulling = true;
-	focusDistance = 8.0f;
-	aspectRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
+	focusDistance = 2.0f;
 }
 
 // Destructor
@@ -31,9 +30,11 @@ ModuleEditorCamera::~ModuleEditorCamera()
 // Called before render is available
 bool ModuleEditorCamera::Init()
 {
+	aspectRatio = (float)App->window->GetWidth() / (float)App->window->GetHeight();
+
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	frustum.SetViewPlaneDistances(nearPlaneDistance, farPlaneDistance);
-	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, SCREEN_WIDTH / SCREEN_HEIGHT);
+	SetAspectRatio(aspectRatio);
 	frustum.SetPos(frustumPosition);
 	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
@@ -117,22 +118,22 @@ const float ModuleEditorCamera::UpdateCameraPitch(const float3 mouseMotion) {
 
 const bool ModuleEditorCamera::WarpMouseTooCloseToEdges(float3 mousePos, float screenMargin)const {
 	bool val = false;
-	if (mousePos.x >= SCREEN_WIDTH - screenMargin) {
+	if (mousePos.x >= App->window->GetWidth() - screenMargin) {
 		SDL_WarpMouseInWindow(App->window->window, screenMargin, mousePos.y);
 		mousePos.x = screenMargin;
 		val = true;
 	}
 	else if (mousePos.x <= screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, SCREEN_WIDTH - screenMargin, mousePos.y);
-		mousePos.x = SCREEN_WIDTH - screenMargin;
+		SDL_WarpMouseInWindow(App->window->window, App->window->GetWidth() - screenMargin, mousePos.y);
+		mousePos.x = App->window->GetWidth() - screenMargin;
 		val = true;
 	}
-	if (mousePos.y >= SCREEN_HEIGHT - screenMargin) {
+	if (mousePos.y >= App->window->GetHeight() - screenMargin) {
 		SDL_WarpMouseInWindow(App->window->window, mousePos.x, screenMargin);
 		val = true;
 	}
 	else if (mousePos.y <= screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, mousePos.x, SCREEN_HEIGHT - screenMargin);
+		SDL_WarpMouseInWindow(App->window->window, mousePos.x, App->window->GetHeight() - screenMargin);
 		val = true;
 	}
 	return val;
@@ -156,9 +157,23 @@ void ModuleEditorCamera::ApplyUpdatedPitchYawToFrustum() {
 
 }
 
-void ModuleEditorCamera::FocusOn(float3 targetPos, float focusDistance) {
-	float3 newVecToTarget = targetPos - frustumPosition;
-	frustumPosition = targetPos - newVecToTarget.Normalized() * focusDistance;
+const float ModuleEditorCamera::GetDistanceBasedOnBoundingBox(Model* m, float distanceFactor)const {
+	float greatestDistance = 0;
+
+	float xBounds = math::Abs(m->BoundingBox().second.x - m->BoundingBox().first.x);
+	float yBounds = math::Abs(m->BoundingBox().second.y - m->BoundingBox().first.y);
+	float zBounds = math::Abs(m->BoundingBox().second.z - m->BoundingBox().first.z);
+
+	greatestDistance = math::Max(xBounds, yBounds, zBounds);
+
+	return greatestDistance * distanceFactor;
+}
+
+void ModuleEditorCamera::FocusOn(Model* m, float focusDistance) {
+	float3 newVecToTarget = m->Position() - frustumPosition;
+
+	frustumPosition = m->Position() - newVecToTarget.Normalized() * GetDistanceBasedOnBoundingBox(m, focusDistance);
+
 	float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToTarget.Normalized(), frustum.Up(), float3::unitY);
 	frustum.SetFront((lookAtMat * frustum.Front()).Normalized());
 	frustum.SetUp(lookAtMat * frustum.Up());
@@ -169,7 +184,7 @@ update_status ModuleEditorCamera::Update()
 {
 	bool showCursor = true;
 	float3 cameraMovementInput = float3(0, 0, 0);
-	float3 orbitTargetPos = float3(0, 0, 0);
+
 	float speedFactor = App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT ? cameraSpeed * 3 : cameraSpeed;
 	const float3 mouseMotion = App->input->GetMouseMotion();
 
@@ -180,19 +195,17 @@ update_status ModuleEditorCamera::Update()
 				if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 
 					float3 mouseMotion = App->input->GetMouseMotion();
+					float orbitDistance = targetModel->Position().Distance(frustumPosition);
 
-					float orbitDistance = 8.0f;
-					float3 orbitTargetPos = float3::zero;
 
 					frustumPosition += frustum.WorldRight() * mouseMotion.x * App->GetDeltaTime() * speedFactor;
 					frustumPosition += frustum.Up() * mouseMotion.y * App->GetDeltaTime() * speedFactor;
 
+					float3 newVecToItem = (targetModel->Position() - frustumPosition).Normalized();
 
-					float3 newVecToItem = (orbitTargetPos - frustumPosition).Normalized();
+					frustumPosition = targetModel->Position() - newVecToItem * orbitDistance;
 
-					frustumPosition = orbitTargetPos - newVecToItem * orbitDistance;
-
-					newVecToItem = (orbitTargetPos - frustumPosition).Normalized();
+					newVecToItem = (targetModel->Position() - frustumPosition).Normalized();
 
 					float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToItem, frustum.Up(), float3::unitY);
 
@@ -240,7 +253,9 @@ update_status ModuleEditorCamera::Update()
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
-		FocusOn(orbitTargetPos, focusDistance);
+		if (targetModel != nullptr) {
+			FocusOn(targetModel, focusDistance);
+		}
 	}
 
 	SDL_ShowCursor(showCursor);
@@ -254,6 +269,12 @@ update_status ModuleEditorCamera::Update()
 	SendProjectionMatrix();
 	return UPDATE_CONTINUE;
 }
+
+void ModuleEditorCamera::SetTargetModel(Model* m) {
+	FocusOn(m, focusDistance);
+	targetModel = m;
+}
+
 
 update_status ModuleEditorCamera::PostUpdate()
 {

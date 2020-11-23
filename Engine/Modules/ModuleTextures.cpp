@@ -2,10 +2,7 @@
 #include "IL/ilu.h"
 #include "../Leaks.h"
 
-ModuleTextures::ModuleTextures() {
-	wrapMode = GL_REPEAT;
-	minFilter = magFilter = GL_LINEAR;
-}
+ModuleTextures::ModuleTextures() : wrapMode(GL_REPEAT), minFilter(GL_LINEAR), magFilter(GL_LINEAR), texturesFolderName("Textures") {}
 ModuleTextures::~ModuleTextures() {
 
 }
@@ -45,57 +42,74 @@ GLenum ModuleTextures::GetMagFilter() {
 	return magFilter;
 }
 
-GLuint ModuleTextures::LoadTexture(std::string path) {
+
+const bool ModuleTextures::GenTexture(std::string path, GLuint* newTextureID) {
 	ILboolean success;
 
-	if (textureMap[path] != NULL) {
-		return textureMap[path];
-	}
-	
-	ILuint newImageID;
-	GLuint newTextureID;
-	ilGenImages(1, &newImageID); /* Generation of one image name */
-	ilBindImage(newImageID); /* Binding of image name */
-	success = ilLoadImage(path.c_str()); /* Loading of image "image.jpg" */
-	if (success) /* If no error occured: */
-	{
-		success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); /* Convert every colour component into
+	success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); /* Convert every colour component into
 		  unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
-		if (!success)
-		{
-			// Error occured 
-			return false;
-		}
-
-		glGenTextures(1, &newTextureID);
-		glBindTexture(GL_TEXTURE_2D, newTextureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		ILinfo info = ILinfo();
-		iluGetImageInfo(&info);
-
-		if (info.Origin == IL_ORIGIN_UPPER_LEFT) {
-			iluFlipImage();
-		}
-
-		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
-			ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
-			ilGetData()); /* Texture specification */
-
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		textureMap[path] = newTextureID;
-
-	}
-	else
+	if (!success)
 	{
-		/* Error occured */
+		// Error occured 
 		return false;
 	}
+
+	glGenTextures(1, newTextureID);
+	glBindTexture(GL_TEXTURE_2D, *newTextureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	ILinfo info = ILinfo();
+	iluGetImageInfo(&info);
+
+	//if (info.Origin == IL_ORIGIN_UPPER_LEFT) {
+	//	iluFlipImage();
+	//}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
+		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
+		ilGetData()); /* Texture specification */
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	textureMap[path] = *newTextureID;
+	return success;
+}
+
+std::string ModuleTextures::GetTexturesFolderName() {
+	return texturesFolderName;
+}
+
+
+
+const bool ModuleTextures::LoadTexture(std::string name, GLuint* tex) {
+	ILboolean success;
+
+	if (textureMap[name] != NULL) {
+		return textureMap[name];
+	}
+	else {
+		textureMap.erase(name);
+	}
+
+
+	ILuint newImageID;
+	GLuint newTextureID = false;
+	ilGenImages(1, &newImageID); /* Generation of one image name */
+	ilBindImage(newImageID); /* Binding of image name */
+
+	LOG("-----Trying to load texture with model specified path----- (%s)", name.c_str());
+	success = ilLoadImage(name.c_str()); /* Loading of image "image.jpg" */
+	if (success) /* If no error occured: */
+	{
+		success = GenTexture(name, &newTextureID);
+	}
+
 	ilDeleteImages(1, &newImageID); /* Because we have already copied image data into texture data
 	  we can release memory used by image. */
-	return newTextureID;
+
+	*tex = newTextureID;
+	return success;
 }
 
 bool ModuleTextures::Init() {

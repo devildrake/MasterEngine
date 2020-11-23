@@ -9,7 +9,9 @@ class ModuleTextures :public Module {
 private:
 	std::map < std::string, GLuint> textureMap;
 	GLenum wrapMode, minFilter, magFilter;
-
+	std::string texturesFolderName;
+private:
+	const bool GenTexture(std::string path, GLuint* newTextureID);
 public:
 
 	ModuleTextures();
@@ -20,11 +22,11 @@ public:
 	update_status   Update();
 	update_status   PostUpdate();
 	bool            CleanUp();
-	GLuint LoadTexture(std::string path);
+	const bool LoadTexture(std::string path, GLuint* tex);
 	void SetWrapMode(GLenum anEnum);
 	void SetMinMode(GLenum anEnum);
 	void SetMagMode(GLenum anEnum);
-
+	std::string GetTexturesFolderName();
 	GLenum GetWrapMode();
 	GLenum GetMinFilter();
 	GLenum GetMagFilter();

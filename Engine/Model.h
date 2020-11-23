@@ -11,12 +11,15 @@ private:
 	std::vector<unsigned> materials;
 	std::vector<Mesh*> meshes;
 	std::string file_name;
+	std::pair<float3, float3 >boundingBox;
+
 public:
 	Model(const char* file_name);
 	Model();
 	~Model();
 	const bool Load(const char* file_name);
-	void LoadMaterials(const aiScene* scene);
+	//void LoadMaterials(const aiScene* scene);
+	void LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPath, std::string modelPath);
 	void Draw();
 	const std::string GetFileName()const;
 	const static bool SceneFound(const char* file_name);
@@ -28,7 +31,7 @@ public:
 	const float3 Rotation()const;
 	const int GetTris()const;
 	const int GetVertices()const;
-
+	const std::pair<float3, float3 > BoundingBox()const;
 };
 
 #endif

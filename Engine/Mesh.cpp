@@ -8,7 +8,6 @@
 #include "Leaks.h"
 #include "Modules/ModuleTextures.h"
 #include "Transform.h"
-
 Mesh::Mesh(const aiMesh* mesh) {
 	LoadVBO(mesh);
 	LoadEBO(mesh);

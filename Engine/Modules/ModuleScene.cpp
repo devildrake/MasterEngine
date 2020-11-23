@@ -3,19 +3,19 @@
 #include "ModuleInput.h"
 #include "../Model.h"
 #include "../Application.h"
+#include "ModuleEditorCamera.h"
 ModuleScene::ModuleScene() :currentModel(nullptr) {
 }
 ModuleScene::~ModuleScene() {
 
 }
 bool ModuleScene::Init() {
-	currentModel = new Model("BakerHouse.fbx");
+	currentModel = new Model("Models\\BakerHouse.fbx");
 	App->renderer->AddModel(currentModel);
+	App->editorCamera->SetTargetModel(currentModel);
 	return true;
 }
 bool ModuleScene::Start() {
-
-	//App->renderer->AddModel(currentModel);
 	return true;
 }
 
@@ -23,8 +23,6 @@ update_status ModuleScene::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 update_status ModuleScene::Update() {
-
-
 	const char* lastFile = App->input->GetLastFileDroppedOnWindow();
 
 	if (lastFile != nullptr) {
@@ -38,6 +36,8 @@ update_status ModuleScene::Update() {
 				if (newModel->Load(lastFile)) {
 					currentModel = newModel;
 					App->renderer->AddModel(currentModel);
+					App->editorCamera->SetTargetModel(currentModel);
+
 				}
 				else {
 					currentModel = nullptr;

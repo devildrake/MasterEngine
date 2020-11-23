@@ -2,15 +2,9 @@
 #include "../Application.h"
 #include "ModuleWindow.h"
 #include "../Leaks.h"
+#include "SDL.h"
 
-ModuleWindow::ModuleWindow()
-{
-	width = SCREEN_WIDTH;
-	height = SCREEN_HEIGHT;
-	fullscreen = borderless = fullDtp = false;
-	brightness = 1.0f;
-	resizable = true;
-}
+ModuleWindow::ModuleWindow() :fullscreen(false), borderless(false), fullDtp(false), resizable(true), brightness(1.0f), width(0), height(0) {}
 
 // Destructor
 ModuleWindow::~ModuleWindow()
@@ -31,8 +25,13 @@ bool ModuleWindow::Init()
 	else
 	{
 		//Create window
-		width = SCREEN_WIDTH;
-		height = SCREEN_HEIGHT;
+		SDL_DisplayMode dm;
+		SDL_GetDesktopDisplayMode(0, &dm);
+
+		width = dm.w / 8 * 6;
+		height = dm.h / 8 * 6;
+
+
 		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 		fullscreen = borderless = fullDtp = false;
 		resizable = true;

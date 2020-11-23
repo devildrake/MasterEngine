@@ -269,6 +269,7 @@ void ConfigWindow::Draw() {
 				}
 
 				if (ImGui::Checkbox("Frustum Culling", &App->editorCamera->frustumCulling)) {
+
 					//TO DO SET FRUSTUM CULLING
 				}
 
