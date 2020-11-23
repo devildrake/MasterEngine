@@ -16,11 +16,11 @@ update_status EditorMainMenu::Draw() {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("MainMenu")) {
 			if (consoleOpen != nullptr)
-				if (ImGui::MenuItem("Console Window", "CTRL+Y", consoleOpen)) {}
+				if (ImGui::MenuItem("Console Window", "ALT+Y", consoleOpen)) {}
 			if (configOpen != nullptr)
-				if (ImGui::MenuItem("Configuration Window", "CTRL+U", configOpen)) {}
+				if (ImGui::MenuItem("Configuration Window", "ALT+U", configOpen)) {}
 			if (propertiesOpen != nullptr)
-				if (ImGui::MenuItem("Properties Window", "CTRL+P", propertiesOpen)) {}
+				if (ImGui::MenuItem("Properties Window", "ALT+P", propertiesOpen)) {}
 
 #ifdef _WIN32
 			if (ImGui::MenuItem("Open Github repository", "")) {

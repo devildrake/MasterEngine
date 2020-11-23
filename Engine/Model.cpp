@@ -97,10 +97,7 @@ Model::Model() :transform(Transform()) {
 
 void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPath, std::string modelPath) {
 	const char* matName = mat->GetName().C_Str();
-	aiReturn ret;
-	aiString materialNameA;
 	GLuint tex;
-	ret = mat->Get(AI_MATKEY_NAME, materialNameA);//Get the material name (pass by reference)
 	std::pair<int, int>texSize{ 0,0 };
 
 	int lastSlash = 0;
@@ -111,9 +108,7 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPa
 	}
 
 	bool success = false;
-	if (ret == AI_SUCCESS) {
 
-	}
 
 	if (mat->GetTexture(aiTextureType_NONE, 0, &file) == AI_SUCCESS) {
 		LOG("%s was found to be a NONE type texture", matName);
@@ -270,7 +265,7 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPa
 		LOG("Failed to load %s", matName);
 	}
 	else {
-		materials.push_back(Material(tex, texSize));
+		materials.push_back(Material(matName, materialPath->c_str(), tex, texSize));
 	}
 
 }

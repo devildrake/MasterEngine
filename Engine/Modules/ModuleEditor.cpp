@@ -54,6 +54,18 @@ update_status ModuleEditor::PreUpdate() {
 }
 update_status ModuleEditor::Update() {
 
+	if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RALT) == KEY_REPEAT) {
+		if (App->input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN) {
+			console->isOpen = !console->isOpen;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+			propertiesWindow->isOpen = !propertiesWindow->isOpen;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN) {
+			configWindow->isOpen = !configWindow->isOpen;
+		}
+	}
+
 	console->Draw();
 	configWindow->Draw();
 	propertiesWindow->Draw();

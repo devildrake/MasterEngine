@@ -1,6 +1,7 @@
 #include "PropertiesWindow.h"
 #include "Application.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleWindow.h"
 #include "Model.h"
 #include "glew.h"
 PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName) {
@@ -14,6 +15,7 @@ PropertiesWindow::~PropertiesWindow() {
 void PropertiesWindow::Draw() {
 	if (!isOpen)return;
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowPos(ImVec2(App->window->GetWidth() - App->window->GetWidth() / 8, App->window->GetHeight() - App->window->GetHeight() / 8 * 3), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin(windowName, &isOpen))
 	{
@@ -35,29 +37,42 @@ void PropertiesWindow::Draw() {
 		}
 	}
 
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Current Model:");
-	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", App->scene->currentModel->GetFileName().c_str());
+	if (ImGui::CollapsingHeader("Model Info")) {
 
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tris:");
-	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->GetTris());
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Current Model:");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", App->scene->currentModel->GetFileName().c_str());
 
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Vertices:");
-	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->GetVertices());
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Tris:");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->GetTris());
 
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture Info:");
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Vertices:");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->GetVertices());
+	}
 
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture Count:");
-	ImGui::SameLine();
+	if (ImGui::CollapsingHeader("Texture Info")) {
 
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->materials.size());
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture Count:");
+		ImGui::SameLine();
 
-	for (int i = 0; i < App->scene->currentModel->materials.size(); ++i)
-	{
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture: %d ", i);
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d %d", App->scene->currentModel->materials[i].GetTextureSize().first, App->scene->currentModel->materials[i].GetTextureSize().second);
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->materials.size());
+
+		for (int i = 0; i < App->scene->currentModel->materials.size(); ++i)
+		{
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture: %d ", i);
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s ", App->scene->currentModel->materials[i].GetTextureName().c_str());
+
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Path:");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), " %s", App->scene->currentModel->materials[i].GetTexturePath().c_str());
+
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture size:");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "% d x% d", App->scene->currentModel->materials[i].GetTextureSize().first, App->scene->currentModel->materials[i].GetTextureSize().second);
+		}
 	}
 
 

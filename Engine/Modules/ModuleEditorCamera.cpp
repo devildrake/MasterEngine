@@ -173,7 +173,7 @@ const float ModuleEditorCamera::GetDistanceBasedOnBoundingBox(Model* m, float di
 void ModuleEditorCamera::FocusOn(Model* m, float focusDistance) {
 	targetModel = m;
 	float3 boundingBoxCenter = m->GetBoundingCenter();
-	float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale() + targetModel->Position());
+	float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale()) + targetModel->Position();
 
 	float3 newVecToTarget = focusPosition - frustumPosition;
 
@@ -202,10 +202,9 @@ update_status ModuleEditorCamera::Update()
 					float3 mouseMotion = App->input->GetMouseMotion();
 
 					float3 boundingBoxCenter = targetModel->GetBoundingCenter();
-					float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale() + targetModel->Position());
+					float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale()) + targetModel->Position();
 
 					float orbitDistance = focusPosition.Distance(frustumPosition);
-
 
 					frustumPosition += frustum.WorldRight() * mouseMotion.x * App->GetDeltaTime() * orbitSpeed;
 					frustumPosition += frustum.Up() * mouseMotion.y * App->GetDeltaTime() * orbitSpeed;
@@ -269,7 +268,7 @@ update_status ModuleEditorCamera::Update()
 
 	SDL_ShowCursor(showCursor);
 	const float mouseWheelMotion = App->input->GetMouseWheelMotion();
-	if (mouseWheelMotion != 0) {
+	if (mouseWheelMotion != 0 && !App->input->IsMouseOverImGuiWindow()) {
 		frustumPosition += mouseWheelMotion * frustum.Front() * zoomSpeed * App->GetDeltaTime();
 	}
 
