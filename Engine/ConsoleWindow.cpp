@@ -25,6 +25,10 @@ void ConsoleWindow::Draw() {
 		return;
 	}
 
+	if (ImGui::SmallButton("Clear Console")) {
+		msgs.clear();
+	}
+
 	for (int i = 0; i < msgs.size(); i++)
 	{
 		const char* item = msgs[i].c_str();

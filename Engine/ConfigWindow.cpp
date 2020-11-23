@@ -68,6 +68,7 @@ ConfigWindow::ConfigWindow(const char* aConfigName) : ImGuiWindow(aConfigName), 
 	SDL_DisplayMode mode;
 	SDL_GetDisplayMode(0, 0, &mode);
 	refresh_rate = mode.refresh_rate;
+	caps = GetCapsString();
 }
 
 
@@ -177,7 +178,7 @@ void ConfigWindow::Draw() {
 
 			ImGui::Text("Caps:");
 			ImGui::SameLine();
-			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), GetCapsString().c_str(), SDL_GetCPUCount());
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), caps.c_str(), SDL_GetCPUCount());
 
 			ImGui::Text("GPU:");
 			ImGui::SameLine();
@@ -250,23 +251,11 @@ void ConfigWindow::Draw() {
 					App->editorCamera->SetFrustumPos(pos);
 				}
 
-
-
-				//TO DO camera mov speed
-				if (ImGui::InputFloat("Mov Speed", &App->editorCamera->cameraSpeed)) {
-
-				}
-
-
-				//TO DO camera rot speed
-				if (ImGui::InputFloat("Rot Speed", &App->editorCamera->rotationSpeed)) {
-
-				}
-
-				//TO DO ZOOM SPEED
-				if (ImGui::InputFloat("Zoom Speed", &App->editorCamera->zoomSpeed)) {
-
-				}
+				ImGui::DragFloat("Camera Speed", &App->editorCamera->cameraSpeed, 0.1f, 0.5f, 10.0f);
+				ImGui::DragFloat("Camera Rot Speed", &App->editorCamera->rotationSpeed, 0.1f, 15.0f, 60.0f);
+				ImGui::DragFloat("Camera Zoom Speed", &App->editorCamera->zoomSpeed, 5.0f, 0.1f, 60.0f);
+				ImGui::DragFloat("Camera Focus distance", &App->editorCamera->focusDistance, 0.1f, 0.1f, 4.0f);
+				ImGui::DragFloat("Camera Orbit Speed", &App->editorCamera->orbitSpeed, 0.1f, 0.1f, 12.0f);
 
 				if (ImGui::Checkbox("Frustum Culling", &App->editorCamera->frustumCulling)) {
 
@@ -288,6 +277,11 @@ void ConfigWindow::Draw() {
 				if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
 					App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
 				}
+
+
+
+
+
 
 				ImGui::ColorEdit3("BG Color", App->renderer->bgColor.ptr());
 

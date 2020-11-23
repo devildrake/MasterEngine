@@ -8,6 +8,8 @@
 #include "Leaks.h"
 #include "Modules/ModuleTextures.h"
 #include "Transform.h"
+#include "Material.h"
+
 Mesh::Mesh(const aiMesh* mesh) {
 	LoadVBO(mesh);
 	LoadEBO(mesh);
@@ -102,7 +104,7 @@ void Mesh::CreateVAO()
 	glBindVertexArray(0);
 }
 
-void Mesh::Draw(const std::vector<unsigned>& model_textures, Transform transform)
+void Mesh::Draw(std::vector<Material>* model_textures, Transform transform)
 {
 	unsigned program = App->renderer->GetDefaultShaderID();
 	const float4x4& view = App->editorCamera->GetFrustum()->ViewMatrix();
@@ -120,11 +122,18 @@ void Mesh::Draw(const std::vector<unsigned>& model_textures, Transform transform
 	//material_index = 0;
 	//glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
 	material_index = 0;
-	for (std::vector<unsigned>::const_iterator it = model_textures.begin(); it != model_textures.end(); ++it) {
-		glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
+	//for (std::vector<Material>::const_iterator it = model_textures.begin(); it != model_textures.end(); ++it) {
+	//	glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
+	//	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
+	//	material_index++;
+	//}
+
+	for (int i = 0; i < model_textures->size(); ++i)
+	{
+		glBindTexture(GL_TEXTURE_2D, model_textures->at(i).GetTextureID());
 		glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
-		material_index++;
 	}
+
 	//glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
 	//glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 	glBindVertexArray(vao);

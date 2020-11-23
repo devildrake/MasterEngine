@@ -19,6 +19,7 @@ private:
 	const char* imgui_version;
 	const char* glew_version;
 	int refresh_rate;
+	std::string caps;
 public:
 	ConfigWindow(const char* windowName);
 	~ConfigWindow();

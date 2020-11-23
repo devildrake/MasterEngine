@@ -4,11 +4,14 @@
 #include "Mesh.h"
 #include <assimp/scene.h>
 #include "Transform.h"
+#include "Material.h"
+
+
 class Model {
 
 private:
 	Transform transform;
-	std::vector<unsigned> materials;
+	std::vector<Material> materials;
 	std::vector<Mesh*> meshes;
 	std::string file_name;
 	std::pair<float3, float3 >boundingBox;
@@ -31,7 +34,9 @@ public:
 	const float3 Rotation()const;
 	const int GetTris()const;
 	const int GetVertices()const;
-	const std::pair<float3, float3 > BoundingBox()const;
+	const std::pair<float3, float3> BoundingBox()const;
+	const float3 GetBoundingCenter()const;
+	friend class PropertiesWindow;
 };
 
 #endif

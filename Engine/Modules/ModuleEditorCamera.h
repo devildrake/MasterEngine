@@ -47,7 +47,7 @@ private:
 	float screenMargin;
 
 	float aspectRatio;
-	float cameraSpeed, rotationSpeed;
+	float cameraSpeed, rotationSpeed, orbitSpeed;
 	float zoomSpeed;
 	bool frustumCulling;
 	float3 frustumPosition;

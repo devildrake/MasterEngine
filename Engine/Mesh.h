@@ -6,6 +6,8 @@
 
 class aiMesh;
 class Transform;
+class Material;
+
 class Mesh {
 private:
 	unsigned vbo, ebo, vao;
@@ -19,7 +21,7 @@ public:
 	void LoadVBO(const aiMesh* mesh);
 	void LoadEBO(const aiMesh* mesh);
 	void CreateVAO();
-	void Draw(const std::vector<unsigned>& model_textures, Transform transform);
+	void Draw(std::vector<Material>* model_textures, Transform transform);
 	void ReleaseTextures();
 	void SetTexture(int index, std::string path);
 	const int GetTris()const;

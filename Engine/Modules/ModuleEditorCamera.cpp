@@ -17,9 +17,10 @@ ModuleEditorCamera::ModuleEditorCamera()
 	pitch = 0;
 	yaw = 0;
 	screenMargin = 20.0f;
-	zoomSpeed = 5;
+	zoomSpeed = 10;
 	frustumCulling = true;
 	focusDistance = 2.0f;
+	orbitSpeed = 6.0f;
 }
 
 // Destructor
@@ -170,9 +171,13 @@ const float ModuleEditorCamera::GetDistanceBasedOnBoundingBox(Model* m, float di
 }
 
 void ModuleEditorCamera::FocusOn(Model* m, float focusDistance) {
-	float3 newVecToTarget = m->Position() - frustumPosition;
+	targetModel = m;
+	float3 boundingBoxCenter = m->GetBoundingCenter();
+	float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale() + targetModel->Position());
 
-	frustumPosition = m->Position() - newVecToTarget.Normalized() * GetDistanceBasedOnBoundingBox(m, focusDistance);
+	float3 newVecToTarget = focusPosition - frustumPosition;
+
+	frustumPosition = focusPosition - newVecToTarget.Normalized() * GetDistanceBasedOnBoundingBox(m, focusDistance);
 
 	float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToTarget.Normalized(), frustum.Up(), float3::unitY);
 	frustum.SetFront((lookAtMat * frustum.Front()).Normalized());
@@ -195,17 +200,21 @@ update_status ModuleEditorCamera::Update()
 				if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 
 					float3 mouseMotion = App->input->GetMouseMotion();
-					float orbitDistance = targetModel->Position().Distance(frustumPosition);
+
+					float3 boundingBoxCenter = targetModel->GetBoundingCenter();
+					float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale() + targetModel->Position());
+
+					float orbitDistance = focusPosition.Distance(frustumPosition);
 
 
-					frustumPosition += frustum.WorldRight() * mouseMotion.x * App->GetDeltaTime() * speedFactor;
-					frustumPosition += frustum.Up() * mouseMotion.y * App->GetDeltaTime() * speedFactor;
+					frustumPosition += frustum.WorldRight() * mouseMotion.x * App->GetDeltaTime() * orbitSpeed;
+					frustumPosition += frustum.Up() * mouseMotion.y * App->GetDeltaTime() * orbitSpeed;
 
-					float3 newVecToItem = (targetModel->Position() - frustumPosition).Normalized();
+					float3 newVecToItem = (focusPosition - frustumPosition).Normalized();
 
-					frustumPosition = targetModel->Position() - newVecToItem * orbitDistance;
+					frustumPosition = focusPosition - newVecToItem * orbitDistance;
 
-					newVecToItem = (targetModel->Position() - frustumPosition).Normalized();
+					newVecToItem = (focusPosition - frustumPosition).Normalized();
 
 					float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToItem, frustum.Up(), float3::unitY);
 
@@ -272,7 +281,6 @@ update_status ModuleEditorCamera::Update()
 
 void ModuleEditorCamera::SetTargetModel(Model* m) {
 	FocusOn(m, focusDistance);
-	targetModel = m;
 }
 
 

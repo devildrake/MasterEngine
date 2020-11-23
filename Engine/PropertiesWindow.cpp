@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Modules/ModuleScene.h"
 #include "Model.h"
+#include "glew.h"
 PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName) {
 	modelPosition = App->scene->currentModel->Position();
 	modelScale = App->scene->currentModel->Scale();
@@ -46,11 +47,18 @@ void PropertiesWindow::Draw() {
 	ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->GetVertices());
 
-	//ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Textures:");
-	//ImGui::SameLine();
-	//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture Info:");
 
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture Count:");
+	ImGui::SameLine();
 
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d", App->scene->currentModel->materials.size());
+
+	for (int i = 0; i < App->scene->currentModel->materials.size(); ++i)
+	{
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Texture: %d ", i);
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%d %d", App->scene->currentModel->materials[i].GetTextureSize().first, App->scene->currentModel->materials[i].GetTextureSize().second);
+	}
 
 
 	ImGui::End();

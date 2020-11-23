@@ -22,7 +22,7 @@ public:
 	update_status   Update();
 	update_status   PostUpdate();
 	bool            CleanUp();
-	const bool LoadTexture(std::string path, GLuint* tex);
+	const bool LoadTexture(std::string path, GLuint* tex, std::pair<int, int>* texSize = nullptr);
 	void SetWrapMode(GLenum anEnum);
 	void SetMinMode(GLenum anEnum);
 	void SetMagMode(GLenum anEnum);

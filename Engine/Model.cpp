@@ -22,6 +22,11 @@ Model::~Model() {
 	meshes.clear();
 }
 
+const float3  Model::GetBoundingCenter()const {
+	return float3(boundingBox.first.Lerp(boundingBox.second, 0.5f));
+}
+
+
 void Model::SetRotation(float3 newRot) {
 	transform.rotation = newRot;
 }
@@ -77,7 +82,7 @@ const std::string Model::GetFileName()const {
 
 void Model::Draw() {
 	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
-		(*it)->Draw(materials, transform);
+		(*it)->Draw(&materials, transform);
 	}
 }
 
@@ -86,7 +91,7 @@ std::string nameAsPNG(aiString name) {
 	return stringName + ".png";
 }
 
-Model::Model() {
+Model::Model() :transform(Transform()) {
 
 }
 
@@ -96,7 +101,7 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPa
 	aiString materialNameA;
 	GLuint tex;
 	ret = mat->Get(AI_MATKEY_NAME, materialNameA);//Get the material name (pass by reference)
-
+	std::pair<int, int>texSize{ 0,0 };
 
 	int lastSlash = 0;
 	for (int i = modelPath.size(); i > 0 && lastSlash == 0; --i) {
@@ -104,8 +109,6 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPa
 			lastSlash = i;
 		}
 	}
-
-
 
 	bool success = false;
 	if (ret == AI_SUCCESS) {
@@ -118,16 +121,16 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPa
 	else if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS) {
 		LOG("Trying to load  %s as Diffuse texture", matName);
 		*materialPath = file.C_Str();
-		success = App->textures->LoadTexture(file.C_Str(), &tex);
+		success = App->textures->LoadTexture(file.C_Str(), &tex, &texSize);
 		std::string withModelPath = modelPath.substr(0, lastSlash) + "\\" + file.C_Str();
 		std::string withTexturesFolderPath = App->textures->GetTexturesFolderName() + "\\" + file.C_Str();
 		if (!success) {
-			success = App->textures->LoadTexture(withModelPath, &tex);
+			success = App->textures->LoadTexture(withModelPath, &tex, &texSize);
 			*materialPath = withModelPath;
 
 		}
 		if (!success) {
-			success = App->textures->LoadTexture(withTexturesFolderPath, &tex);
+			success = App->textures->LoadTexture(withTexturesFolderPath, &tex, &texSize);
 			*materialPath = withTexturesFolderPath;
 
 		}
@@ -267,7 +270,7 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPa
 		LOG("Failed to load %s", matName);
 	}
 	else {
-		materials.push_back(tex);
+		materials.push_back(Material(tex, texSize));
 	}
 
 }
