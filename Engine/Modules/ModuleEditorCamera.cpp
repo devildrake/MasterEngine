@@ -104,30 +104,6 @@ const float ModuleEditorCamera::UpdateCameraPitch(const float3 mouseMotion) {
 	return pitch - prevPitch;
 }
 
-const bool ModuleEditorCamera::WarpMouseTooCloseToEdges(float3 mousePos, float screenMargin)const {
-	bool val = false;
-	if (mousePos.x >= App->window->GetWidth() - screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, screenMargin, mousePos.y);
-		mousePos.x = screenMargin;
-		val = true;
-	}
-	else if (mousePos.x <= screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, App->window->GetWidth() - screenMargin, mousePos.y);
-		mousePos.x = App->window->GetWidth() - screenMargin;
-		val = true;
-	}
-	if (mousePos.y >= App->window->GetHeight() - screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, mousePos.x, screenMargin);
-		val = true;
-	}
-	else if (mousePos.y <= screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, mousePos.x, App->window->GetHeight() - screenMargin);
-		val = true;
-	}
-	return val;
-}
-
-
 void ModuleEditorCamera::ApplyUpdatedPitchYawToFrustum() {
 	const float3 mouseMotion = App->input->GetMouseMotion();
 
@@ -183,33 +159,36 @@ update_status ModuleEditorCamera::Update()
 	if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)) {
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 
-			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) {
-				if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+			//Calculate focus positon
+			float3 boundingBoxCenter = targetModel->GetBoundingCenter();
+			float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale()) + targetModel->Position();
 
-					float3 mouseMotion = App->input->GetMouseMotion();
+			//Push camera position temporarily to focus position
+			frustumPosition -= focusPosition;
 
-					float3 boundingBoxCenter = targetModel->GetBoundingCenter();
-					float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale()) + targetModel->Position();
+			//Generate rotation matrices
+			float newYaw = mouseMotion.x * App->GetDeltaTime() * orbitSpeed;
+			float newPitch = -mouseMotion.y * App->GetDeltaTime() * orbitSpeed;
 
-					float orbitDistance = focusPosition.Distance(frustumPosition);
+			float3x3 rotMatYaw = float3x3::RotateAxisAngle(frustum.Up(), DEGTORAD * newYaw);
+			float3x3 rotMatPitch = float3x3::RotateAxisAngle(frustum.WorldRight(), DEGTORAD * newPitch);
 
-					frustumPosition += frustum.WorldRight() * mouseMotion.x * App->GetDeltaTime() * orbitSpeed;
-					frustumPosition += frustum.Up() * mouseMotion.y * App->GetDeltaTime() * orbitSpeed;
-
-					float3 newVecToItem = (focusPosition - frustumPosition).Normalized();
-
-					frustumPosition = focusPosition - newVecToItem * orbitDistance;
-
-					newVecToItem = (focusPosition - frustumPosition).Normalized();
-
-					float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToItem, frustum.Up(), float3::unitY);
-
-					frustum.SetFront(lookAtMat * frustum.Front());
-					frustum.SetUp(lookAtMat * frustum.Up());
+			//Rotate camera frustum with focus position as origin
+			frustumPosition = rotMatPitch * rotMatYaw * frustumPosition;
 
 
-				}
-			}
+			//Pop camera position back from focusPosition
+			frustumPosition += focusPosition;
+
+			//Calculate Look at matrix
+			float3 newVecToItem = (focusPosition - frustumPosition);
+			newVecToItem.Normalize();
+
+			float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToItem, frustum.Up(), float3::unitY);
+
+			//Apply Look at matrix
+			frustum.SetFront((lookAtMat * frustum.Front()).Normalized());
+			frustum.SetUp((lookAtMat * frustum.Up()).Normalized());
 
 			showCursor = false;
 		}
@@ -219,7 +198,7 @@ update_status ModuleEditorCamera::Update()
 			showCursor = false;
 		}
 	}
-
+	//ALT NOT PRESSED
 	else {
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 			showCursor = false;

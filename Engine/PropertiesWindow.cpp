@@ -4,14 +4,18 @@
 #include "Modules/ModuleWindow.h"
 #include "Model.h"
 #include "glew.h"
-PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName) {
-	modelPosition = App->scene->currentModel->Position();
-	modelScale = App->scene->currentModel->Scale();
-	modelRotation = App->scene->currentModel->Rotation();
+PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName), modelPosition(0, 0, 0), modelScale(0, 0, 0), modelRotation(0, 0, 0), triangleCount(0), textureSize(0) {
+	if (App->scene->currentModel != nullptr) {
+		modelPosition = App->scene->currentModel->Position();
+		modelScale = App->scene->currentModel->Scale();
+		modelRotation = App->scene->currentModel->Rotation();
+	}
 }
+
 PropertiesWindow::~PropertiesWindow() {
 
 }
+
 void PropertiesWindow::Draw() {
 	if (!isOpen)return;
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);

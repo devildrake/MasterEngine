@@ -58,7 +58,6 @@ private:
 	const float UpdateCameraPitch(const float3 mouseMotion);
 	const float3 GetCameraMovementInput()const;
 
-	const bool WarpMouseTooCloseToEdges(float3, float)const;
 	void ApplyUpdatedPitchYawToFrustum();
 	const float GetDistanceBasedOnBoundingBox(Model* m, float distanceFactor)const;
 
