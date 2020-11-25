@@ -44,12 +44,10 @@ private:
 	float focusDistance;
 	void* context;
 	SDL_GLContext glcontext;
-	float screenMargin;
 
 	float aspectRatio;
 	float cameraSpeed, rotationSpeed, orbitSpeed;
 	float zoomSpeed;
-	bool frustumCulling;
 	float3 frustumPosition;
 	float nearPlaneDistance, farPlaneDistance;
 	Model* targetModel = nullptr;

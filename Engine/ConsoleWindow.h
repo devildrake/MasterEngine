@@ -7,6 +7,7 @@
 class ConsoleWindow :public ImGuiWindow {
 private:
 	std::vector<std::string>msgs;
+	bool autoScroll, doScroll;
 public:
 	ConsoleWindow(const char* windowName);
 	~ConsoleWindow();

@@ -7,21 +7,8 @@
 #include "../Leaks.h"
 #define DEGTORAD 3.14159/180
 
-ModuleEditorCamera::ModuleEditorCamera()
-{
-	nearPlaneDistance = 0.1f;
-	farPlaneDistance = 200.0f;
-	frustumPosition = float3(0, 1, -2);
-	cameraSpeed = 6;
-	rotationSpeed = 15;
-	pitch = 0;
-	yaw = 0;
-	screenMargin = 20.0f;
-	zoomSpeed = 10;
-	frustumCulling = true;
-	focusDistance = 2.0f;
-	orbitSpeed = 6.0f;
-}
+ModuleEditorCamera::ModuleEditorCamera() : nearPlaneDistance(0.1f), farPlaneDistance(200.0f), frustumPosition(0, 5, -3),
+cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(6.0f) {}
 
 // Destructor
 ModuleEditorCamera::~ModuleEditorCamera()
@@ -238,10 +225,6 @@ update_status ModuleEditorCamera::Update()
 			showCursor = false;
 			ApplyUpdatedPitchYawToFrustum();
 
-			//if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
-			//	App->input->ResetMouseMotion();
-			//}
-
 			frustumPosition += GetCameraMovementInput() * speedFactor * App->GetDeltaTime();
 		}
 
@@ -250,10 +233,6 @@ update_status ModuleEditorCamera::Update()
 				const float3 mouseMotion = App->input->GetMouseMotion();
 				cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * rotationSpeed * App->GetDeltaTime();
 				cameraMovementInput += frustum.Up() * mouseMotion.y * rotationSpeed * App->GetDeltaTime();
-
-				//if (WarpMouseTooCloseToEdges(App->input->GetMousePosition(), screenMargin)) {
-				//	App->input->ResetMouseMotion();
-				//}
 
 				frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
 			}
@@ -267,6 +246,7 @@ update_status ModuleEditorCamera::Update()
 	}
 
 	SDL_ShowCursor(showCursor);
+
 	const float mouseWheelMotion = App->input->GetMouseWheelMotion();
 	if (mouseWheelMotion != 0 && !App->input->IsMouseOverImGuiWindow()) {
 		frustumPosition += mouseWheelMotion * frustum.Front() * zoomSpeed * App->GetDeltaTime();

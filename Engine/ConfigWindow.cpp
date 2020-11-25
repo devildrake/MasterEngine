@@ -94,6 +94,14 @@ void ConfigWindow::Draw() {
 		ImGui::End();
 		return;
 	}
+
+	if (ImGui::BeginPopupContextItem()) {
+		if (ImGui::MenuItem("Close Window")) {
+			isOpen = false;
+		}
+		ImGui::EndPopup();
+	}
+
 	ImGui::Text("Options");
 
 
@@ -200,10 +208,6 @@ void ConfigWindow::Draw() {
 			glGetIntegerv(GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX,
 				&cur_avail_mem_kb);
 
-			//GLint reserved_mem_kb = 0;
-			//glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &reserved_mem_kb);
-
-
 			ImGui::Text("VRAM budget:");
 			ImGui::SameLine();
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(total_mem_kb) / 1024 / 1024);
@@ -233,9 +237,8 @@ void ConfigWindow::Draw() {
 			if (ImGui::Checkbox("Active", &cameraHeaderActive)) {}
 
 			if (cameraHeaderActive) {
-
-				float3 dummyFront;
-				dummyFront = App->editorCamera->GetFrustum()->Front();
+				// Front and Up are READ ONLY values, thus the dummy float3
+				float3 dummyFront = App->editorCamera->GetFrustum()->Front();
 				if (ImGui::InputFloat3("Front", dummyFront.ptr())) {
 					//dummyFront.Normalize();
 					//App->editorCamera->GetFrustum()->SetFront(dummyFront);
@@ -257,31 +260,17 @@ void ConfigWindow::Draw() {
 				ImGui::DragFloat("Camera Focus distance", &App->editorCamera->focusDistance, 0.1f, 0.1f, 4.0f);
 				ImGui::DragFloat("Camera Orbit Speed", &App->editorCamera->orbitSpeed, 0.1f, 0.1f, 12.0f);
 
-				if (ImGui::Checkbox("Frustum Culling", &App->editorCamera->frustumCulling)) {
-
-					//TO DO SET FRUSTUM CULLING
-				}
-
-				//TO DO NEAR PLANE
 				if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
 					App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);
 				}
 
-
-				//TO DO FAR PLANE
 				if (ImGui::InputFloat("Far Plane", &App->editorCamera->farPlaneDistance)) {
 					App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
 				}
 
-				//TO DO ASPECT RATIO
 				if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
 					App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
 				}
-
-
-
-
-
 
 				ImGui::ColorEdit3("BG Color", App->renderer->bgColor.ptr());
 
@@ -292,7 +281,6 @@ void ConfigWindow::Draw() {
 		static char engineNameBuff[32] = "Master Engine";
 		static char descBuff[128] = "Engine made for the master's degree at UPC";
 		static char authorBuff[32] = "By David Sierra";
-		//static char buf[32] = u8"NIHONGO"; // <- this is how you would write it with C++11, using real kanjis
 		ImGui::InputText("Engine Name", engineNameBuff, IM_ARRAYSIZE(engineNameBuff));
 		ImGui::InputText("Description", descBuff, IM_ARRAYSIZE(descBuff));
 		ImGui::InputText("Author", authorBuff, IM_ARRAYSIZE(authorBuff));

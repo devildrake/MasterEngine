@@ -1,5 +1,5 @@
-#ifndef __MODULEINPUT_H__
-#define __MODULEINPUT_H__
+#ifndef __MODULE_INPUT_H__
+#define __MODULE_INPUT_H__
 
 #include "Module.h"
 
@@ -26,6 +26,8 @@ enum KeyState
 
 class ModuleInput : public Module
 {
+private:
+	void WarpMouseIfOutOfWindow();
 
 public:
 
@@ -65,8 +67,6 @@ public:
 	const float3& GetMouseMotion() const;
 	const float3& GetMousePosition() const;
 	const float& GetMouseWheelMotion()const;
-	const void MouseLeftWindow();
-	void ResetMouseMotion();
 	const bool IsMouseOverImGuiWindow()const;
 	const char* GetLastFileDroppedOnWindow() const;
 	void SetLastFileDroppedOnWindow(char* newF);
@@ -78,7 +78,6 @@ private:
 	float3 mouse_motion;
 	float3 mouse;
 	float wheel_motion;
-	bool mouseReset;
 };
 
 #endif // __MODULEINPUT_H__

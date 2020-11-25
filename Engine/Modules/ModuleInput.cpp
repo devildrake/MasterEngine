@@ -16,7 +16,6 @@ ModuleInput::ModuleInput()
 	keyboard = new KeyState[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
 	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
-	mouseReset = false;
 }
 
 // Destructor
@@ -37,7 +36,6 @@ bool ModuleInput::Init()
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-	//SDL_SetWindowGrab(App->window->window, SDL_TRUE);
 	return ret;
 }
 
@@ -58,10 +56,6 @@ update_status ModuleInput::PreUpdate() {
 	mouse_motion.x = 0;
 	mouse_motion.y = 0;
 	wheel_motion = 0;
-	//std::string a = std::to_string(mouse.x) + " " + std::to_string(mouse.y);
-	//LOG(a.c_str());
-
-	//SDL_CaptureMouse(true);
 
 	if (lastFileDroppedOnWindow != nullptr) {
 		SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
@@ -105,15 +99,8 @@ update_status ModuleInput::PreUpdate() {
 		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 		switch (sdlEvent.type)
 		{
-		case (SDL_DROPFILE): {      // In case if dropped file
-			//// Shows directory of dropped file
-			//SDL_ShowSimpleMessageBox(
-			//	SDL_MESSAGEBOX_INFORMATION,
-			//	"File dropped on window",
-			//	dropped_filedir,
-			//	App->window->window
-			//);
-
+		case (SDL_DROPFILE): {
+			//For one frame, upon dropping a file, its path will be stored so that other modules may access it and use it
 			if (lastFileDroppedOnWindow != nullptr) {
 				SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
 				lastFileDroppedOnWindow = nullptr;
@@ -142,10 +129,6 @@ update_status ModuleInput::PreUpdate() {
 				}
 
 			}
-			else if (sdlEvent.window.event == SDL_WINDOWEVENT_LEAVE) {
-				//App->renderer->MouseLeftWindow();
-				MouseLeftWindow();
-			}
 			else if (sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
 				windowEvents[WE_QUIT] = true;
 			}
@@ -160,23 +143,23 @@ update_status ModuleInput::PreUpdate() {
 
 
 		case SDL_MOUSEMOTION:
-			if (mouseReset) {
-				mouseReset = false;
-			}
 
 			if (math::Abs(sdlEvent.motion.xrel) < 150)
 			{
-				mouse_motion.x = sdlEvent.motion.xrel;// / SCREEN_SIZE;
+				mouse_motion.x = sdlEvent.motion.xrel;
 			}
 
 			if (math::Abs(sdlEvent.motion.yrel) < 150)
 			{
-				mouse_motion.y = sdlEvent.motion.yrel;// / SCREEN_SIZE;
+				mouse_motion.y = sdlEvent.motion.yrel;
 			}
 
-			//LOG(std::to_string(sdlEvent.motion.xrel).c_str());
-			mouse.x = sdlEvent.motion.x;// / SCREEN_SIZE;
-			mouse.y = sdlEvent.motion.y;// / SCREEN_SIZE;
+			WarpMouseIfOutOfWindow();
+
+
+
+			mouse.x = sdlEvent.motion.x;
+			mouse.y = sdlEvent.motion.y;
 			break;
 		case SDL_MOUSEWHEEL:
 			wheel_motion = sdlEvent.wheel.y;
@@ -193,36 +176,25 @@ update_status ModuleInput::PreUpdate() {
 // Called every draw update
 update_status ModuleInput::Update()
 {
-
-
-
 	return UPDATE_CONTINUE;
 }
 
+void ModuleInput::WarpMouseIfOutOfWindow() {
 
-const void ModuleInput::MouseLeftWindow() {
-	//LOG("MOUSE LEFT WINDOW");
-	/*float screenMargin = 40.0f;
-	float3 mousePos = App->input->GetMousePosition();
-
-	if (mousePos.x >= SCREEN_WIDTH / 2 - screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, screenMargin, mousePos.y);
+	if (mouse.x >= App->window->GetWidth()) {
+		SDL_WarpMouseInWindow(App->window->window, 0, mouse.y);
 	}
-	else if (mousePos.x <= screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, SCREEN_WIDTH - screenMargin, mousePos.y);
+	else if (mouse.x < 0) {
+		SDL_WarpMouseInWindow(App->window->window, App->window->GetWidth() - 1, mouse.y);
 	}
 
-	if (mousePos.y >= SCREEN_HEIGHT / 2 - screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, mousePos.x, screenMargin);
+	if (mouse.y >= App->window->GetHeight()) {
+		SDL_WarpMouseInWindow(App->window->window, mouse.x, 0);
 
 	}
-	else if (mousePos.y <= screenMargin) {
-		SDL_WarpMouseInWindow(App->window->window, mousePos.x, SCREEN_HEIGHT - screenMargin);
-	}*/
-
-	//LOG("OUT");
-
-	//SDL_WarpMouseInWindow(App->window->window, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+	else if (mouse.y < 0) {
+		SDL_WarpMouseInWindow(App->window->window, mouse.x, App->window->GetHeight() - 1);
+	}
 }
 
 // Called before quitting
@@ -262,11 +234,6 @@ const float3& ModuleInput::GetMouseMotion() const
 	return mouse_motion;
 }
 
-void ModuleInput::ResetMouseMotion() {
-	mouseReset = true;
-	mouse_motion = float3(0, 0, 0);
-	mouse = float3(0, 0, 0);
-}
 
 const bool ModuleInput::IsMouseOverImGuiWindow()const {
 	return ImGui::GetIO().WantCaptureMouse;

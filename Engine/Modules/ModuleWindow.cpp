@@ -85,7 +85,7 @@ void ModuleWindow::SetFlag(SDL_WindowFlags flag) {
 		SDL_SetWindowFullscreen(window, fullscreen ? SDL_TRUE : SDL_FALSE);
 		break;
 	case SDL_WINDOW_RESIZABLE:
-		SDL_SetWindowResizable(window, !resizable ? SDL_TRUE : SDL_FALSE);
+		SDL_SetWindowResizable(window, resizable ? SDL_TRUE : SDL_FALSE);
 		break;
 	case SDL_WINDOW_FULLSCREEN_DESKTOP:
 		SDL_SetWindowFullscreen(window, fullscreen ? SDL_TRUE : SDL_FALSE);

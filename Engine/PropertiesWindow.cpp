@@ -23,6 +23,13 @@ void PropertiesWindow::Draw() {
 		return;
 	}
 
+	if (ImGui::BeginPopupContextItem()) {
+		if (ImGui::MenuItem("Close Properites")) {
+			isOpen = false;
+		}
+		ImGui::EndPopup();
+	}
+
 	if (ImGui::CollapsingHeader("Transform")) {
 		if (ImGui::DragFloat3("Position", modelPosition.ptr())) {
 			App->scene->currentModel->SetPos(modelPosition);
