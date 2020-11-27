@@ -2,8 +2,7 @@
 
 #include "Utilities/Globals.h"
 #include "Modules/Module.h"
-#include "MathGeoLib/Time/Clock.h"
-#include "Utilities/LTimer.h"
+#include "Utilities/Timer.h"
 #include <list>
 
 class ModuleRender;
@@ -49,10 +48,10 @@ public:
 
 	ModuleTextures* textures = nullptr;
 private:
-	int frameCap, ticksPerFrame;
+	Uint32 frameCap, millisPerFrame;
+	float lastDeltaTime;
 	std::list<Module*> modules;
-	LTimer capTimer;
-	math::tick_t lastTick, newTick;
+	Timer capTimer;
 };
 
 extern Application* App;

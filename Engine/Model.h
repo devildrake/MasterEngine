@@ -22,7 +22,7 @@ public:
 	~Model();
 	const bool Load(const char* file_name);
 	//void LoadMaterials(const aiScene* scene);
-	void LoadMaterial(aiMaterial* mat, aiString file, std::string* materialPath, std::string modelPath);
+	void LoadMaterial(aiMaterial* mat, aiString file, std::string& materialPath, std::string modelPath);
 	void Draw();
 	const std::string GetFileName()const;
 	const static bool SceneFound(const char* file_name);
@@ -36,6 +36,10 @@ public:
 	const int GetVertices()const;
 	const std::pair<float3, float3> BoundingBox()const;
 	const float3 GetBoundingCenter()const;
+	void ReleaseTextures();
+	void ResetTransform();
+
+public:
 	friend class PropertiesWindow;
 };
 

@@ -21,8 +21,7 @@ public:
 	void LoadVBO(const aiMesh* mesh);
 	void LoadEBO(const aiMesh* mesh);
 	void CreateVAO();
-	void Draw(std::vector<Material>* model_textures, Transform transform);
-	void ReleaseTextures();
+	void Draw(const std::vector<Material>& model_textures, Transform transform);
 	void SetTexture(int index, std::string path);
 	const int GetTris()const;
 	const int GetVertices()const;

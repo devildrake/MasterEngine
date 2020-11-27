@@ -1,4 +1,7 @@
 #include "ModuleEditor.h"
+#include "../ImGui/imgui.h"
+#include "../ImGui/imgui_impl_sdl.h"
+#include "../ImGui/imgui_impl_opengl3.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "../ImGui/imconfig.h"
@@ -13,10 +16,11 @@
 #include "../EditorMainMenu.h"
 #include "../PropertiesWindow.h"
 
-ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr) {}
+ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr) {
+
+}
 
 ModuleEditor::~ModuleEditor() {
-	//delete console;
 }
 
 bool ModuleEditor::Init() {
@@ -38,7 +42,7 @@ bool ModuleEditor::Start() {
 
 	configWindow = new ConfigWindow("Configuration");
 	propertiesWindow = new PropertiesWindow("Properties");
-	mainMenu = new EditorMainMenu(&console->isOpen, &configWindow->isOpen, &propertiesWindow->isOpen);
+	mainMenu = new EditorMainMenu(console->isOpen, configWindow->isOpen, propertiesWindow->isOpen);
 
 	return true;
 }

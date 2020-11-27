@@ -76,9 +76,10 @@ ConfigWindow::~ConfigWindow() {
 	windowName = "";
 }
 
+//Time comes in seconds
 void ConfigWindow::AddFrame(float deltaTime) {
 	times[frameCounter] = deltaTime * 1000;
-	frames[frameCounter] = 1 / deltaTime;
+	frames[frameCounter] = (float)1 / deltaTime;
 	frameCounter = (frameCounter + 1) % FRAMECOUNT;
 }
 
@@ -223,17 +224,12 @@ void ConfigWindow::Draw() {
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(cur_avail_mem_kb) / 1024 / 1024);
 
 
-			//ImGui::Text("VRAM reserved:");
-			//ImGui::SameLine();
-			//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.2f Gb", (float)(reserved_mem_kb) / 1024 / 1024);
-
 		}
 	}
 
 
 	if (App->editorCamera != nullptr) {
 		if (ImGui::CollapsingHeader("Camera")) {
-			//ImGui::Text("To Do");
 			if (ImGui::Checkbox("Active", &cameraHeaderActive)) {}
 
 			if (cameraHeaderActive) {
@@ -258,7 +254,7 @@ void ConfigWindow::Draw() {
 				ImGui::DragFloat("Camera Rot Speed", &App->editorCamera->rotationSpeed, 0.1f, 15.0f, 60.0f);
 				ImGui::DragFloat("Camera Zoom Speed", &App->editorCamera->zoomSpeed, 5.0f, 0.1f, 60.0f);
 				ImGui::DragFloat("Camera Focus distance", &App->editorCamera->focusDistance, 0.1f, 0.1f, 4.0f);
-				ImGui::DragFloat("Camera Orbit Speed", &App->editorCamera->orbitSpeed, 0.1f, 0.1f, 12.0f);
+				ImGui::DragFloat("Camera Orbit Speed", &App->editorCamera->orbitSpeed, 0.1f, 0.1f, 36.0f);
 
 				if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
 					App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);

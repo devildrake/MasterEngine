@@ -43,7 +43,7 @@ GLenum ModuleTextures::GetMagFilter() {
 }
 
 
-const bool ModuleTextures::GenTexture(std::string path, GLuint* newTextureID) {
+const bool ModuleTextures::GenTexture(std::string path, GLuint& newTextureID) {
 	ILboolean success;
 
 	success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); /* Convert every colour component into
@@ -54,8 +54,8 @@ const bool ModuleTextures::GenTexture(std::string path, GLuint* newTextureID) {
 		return false;
 	}
 
-	glGenTextures(1, newTextureID);
-	glBindTexture(GL_TEXTURE_2D, *newTextureID);
+	glGenTextures(1, &newTextureID);
+	glBindTexture(GL_TEXTURE_2D, newTextureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -72,7 +72,7 @@ const bool ModuleTextures::GenTexture(std::string path, GLuint* newTextureID) {
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	textureMap[path] = *newTextureID;
+	textureMap[path] = newTextureID;
 	return success;
 }
 
@@ -82,7 +82,7 @@ std::string ModuleTextures::GetTexturesFolderName() {
 
 
 
-const bool ModuleTextures::LoadTexture(std::string name, GLuint* tex, std::pair<int, int>* texSize) {
+const bool ModuleTextures::LoadTexture(std::string name, GLuint& tex, std::pair<int, int>& texSize) {
 	ILboolean success;
 
 	if (textureMap[name] != NULL) {
@@ -104,20 +104,53 @@ const bool ModuleTextures::LoadTexture(std::string name, GLuint* tex, std::pair<
 	if (success) /* If no error occured: */
 	{
 
-		if (texSize != nullptr) {
-			texSize->first = ilGetInteger(IL_IMAGE_WIDTH);
-			texSize->second = ilGetInteger(IL_IMAGE_HEIGHT);
-		}
-		success = GenTexture(name, &newTextureID);
+		texSize.first = ilGetInteger(IL_IMAGE_WIDTH);
+		texSize.second = ilGetInteger(IL_IMAGE_HEIGHT);
+
+		success = GenTexture(name, newTextureID);
 	}
 
 
 	ilDeleteImages(1, &newImageID); /* Because we have already copied image data into texture data
 	  we can release memory used by image. */
 
-	*tex = newTextureID;
+	tex = newTextureID;
 	return success;
 }
+
+
+const bool ModuleTextures::LoadTexture(std::string name, GLuint& tex) {
+	ILboolean success;
+
+	if (textureMap[name] != NULL) {
+		return textureMap[name];
+	}
+	else {
+		textureMap.erase(name);
+	}
+
+
+	ILuint newImageID;
+	GLuint newTextureID = false;
+	ilGenImages(1, &newImageID); /* Generation of one image name */
+	ilBindImage(newImageID); /* Binding of image name */
+
+
+	LOG("-----Trying to load texture with model specified path----- (%s)", name.c_str());
+	success = ilLoadImage(name.c_str()); /* Loading of image "image.jpg" */
+	if (success) /* If no error occured: */
+	{
+		success = GenTexture(name, newTextureID);
+	}
+
+
+	ilDeleteImages(1, &newImageID); /* Because we have already copied image data into texture data
+	  we can release memory used by image. */
+
+	tex = newTextureID;
+	return success;
+}
+
 
 bool ModuleTextures::Init() {
 

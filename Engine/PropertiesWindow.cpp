@@ -4,12 +4,9 @@
 #include "Modules/ModuleWindow.h"
 #include "Model.h"
 #include "glew.h"
-PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName), modelPosition(0, 0, 0), modelScale(0, 0, 0), modelRotation(0, 0, 0), triangleCount(0), textureSize(0) {
-	if (App->scene->currentModel != nullptr) {
-		modelPosition = App->scene->currentModel->Position();
-		modelScale = App->scene->currentModel->Scale();
-		modelRotation = App->scene->currentModel->Rotation();
-	}
+
+PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName), triangleCount(0), textureSize(0) {
+
 }
 
 PropertiesWindow::~PropertiesWindow() {
@@ -35,15 +32,17 @@ void PropertiesWindow::Draw() {
 	}
 
 	if (ImGui::CollapsingHeader("Transform")) {
-		if (ImGui::DragFloat3("Position", modelPosition.ptr())) {
-			App->scene->currentModel->SetPos(modelPosition);
-		}
-		if (ImGui::DragFloat3("Rotation", modelRotation.ptr())) {
-			App->scene->currentModel->SetRotation(modelRotation);
+
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem("Reset")) {
+				App->scene->currentModel->ResetTransform();
+			}
+			ImGui::EndPopup();
 		}
 
-		if (ImGui::DragFloat3("Scale", modelScale.ptr())) {
-			App->scene->currentModel->SetScale(modelScale);
+		if (ImGui::DragFloat3("Position", App->scene->currentModel->transform.position.ptr())) {}
+		if (ImGui::DragFloat3("Rotation", App->scene->currentModel->transform.rotation.ptr())) {}
+		if (ImGui::DragFloat3("Scale", App->scene->currentModel->transform.scale.ptr())) {
 
 		}
 	}

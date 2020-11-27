@@ -48,7 +48,7 @@ bool ModuleTransformedTexturedTriangleExcercise::Init() {
 }
 
 bool ModuleTransformedTexturedTriangleExcercise::Start() {
-	bool success = App->textures->LoadTexture("Lenna.png", &texture);
+	bool success = App->textures->LoadTexture("Lenna.png", texture);
 
 	return success;
 }

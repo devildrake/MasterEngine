@@ -246,7 +246,6 @@
     <ClInclude Include="ImGui\imstb_rectpack.h" />
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
-    <ClInclude Include="Utilities\LTimer.h" />
     <ClInclude Include="MathGeoLib\Algorithm\GJK.h" />
     <ClInclude Include="MathGeoLib\Algorithm\GJK2D.h" />
     <ClInclude Include="MathGeoLib\Algorithm\Random\LCG.h" />
@@ -330,6 +329,8 @@
     <ClInclude Include="Modules\ModuleRender.h" />
     <ClInclude Include="Modules\ModuleWindow.h" />
     <ClInclude Include="Modules\ModuleDebugDraw.h" />
+    <ClInclude Include="Utilities\PreciseTimer.h" />
+    <ClInclude Include="Utilities\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -353,7 +354,6 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities\log.cpp" />
-    <ClCompile Include="Utilities\LTimer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MathGeoLib\Algorithm\GJK.cpp" />
     <ClCompile Include="MathGeoLib\Algorithm\GJK2D.cpp" />
@@ -404,6 +404,8 @@
     <ClCompile Include="Modules\ModuleRender.cpp" />
     <ClCompile Include="Modules\ModuleWindow.cpp" />
     <ClCompile Include="Modules\ModuleDebugDraw.cpp" />
+    <ClCompile Include="Utilities\PreciseTimer.cpp" />
+    <ClCompile Include="Utilities\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assimp\include\assimp\color4.inl" />

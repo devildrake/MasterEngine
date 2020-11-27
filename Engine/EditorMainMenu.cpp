@@ -3,7 +3,7 @@
 #include "SDL/include/SDL.h"
 #include "Application.h"
 #include "Modules/ModuleWindow.h"
-EditorMainMenu::EditorMainMenu(bool* consoleWindowOpen, bool* configWindowOpen, bool* propertiesWindowOpen) : consoleOpen(consoleWindowOpen), configOpen(configWindowOpen), propertiesOpen(propertiesWindowOpen) {
+EditorMainMenu::EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen) : consoleOpen(&consoleWindowOpen), configOpen(&configWindowOpen), propertiesOpen(&propertiesWindowOpen) {
 
 }
 

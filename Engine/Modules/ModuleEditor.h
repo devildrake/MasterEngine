@@ -1,12 +1,10 @@
 #ifndef MODULE_EDITOR_H
 #define MODULE_EDITOR_H
 #include "Module.h"
-#include "../ImGui/imgui.h"
-#include "../ImGui/imgui_impl_sdl.h"
-#include "../ImGui/imgui_impl_opengl3.h"
+
 #include <vector>
 #include <string>
-
+#include "../Utilities/PreciseTimer.h"
 class ConfigWindow;
 class ConsoleWindow;
 class EditorMainMenu;
@@ -15,6 +13,7 @@ class ModuleWindow;
 class ModuleRender;
 class ModuleEditorCamera;
 class PropertiesWindow;
+
 #define FRAMECOUNT 60
 #define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048
 #define GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049

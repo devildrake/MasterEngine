@@ -29,7 +29,8 @@ Application::Application()
 	modules.push_back(scene = new ModuleScene());
 
 	modules.push_back(debugDraw = new ModuleDebugDraw());
-	lastTick = newTick = Clock::Tick();
+	capTimer = Timer();
+	//lastTick = newTick = Clock::Tick();
 	SetFrameCap(60);
 }
 
@@ -42,7 +43,7 @@ Application::~Application()
 }
 
 float Application::GetDeltaTime() {
-	return Clock::TimespanToSecondsF(lastTick, newTick);
+	return lastDeltaTime;
 }
 
 bool Application::Init()
@@ -68,10 +69,7 @@ bool Application::Start()
 
 update_status Application::Update()
 {
-	capTimer.start();
-
-	lastTick = newTick;
-	newTick = Clock::Tick();
+	capTimer.Start();
 
 	update_status ret = UPDATE_CONTINUE;
 
@@ -85,19 +83,21 @@ update_status Application::Update()
 	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
-	int frameTicks = capTimer.getTicks();
-	if (frameTicks < ticksPerFrame)
-	{
-		//Wait remaining time
-		SDL_Delay(ticksPerFrame - frameTicks);
+	//int frameTicks = capTimer.getTicks();
+	Uint32 frameMillis = capTimer.Read();
+
+	if (frameMillis < millisPerFrame) {
+		SDL_Delay(millisPerFrame - frameMillis);
 	}
+
+	lastDeltaTime = capTimer.Read() / 1000;
 
 	return ret;
 }
 
 void Application::SetFrameCap(int newFrameCap) {
 	frameCap = newFrameCap;
-	ticksPerFrame = 1000 / newFrameCap;
+	millisPerFrame = 1000 / newFrameCap;
 }
 
 

@@ -8,9 +8,6 @@ read-only information about the current loaded meshes and texture (triangle coun
 
 class PropertiesWindow :public ImGuiWindow {
 private:
-	float3 modelPosition;
-	float3 modelRotation;
-	float3 modelScale;
 	std::string modelName;
 	int triangleCount;
 	int textureSize;

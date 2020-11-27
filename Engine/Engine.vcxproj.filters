@@ -152,7 +152,6 @@
     <ClCompile Include="Modules\ModuleInput.cpp" />
     <ClCompile Include="Modules\ModuleRender.cpp" />
     <ClCompile Include="Modules\ModuleWindow.cpp" />
-    <ClCompile Include="Utilities\LTimer.cpp" />
     <ClCompile Include="Utilities\log.cpp" />
     <ClCompile Include="Excercises\ModuleHelloTriangleExcerise.cpp" />
     <ClCompile Include="Excercises\ModuleTransformedTriangleExcercise.cpp" />
@@ -169,6 +168,8 @@
     <ClCompile Include="Modules\ModuleScene.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Utilities\Timer.cpp" />
+    <ClCompile Include="Utilities\PreciseTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -427,7 +428,6 @@
     <ClInclude Include="Modules\ModuleEditorCamera.h" />
     <ClInclude Include="Modules\ModuleInput.h" />
     <ClInclude Include="Modules\ModuleRender.h" />
-    <ClInclude Include="Utilities\LTimer.h" />
     <ClInclude Include="Utilities\Globals.h" />
     <ClInclude Include="Excercises\ModuleHelloTriangleExcerise.h" />
     <ClInclude Include="Excercises\ModuleTransformedTriangleExcercise.h" />
@@ -529,6 +529,8 @@
     <ClInclude Include="Modules\ModuleScene.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="Utilities\Timer.h" />
+    <ClInclude Include="Utilities\PreciseTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

@@ -11,7 +11,7 @@ private:
 	GLenum wrapMode, minFilter, magFilter;
 	std::string texturesFolderName;
 private:
-	const bool GenTexture(std::string path, GLuint* newTextureID);
+	const bool GenTexture(std::string path, GLuint& newTextureID);
 public:
 
 	ModuleTextures();
@@ -22,7 +22,8 @@ public:
 	update_status   Update();
 	update_status   PostUpdate();
 	bool            CleanUp();
-	const bool LoadTexture(std::string path, GLuint* tex, std::pair<int, int>* texSize = nullptr);
+	const bool LoadTexture(std::string path, GLuint& tex, std::pair<int, int>& texSize);
+	const bool LoadTexture(std::string path, GLuint& tex);
 	void SetWrapMode(GLenum anEnum);
 	void SetMinMode(GLenum anEnum);
 	void SetMagMode(GLenum anEnum);

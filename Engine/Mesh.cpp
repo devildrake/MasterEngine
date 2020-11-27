@@ -25,16 +25,12 @@ Mesh::Mesh(const aiMesh* mesh, const char* matname) {
 
 
 Mesh::~Mesh() {
-
-	ReleaseTextures();
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);
 }
 
-void Mesh::ReleaseTextures() {
-	App->textures->ReleaseTexture(texture_path);
-}
+
 
 void Mesh::SetTexture(int index, std::string path) {
 	texture_path = path;
@@ -104,7 +100,7 @@ void Mesh::CreateVAO()
 	glBindVertexArray(0);
 }
 
-void Mesh::Draw(std::vector<Material>* model_textures, Transform transform)
+void Mesh::Draw(const std::vector<Material>& model_textures, Transform transform)
 {
 	unsigned program = App->renderer->GetDefaultShaderID();
 	const float4x4& view = App->editorCamera->GetFrustum()->ViewMatrix();
@@ -113,8 +109,6 @@ void Mesh::Draw(std::vector<Material>* model_textures, Transform transform)
 	//model = float4x4::RotateX(DegToRad(transform.rotation.x)) * float4x4::RotateY(DegToRad(transform.rotation.y)) * float4x4::RotateZ(DegToRad(transform.rotation.z)) * float4x4::Translate(transform.position) * float4x4::Scale(transform.scale) * model;
 	model = float4x4::Translate(transform.position) * float4x4::RotateX(DegToRad(transform.rotation.x)) * float4x4::RotateY(DegToRad(transform.rotation.y)) * float4x4::RotateZ(DegToRad(transform.rotation.z)) * float4x4::Scale(transform.scale) * model;
 
-
-
 	glUseProgram(program);
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&model);
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);
@@ -122,18 +116,17 @@ void Mesh::Draw(std::vector<Material>* model_textures, Transform transform)
 	glActiveTexture(GL_TEXTURE0);
 	//material_index = 0;
 	//glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
-	material_index = 0;
 	//for (std::vector<Material>::const_iterator it = model_textures.begin(); it != model_textures.end(); ++it) {
 	//	glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
 	//	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 	//	material_index++;
 	//}
 
-	for (int i = 0; i < model_textures->size(); ++i)
-	{
-		glBindTexture(GL_TEXTURE_2D, model_textures->at(i).GetTextureID());
-		glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
-	}
+	material_index = 0;
+	glBindTexture(GL_TEXTURE_2D, (model_textures)[material_index].GetTextureID());
+
+
+	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 
 	//glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
 	//glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
