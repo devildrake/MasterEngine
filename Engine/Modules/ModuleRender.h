@@ -10,6 +10,16 @@ class Model;
 
 class ModuleRender : public Module
 {
+private:
+
+	void* context;
+	float3 bgColor;
+	std::list<Model*> models;
+	SDL_GLContext glcontext;
+	Shader* default_shader;
+	bool faceCulling;
+	bool depthTest;
+	bool wireFramePolygonMode;
 public:
 
 	ModuleRender();
@@ -23,16 +33,13 @@ public:
 	void WindowResized(unsigned width, unsigned height);
 	SDL_GLContext GetContext();
 	const unsigned GetDefaultShaderID()const;
-	friend class ConfigWindow;
 	void AddModel(Model* m);
 	void RemoveModel(Model* m);
+	void ToggleFaceCulling()const;
+	void ToggleDepthTest()const;
+	void ToggleWireFrameMode()const;
+public:
+	friend class ConfigWindow;
 
-private:
-
-	void* context;
-	float3 bgColor;
-	std::list<Model*> models;
-	SDL_GLContext glcontext;
-	Shader* default_shader;
 };
 #endif

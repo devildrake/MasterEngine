@@ -38,11 +38,11 @@ void Mesh::SetTexture(int index, std::string path) {
 }
 
 const int Mesh::GetTris()const {
-	return num_vertices;
+	return num_faces;
 }
 
 const int Mesh::GetVertices()const {
-	return num_faces;
+	return num_vertices;
 }
 
 

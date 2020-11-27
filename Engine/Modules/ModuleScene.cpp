@@ -16,7 +16,7 @@ bool ModuleScene::Init() {
 }
 bool ModuleScene::Start() {
 
-	currentModel = new Model("Models\\BakerHouse.fbx");
+	currentModel = new Model("Resources\\Models\\BakerHouse.fbx");
 	App->renderer->AddModel(currentModel);
 	App->editorCamera->SetTargetModel(currentModel);
 	return true;

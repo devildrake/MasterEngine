@@ -117,8 +117,16 @@ void ConfigWindow::Draw() {
 			ImGui::InputText("App Name", appNameBuff, IM_ARRAYSIZE(appNameBuff));
 			ImGui::InputText("Organization", organizationBuff, IM_ARRAYSIZE(organizationBuff));
 
-			if (ImGui::SliderInt("Max Fps", &App->editor->frameCap, 30, 90)) {
-				App->SetFrameCap(App->editor->frameCap);
+			bool isFrameRateCapped = App->GetFrameCap() > 0;
+
+			if (ImGui::Checkbox("Frame Cap", &isFrameRateCapped)) {
+				App->SetFrameCap(isFrameRateCapped ? 60 : 0);
+			}
+
+			if (isFrameRateCapped) {
+				if (ImGui::SliderInt("Max Fps", &App->editor->frameCap, 30, 90)) {
+					App->SetFrameCap(App->editor->frameCap);
+				}
 			}
 
 			ImGui::PlotHistogram("##framerate", frames, IM_ARRAYSIZE(frames), 0, NULL, 0.0f, 100.0f, ImVec2(310, 100));
@@ -227,6 +235,20 @@ void ConfigWindow::Draw() {
 		}
 	}
 
+	if (ImGui::CollapsingHeader("Renderer")) {
+
+		if (ImGui::Checkbox("Face Culling", &App->renderer->faceCulling)) {
+			App->renderer->ToggleFaceCulling();
+		}
+
+		if (ImGui::Checkbox("Depth Test", &App->renderer->depthTest)) {
+			App->renderer->ToggleDepthTest();
+		}
+
+		if (ImGui::Checkbox("WireFrame Mode", &App->renderer->wireFramePolygonMode)) {
+			App->renderer->ToggleWireFrameMode();
+		}
+	}
 
 	if (App->editorCamera != nullptr) {
 		if (ImGui::CollapsingHeader("Camera")) {

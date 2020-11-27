@@ -83,11 +83,12 @@ update_status Application::Update()
 	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
-	//int frameTicks = capTimer.getTicks();
-	Uint32 frameMillis = capTimer.Read();
+	if (millisPerFrame > 0) {
+		Uint32 frameMillis = capTimer.Read();
 
-	if (frameMillis < millisPerFrame) {
-		SDL_Delay(millisPerFrame - frameMillis);
+		if (frameMillis < millisPerFrame) {
+			SDL_Delay(millisPerFrame - frameMillis);
+		}
 	}
 
 	lastDeltaTime = capTimer.Read() / 1000;
@@ -97,12 +98,11 @@ update_status Application::Update()
 
 void Application::SetFrameCap(int newFrameCap) {
 	frameCap = newFrameCap;
-	millisPerFrame = 1000 / newFrameCap;
+
+	millisPerFrame = frameCap > 0 ? 1000 / newFrameCap : 0;
 }
 
-
-
-inline const int Application::GetFrameCap() const {
+const int Application::GetFrameCap() const {
 	return frameCap;
 }
 

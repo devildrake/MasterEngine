@@ -9,8 +9,8 @@
 #include "../Leaks.h"
 #include <assimp/cimport.h>
 
-ModuleRender::ModuleRender() {
-	bgColor = float3(0.2f, 0.2f, 0.2f);
+ModuleRender::ModuleRender() :bgColor(0.2f, 0.2f, 0.2f), context(nullptr), default_shader(nullptr), glcontext(nullptr), faceCulling(true), depthTest(true), wireFramePolygonMode(false) {
+
 }
 
 // Destructor
@@ -22,7 +22,6 @@ ModuleRender::~ModuleRender()
 
 void myCallback(const char* msg, char* userData) {
 	LOG(msg);
-	//printIntoMyFile(msg);
 }
 
 // Called before render is available
@@ -61,9 +60,40 @@ bool ModuleRender::Init()
 	aiAttachLogStream(&stream);
 	glEnable(GL_DEPTH_TEST); // Enable depth test
 	glEnable(GL_CULL_FACE); // Enable cull backward faces
+	glEnable(GL_BLEND); // Enable cull backward faces
 	glFrontFace(GL_CCW); // Front faces will be counter clockwise
 	return true;
 }
+
+void ModuleRender::ToggleWireFrameMode()const {
+	if (wireFramePolygonMode) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+}
+
+void ModuleRender::ToggleDepthTest()const {
+	if (depthTest) {
+		glEnable(GL_DEPTH_TEST); // Enable cull backward faces
+	}
+	else {
+		glDisable(GL_DEPTH_TEST); // Enable cull backward faces
+	}
+}
+
+
+void ModuleRender::ToggleFaceCulling()const {
+	if (faceCulling) {
+		glEnable(GL_CULL_FACE); // Enable cull backward faces
+	}
+	else {
+		glDisable(GL_CULL_FACE); // Enable cull backward faces
+	}
+
+}
+
 
 void ModuleRender::AddModel(Model* m) {
 	if (m == nullptr)return;

@@ -8,7 +8,7 @@
 #define DEGTORAD 3.14159/180
 
 ModuleEditorCamera::ModuleEditorCamera() : nearPlaneDistance(0.1f), farPlaneDistance(200.0f), frustumPosition(0, 5, -3),
-cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(6.0f) {}
+cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f) {}
 
 // Destructor
 ModuleEditorCamera::~ModuleEditorCamera()
@@ -136,15 +136,7 @@ const float ModuleEditorCamera::GetDistanceBasedOnBoundingBox(Model* m, float di
 void ModuleEditorCamera::FocusOn(Model* m, float focusDistance) {
 	targetModel = m;
 	float3 boundingBoxCenter = m->GetBoundingCenter();
-	float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale()) + targetModel->Position();
-
-	float3 newVecToTarget = focusPosition - frustumPosition;
-
-	frustumPosition = focusPosition - newVecToTarget.Normalized() * GetDistanceBasedOnBoundingBox(m, focusDistance);
-
-	float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToTarget.Normalized(), frustum.Up(), float3::unitY);
-	frustum.SetFront((lookAtMat * frustum.Front()).Normalized());
-	frustum.SetUp(lookAtMat * frustum.Up());
+	frustumPosition = boundingBoxCenter - (GetDistanceBasedOnBoundingBox(m, focusDistance) * frustum.Front());
 }
 
 // Called every draw update
