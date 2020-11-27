@@ -135,16 +135,16 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string& materialPa
 	else if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS) {
 		LOG("Trying to load  %s as Diffuse texture", matName);
 		materialPath = file.C_Str();
-		success = App->textures->LoadTexture(file.C_Str(), tex, &texSize);
+		success = App->textures->LoadTexture(file.C_Str(), tex, texSize);
 		std::string withModelPath = modelPath.substr(0, lastSlash) + "\\" + file.C_Str();
 		std::string withTexturesFolderPath = App->textures->GetTexturesFolderName() + "\\" + file.C_Str();
 		if (!success) {
-			success = App->textures->LoadTexture(withModelPath, tex, &texSize);
+			success = App->textures->LoadTexture(withModelPath, tex, texSize);
 			materialPath = withModelPath;
 
 		}
 		if (!success) {
-			success = App->textures->LoadTexture(withTexturesFolderPath, tex, &texSize);
+			success = App->textures->LoadTexture(withTexturesFolderPath, tex, texSize);
 			materialPath = withTexturesFolderPath;
 
 		}
