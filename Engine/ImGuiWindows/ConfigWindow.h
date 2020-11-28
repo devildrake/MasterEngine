@@ -10,12 +10,15 @@
 
 class ConfigWindow :public ImGuiWindow {
 private:
-	std::pair< ImVec2, ImVec2> bounds;
 	bool applicationHeaderActive, windowHeaderActive, hardwareHeaderActive, cameraHeaderActive;
 	float frames[FRAMECOUNT];
 	float times[FRAMECOUNT];
 	int frameCounter;
+	
+	//Screen refresh rate
 	int refresh_rate;
+
+	//String with all GPU capabilities added to it as strings
 	std::string caps;
 public:
 	ConfigWindow(const char* windowName);

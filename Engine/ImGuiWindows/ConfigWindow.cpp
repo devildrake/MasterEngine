@@ -85,9 +85,6 @@ void ConfigWindow::Draw() {
 	if (!isOpen)return;
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 
-	bounds.first = ImGui::GetWindowContentRegionMin();
-	bounds.second = ImGui::GetWindowContentRegionMax();
-
 	if (!ImGui::Begin(windowName, &isOpen))
 	{
 		ImGui::End();
@@ -120,12 +117,12 @@ void ConfigWindow::Draw() {
 			}
 
 			if (isFrameRateCapped) {
-				if (ImGui::SliderInt("Max Fps", &App->editor->frameCap, 30, 90)) {
+				if (ImGui::SliderInt("Max Fps", &App->editor->frameCap, 30, 120)) {
 					App->SetFrameCap(App->editor->frameCap);
 				}
 			}
 
-			ImGui::PlotHistogram("##framerate", frames, IM_ARRAYSIZE(frames), 0, NULL, 0.0f, 100.0f, ImVec2(310, 100));
+			ImGui::PlotHistogram("##framerate", frames, IM_ARRAYSIZE(frames), 0, NULL, 0.0f, 140, ImVec2(310, 100));
 			ImGui::SameLine();
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "FrameRate");
 

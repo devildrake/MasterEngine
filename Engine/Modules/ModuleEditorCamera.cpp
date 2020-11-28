@@ -8,7 +8,7 @@
 #define DEGTORAD 3.14159/180
 
 ModuleEditorCamera::ModuleEditorCamera() : nearPlaneDistance(0.1f), farPlaneDistance(200.0f), frustumPosition(0, 5, -3),
-cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f), context(nullptr), glcontext(nullptr), aspectRatio(1) {}
+cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f), context(nullptr), glcontext(nullptr), aspectRatio(1.77f) {}
 
 // Destructor
 ModuleEditorCamera::~ModuleEditorCamera()
@@ -32,8 +32,6 @@ bool ModuleEditorCamera::Init()
 
 update_status ModuleEditorCamera::PreUpdate()
 {
-
-
 	return UPDATE_CONTINUE;
 }
 
@@ -91,8 +89,7 @@ const float ModuleEditorCamera::UpdateCameraYaw(const float3 mouseMotion) {
 
 	float prevYaw = yaw;
 	yaw -= mouseMotion.x * rotationSpeed * App->GetDeltaTime();
-	//yaw = math::Mod(yaw, 360.0f);
-
+	yaw = math::Mod(yaw, 360.0f);
 	return yaw - prevYaw;
 }
 

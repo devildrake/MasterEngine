@@ -25,15 +25,16 @@ bool ModuleScene::Start() {
 update_status ModuleScene::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
+
 update_status ModuleScene::Update() {
-
 	std::string lastFile = App->input->GetLastFileDroppedOnWindow();
-
 	if (lastFile.size() > 0) {
 		if (currentModel != nullptr) {
+			//If a new file has been dropped and it doesn't share the name with the current model, try to load it as model or texture
 			if (currentModel->GetFileName() != lastFile) {
 				Model* newModel = new Model();
 
+				//Scene Found will tell wether or not a model could be loaded
 				if (Model::SceneFound(lastFile.c_str())) {
 
 					App->renderer->RemoveModel(currentModel);
@@ -49,6 +50,8 @@ update_status ModuleScene::Update() {
 					}
 				}
 				else {
+					LOG("%s couldn't be loaded as a model", lastFile.c_str());
+
 					delete newModel;
 					GLuint possibleTexture;
 					std::pair<int, int>possibleSize;
@@ -67,12 +70,15 @@ update_status ModuleScene::Update() {
 							}
 
 							currentModel->LoadMaterial(lastFile.substr(lastSlash, lastFile.size() - 1).c_str(), lastFile, possibleTexture, possibleSize);
-							//currentModel->LoadMaterial()
 						}
 					}
-
-
+					else {
+						LOG("INFO --> The same file won't be loaded twice, Application will do nothing.");
+					}
 				}
+			}
+			else {
+				LOG("INFO --> The same file won't be loaded twice, Application will do nothing.");
 			}
 		}
 	}

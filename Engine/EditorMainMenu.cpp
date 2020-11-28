@@ -3,16 +3,13 @@
 #include "SDL/include/SDL.h"
 #include "Application.h"
 #include "Modules/ModuleWindow.h"
-EditorMainMenu::EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutWindowOpen) : consoleOpen(&consoleWindowOpen), configOpen(&configWindowOpen), propertiesOpen(&propertiesWindowOpen), aboutOpen(&aboutWindowOpen) {
 
-}
-
+EditorMainMenu::EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutWindowOpen) : consoleOpen(&consoleWindowOpen), configOpen(&configWindowOpen), propertiesOpen(&propertiesWindowOpen), aboutOpen(&aboutWindowOpen) {}
 
 update_status EditorMainMenu::Draw() {
 
 	ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
 
-	//ImGui::DockSpaceOverViewport();
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("MainMenu")) {
 			if (consoleOpen != nullptr)
@@ -41,7 +38,6 @@ update_status EditorMainMenu::Draw() {
 				return UPDATE_STOP;
 			}
 
-			//if(ImGui::)
 			ImGui::EndMenu();
 		}
 

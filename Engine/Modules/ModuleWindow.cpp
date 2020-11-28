@@ -31,7 +31,6 @@ bool ModuleWindow::Init()
 		width = dm.w / 8 * 6;
 		height = dm.h / 8 * 6;
 
-
 		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 		fullscreen = borderless = fullDtp = false;
 		resizable = true;

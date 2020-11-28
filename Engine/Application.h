@@ -14,11 +14,6 @@ class ModuleEditorCamera;
 class ModuleEditor;
 class ModuleDebugDraw;
 class ModuleScene;
-
-//class ModuleHelloTriangleExcercise;
-//class ModuleTransformedTriangleExcercise;
-class ModuleTransformedTexturedTriangleExcercise;
-
 class Application
 {
 public:
@@ -42,10 +37,6 @@ public:
 	ModuleEditor* editor = nullptr;
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
-	//ModuleHelloTriangleExcercise* triangleExcercise = nullptr;
-	//ModuleTransformedTriangleExcercise* transformedTriangleExcercise = nullptr;
-	//ModuleTransformedTexturedTriangleExcercise* transformedTexturedTriangleExcercise = nullptr;
-
 	ModuleTextures* textures = nullptr;
 private:
 	Uint32 frameCap, millisPerFrame;

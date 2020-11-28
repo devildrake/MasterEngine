@@ -29,18 +29,12 @@ bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
 
-	//glewInit();
-
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // desired version
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // we want a double buffer
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // we want to have a depth buffer with 24 bits
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-
 
 	// Create an OpenGL context associated with the window.
 	glcontext = SDL_GL_CreateContext(App->window->window);
@@ -52,15 +46,11 @@ bool ModuleRender::Init()
 	LOG("OpenGL version supported %s", glGetString(GL_VERSION));
 	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-
-
-
 	struct aiLogStream stream;
 	stream.callback = myCallback;
 	aiAttachLogStream(&stream);
 	glEnable(GL_DEPTH_TEST); // Enable depth test
 	glEnable(GL_CULL_FACE); // Enable cull backward faces
-	glEnable(GL_BLEND); // Enable cull backward faces
 	glFrontFace(GL_CCW); // Front faces will be counter clockwise
 	return true;
 }
@@ -132,7 +122,6 @@ const unsigned ModuleRender::GetDefaultShaderID() const {
 // Called every draw update
 update_status ModuleRender::Update()
 {
-
 
 	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
 		(*it)->Draw();
