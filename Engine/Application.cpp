@@ -11,7 +11,7 @@
 #include "Modules/ModuleDebugDraw.h"
 #include "Modules/ModuleTextures.h"
 #include "Modules/ModuleScene.h"
-#include "Leaks.h"
+#include <Leaks.h>
 
 
 Application::Application()
@@ -83,7 +83,7 @@ update_status Application::Update()
 	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
-	if (millisPerFrame > 0) {
+	if (millisPerFrame > (Uint32)0) {
 		Uint32 frameMillis = capTimer.Read();
 
 		if (frameMillis < millisPerFrame) {

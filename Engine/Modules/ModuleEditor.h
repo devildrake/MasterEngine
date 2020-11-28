@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <string>
-#include "../Utilities/PreciseTimer.h"
+#include <PreciseTimer.h>
 #include "../MathGeoLib/Math/float3.h"
 class ConfigWindow;
 class ConsoleWindow;

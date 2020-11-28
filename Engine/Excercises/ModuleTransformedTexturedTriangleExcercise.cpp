@@ -1,12 +1,11 @@
 ﻿#include "ModuleTransformedTexturedTriangleExcercise.h"
-
 #include "ModuleTransformedTriangleExcercise.h"
-#include "SDL.h"
+#include <SDL.h>
 #include <string>
 #include "../Modules/ModuleEditorCamera.h"
 #include "../Utilities/debug_draw.hpp"
 #include "../Modules/ModuleTextures.h"
-#include "../Leaks.h"
+#include <Leaks.h>
 
 ModuleTransformedTexturedTriangleExcercise::ModuleTransformedTexturedTriangleExcercise() {
 	info = new ILinfo();

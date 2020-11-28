@@ -1,5 +1,5 @@
 #include "AboutWindow.h"
-#include "glew.h"
+#include <glew.h>
 
 AboutWindow::AboutWindow(const char* windowName) :ImGuiWindow(windowName) {
 	SDL_GetVersion(&sdl_version);

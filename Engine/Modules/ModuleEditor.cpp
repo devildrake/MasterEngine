@@ -1,24 +1,26 @@
 #include "ModuleEditor.h"
-#include "../ImGui/imgui.h"
-#include "../ImGui/imgui_impl_sdl.h"
-#include "../ImGui/imgui_impl_opengl3.h"
-#include "ModuleWindow.h"
-#include "ModuleRender.h"
-#include "../ImGui/imconfig.h"
-#include "../Leaks.h"
-#include "../ConsoleWindow.h"
-#include "../ConfigWindow.h"
-#include "../Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleEditorCamera.h"
 #include "ModuleInput.h";
-#include "../EditorMainMenu.h"
-#include "../PropertiesWindow.h"
-#include "../AboutWindow.h"
 #include "ModuleDebugDraw.h"
 
-ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
+#include "../Application.h"
+
+#include "../ImGui/imgui.h"
+#include "../ImGui/imgui_impl_sdl.h"
+#include "../ImGui/imgui_impl_opengl3.h"
+#include "../ImGui/imconfig.h"
+
+#include "../ImGuiWindows/ConsoleWindow.h"
+#include "../ImGuiWindows/ConfigWindow.h"
+#include "../ImGuiWindows/PropertiesWindow.h"
+#include "../ImGuiWindows/AboutWindow.h"
+
+#include "../EditorMainMenu.h"
+#include <Leaks.h>
+
+ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr),aboutWindow(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
 
 }
 
@@ -61,17 +63,17 @@ update_status ModuleEditor::PreUpdate() {
 }
 update_status ModuleEditor::Update() {
 
-	if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RALT) == KEY_REPEAT) {
-		if (App->input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_LALT) == ModuleInput::KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RALT) == ModuleInput::KEY_REPEAT) {
+		if (App->input->GetKey(SDL_SCANCODE_Y) == ModuleInput::KEY_DOWN) {
 			console->isOpen = !console->isOpen;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+		if (App->input->GetKey(SDL_SCANCODE_P) == ModuleInput::KEY_DOWN) {
 			propertiesWindow->isOpen = !propertiesWindow->isOpen;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN) {
+		if (App->input->GetKey(SDL_SCANCODE_U) == ModuleInput::KEY_DOWN) {
 			configWindow->isOpen = !configWindow->isOpen;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) {
+		if (App->input->GetKey(SDL_SCANCODE_A) == ModuleInput::KEY_DOWN) {
 			aboutWindow->isOpen = !aboutWindow->isOpen;
 		}
 	}

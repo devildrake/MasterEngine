@@ -1,12 +1,14 @@
 #include "Model.h"
-#include "Utilities/Globals.h"
-#include "Application.h"
-#include "Modules/ModuleTextures.h"
+#include <Globals.h>
+#include <PreciseTimer.h>
+#include "../Application.h"
+#include "../Modules/ModuleTextures.h"
 #include <assimp/cimport.h>
-#include "Leaks.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-#include "Utilities/PreciseTimer.h"
+
+#include <Leaks.h>
+
 
 Model::Model(const char* new_file) :transform(Transform()) {
 	Load(new_file);

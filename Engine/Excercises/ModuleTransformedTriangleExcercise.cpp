@@ -1,10 +1,10 @@
 #include "ModuleTransformedTriangleExcercise.h"
-#include "SDL.h"
+#include <SDL.h>
 #include <string>
 #include "../Modules/ModuleEditorCamera.h"
 #include "../Application.h"
-#include "../Utilities/debug_draw.hpp"
-#include "../Leaks.h"
+#include <debug_draw.hpp>
+#include <Leaks.h>
 
 ModuleTransformedTriangleExcercise::ModuleTransformedTriangleExcercise() {
 
@@ -117,7 +117,7 @@ void ModuleTransformedTriangleExcercise::RenderVBO(unsigned vbo)
 	model = float4x4::identity;
 
 	float4x4 translateMat = float4x4::Translate(trianglePos);
-	model = translateMat * model; 
+	model = translateMat * model;
 
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "view"), 1, GL_TRUE, &view[0][0]);

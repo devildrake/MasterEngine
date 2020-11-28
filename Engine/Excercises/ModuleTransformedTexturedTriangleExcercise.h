@@ -1,13 +1,13 @@
 #ifndef MODULE_TRANSFORMED_TEXTURED_TRIANGLE_EXCERCISE_H
 #define MODULE_TRANSFORMED_TEXTURED_TRIANGLE_EXCERCISE_Hs
 #include "../MathGeoLib/MathGeoLib.h"
-#include "glew.h"
+#include <glew.h>
 #include "../MathGeoLib/Geometry/Frustum.h"
 #include "../Utilities/Globals.h"
 #include "../ImGui/imgui.h"
 #include "../Application.h"
 #include "../Modules/ModuleTextures.h"
-#include "IL/ilut.h"
+#include <IL/ilut.h>
 class ModuleTransformedTexturedTriangleExcercise :public Module {
 public:
 	ModuleTransformedTexturedTriangleExcercise();

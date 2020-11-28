@@ -1,7 +1,7 @@
 #ifndef _MODULE_TEXTURE_H_
 #define _MODULE_TEXTURE_H_
 #include "Module.h"
-#include "glew.h"
+#include <glew.h>
 #include <map>
 #include <string>
 

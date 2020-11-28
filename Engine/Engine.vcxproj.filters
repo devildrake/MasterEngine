@@ -158,19 +158,19 @@
     <ClCompile Include="Modules\ModuleDebugDraw.cpp" />
     <ClCompile Include="Excercises\ModuleTransformedTexturedTriangleExcercise.cpp" />
     <ClCompile Include="Modules\ModuleTextures.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ConsoleWindow.cpp" />
-    <ClCompile Include="ConfigWindow.cpp" />
     <ClCompile Include="EditorMainMenu.cpp" />
-    <ClCompile Include="PropertiesWindow.cpp" />
     <ClCompile Include="Modules\ModuleScene.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Utilities\Timer.cpp" />
     <ClCompile Include="Utilities\PreciseTimer.cpp" />
-    <ClCompile Include="AboutWindow.cpp" />
+    <ClCompile Include="ImGuiWindows\AboutWindow.cpp" />
+    <ClCompile Include="ImGuiWindows\ConsoleWindow.cpp" />
+    <ClCompile Include="ImGuiWindows\ConfigWindow.cpp" />
+    <ClCompile Include="ImGuiWindows\PropertiesWindow.cpp" />
+    <ClCompile Include="Rendering\Shader.cpp" />
+    <ClCompile Include="Rendering\Model.cpp" />
+    <ClCompile Include="Rendering\Mesh.cpp" />
+    <ClCompile Include="Rendering\Material.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -518,21 +518,21 @@
     <ClInclude Include="Assimp\include\assimp\XMLTools.h" />
     <ClInclude Include="Assimp\include\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="Modules\ModuleTextures.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="Leaks.h" />
-    <ClInclude Include="ImGuiWindow.h" />
-    <ClInclude Include="ConsoleWindow.h" />
-    <ClInclude Include="ConfigWindow.h" />
     <ClInclude Include="EditorMainMenu.h" />
-    <ClInclude Include="PropertiesWindow.h" />
     <ClInclude Include="Modules\ModuleScene.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="Material.h" />
     <ClInclude Include="Utilities\Timer.h" />
     <ClInclude Include="Utilities\PreciseTimer.h" />
-    <ClInclude Include="AboutWindow.h" />
+    <ClInclude Include="ImGuiWindows\AboutWindow.h" />
+    <ClInclude Include="ImGuiWindows\ConfigWindow.h" />
+    <ClInclude Include="ImGuiWindows\ConsoleWindow.h" />
+    <ClInclude Include="ImGuiWindows\ImGuiWindow.h" />
+    <ClInclude Include="ImGuiWindows\PropertiesWindow.h" />
+    <ClInclude Include="Utilities\Leaks.h" />
+    <ClInclude Include="Rendering\Shader.h" />
+    <ClInclude Include="Rendering\Model.h" />
+    <ClInclude Include="Rendering\Mesh.h" />
+    <ClInclude Include="Rendering\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

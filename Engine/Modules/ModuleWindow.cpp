@@ -1,8 +1,8 @@
 #include "../Utilities/Globals.h"
 #include "../Application.h"
 #include "ModuleWindow.h"
-#include "../Leaks.h"
 #include "SDL.h"
+#include "../Utilities/Leaks.h"
 
 ModuleWindow::ModuleWindow() :fullscreen(false), borderless(false), fullDtp(false), resizable(true), brightness(1.0f), width(0), height(0) {}
 

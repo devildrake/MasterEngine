@@ -1,4 +1,4 @@
-#include "Timer.h"
+#include <Timer.h>
 
 void Timer::Start() {
 	startTicks = SDL_GetTicks();

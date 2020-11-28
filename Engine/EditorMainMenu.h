@@ -1,7 +1,7 @@
 #ifndef EDITOR_MAIN_MENU_H
 #define EDITOR_MAIN_MENU_H
 
-#include "Utilities/Globals.h"
+#include <Globals.h>
 #include "ImGui/imgui.h"
 #include <string>
 

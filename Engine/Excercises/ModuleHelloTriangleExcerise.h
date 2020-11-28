@@ -2,7 +2,7 @@
 #define MODULE_HELLO_TRIANGLE_EXCERCISE
 
 #include "../Modules/Module.h"
-#include "glew.h"
+#include <glew.h>
 
 class ModuleHelloTriangleExcercise :public Module {
 public:

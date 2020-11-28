@@ -46,6 +46,6 @@ update_status EditorMainMenu::Draw() {
 		}
 
 		ImGui::EndMainMenuBar();
-		return UPDATE_CONTINUE;
 	}
+	return UPDATE_CONTINUE;
 }

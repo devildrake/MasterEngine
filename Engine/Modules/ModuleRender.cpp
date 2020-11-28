@@ -1,13 +1,13 @@
-#include "../Utilities/Globals.h"
+#include <Globals.h>
 #include "../Application.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include <glew.h>
-#include "../Model.h"
-#include "../Shader.h"
-#include "../Leaks.h"
+#include "../Rendering/Model.h"
+#include "../Rendering/Shader.h"
 #include <assimp/cimport.h>
+#include <Leaks.h>
 
 ModuleRender::ModuleRender() :bgColor(0.2f, 0.2f, 0.2f), context(nullptr), default_shader(nullptr), glcontext(nullptr), faceCulling(true), depthTest(true), wireFramePolygonMode(false) {
 

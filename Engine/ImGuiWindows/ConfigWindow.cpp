@@ -1,15 +1,15 @@
 #include "ConfigWindow.h"
-#include "Utilities/Globals.h"
-#include "ImGui/imgui.h"
-#include "Application.h"
-#include "Modules/ModuleWindow.h"
-#include "Modules/ModuleRender.h"
-#include "Modules/ModuleEditorCamera.h"
-#include "Modules/ModuleEditor.h"
-#include "Modules/ModuleInput.h"
-#include "Application.h"
-#include "glew.h"
-#include "Leaks.h"
+#include <Globals.h>
+#include "../ImGui/imgui.h"
+#include "../Application.h"
+#include "../Modules/ModuleWindow.h"
+#include "../Modules/ModuleRender.h"
+#include "../Modules/ModuleEditorCamera.h"
+#include "../Modules/ModuleEditor.h"
+#include "../Modules/ModuleInput.h"
+#include "../Application.h"
+#include <glew.h>
+#include <Leaks.h>
 
 std::string ConfigWindow::GetCapsString() {
 	std::string capsString = "";
@@ -188,7 +188,7 @@ void ConfigWindow::Draw() {
 
 			ImGui::Text("System RAM:");
 			ImGui::SameLine();
-			float ram = SDL_GetSystemRAM() / 1000;
+			float ram = (float)SDL_GetSystemRAM() / (float)1000;
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%.1f Gb", ram);
 
 			ImGui::Text("Caps:");

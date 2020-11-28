@@ -1,6 +1,6 @@
 #include "ModuleTextures.h"
-#include "IL/ilu.h"
-#include "../Leaks.h"
+#include <IL/ilu.h>
+#include <Leaks.h>
 
 ModuleTextures::ModuleTextures() : wrapMode(GL_REPEAT), minFilter(GL_LINEAR), magFilter(GL_LINEAR), texturesFolderName("Resources\\Textures") {}
 ModuleTextures::~ModuleTextures() {

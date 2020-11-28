@@ -1,12 +1,15 @@
 #include "../Utilities/Globals.h"
 #include "ModuleDebugDraw.h"
+#include <glew.h>
+
+#include "ModuleEditorCamera.h"
+#include "ModuleWindow.h"
+
 #include "../Application.h"
 #define DEBUG_DRAW_IMPLEMENTATION
-#include "../Utilities/debugdraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
-#include "../Modules/ModuleEditorCamera.h"
-#include "../Modules/ModuleWindow.h"
-#include "glew.h"
-#include "../Leaks.h"
+#include <debugdraw.h>// Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
+
+#include <Leaks.h>
 
 class DDRenderInterfaceCoreGL final
 	: public dd::RenderInterface

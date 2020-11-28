@@ -1,4 +1,4 @@
-#include "../Utilities/Globals.h"
+#include <Globals.h>
 #include "../Application.h"
 #include "ModuleInput.h"
 #include "../ImGui/imgui_impl_sdl.h"
@@ -8,7 +8,7 @@
 #include "ModuleEditorCamera.h"
 #include "../SDL/include/SDL.h"
 #include "ModuleEditor.h"
-#include "../Leaks.h"
+#include <Leaks.h>
 
 #define MAX_KEYS 300
 
@@ -187,18 +187,18 @@ update_status ModuleInput::Update()
 
 void ModuleInput::WarpMouseIfOutOfWindow() {
 
-	if (mouse.x >= App->window->GetWidth()) {
+	if (mouse.x >= (float)App->window->GetWidth()) {
 		SDL_WarpMouseInWindow(App->window->window, 0, mouse.y);
 	}
-	else if (mouse.x < 0) {
+	else if (mouse.x < 0.0f) {
 		SDL_WarpMouseInWindow(App->window->window, App->window->GetWidth() - 1, mouse.y);
 	}
 
-	if (mouse.y >= App->window->GetHeight()) {
+	if (mouse.y >= (float)App->window->GetHeight()) {
 		SDL_WarpMouseInWindow(App->window->window, mouse.x, 0);
 
 	}
-	else if (mouse.y < 0) {
+	else if (mouse.y < 0.0f) {
 		SDL_WarpMouseInWindow(App->window->window, mouse.x, App->window->GetHeight() - 1);
 	}
 }

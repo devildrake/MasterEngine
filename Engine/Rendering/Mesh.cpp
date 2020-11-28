@@ -1,14 +1,15 @@
 #include "Mesh.h"
 #include "Mesh.h"
 #include <glew.h>
-#include "Application.h"
-#include "Modules/ModuleRender.h"
-#include "Modules/ModuleEditorCamera.h"
 #include <assimp/mesh.h>
-#include "Leaks.h"
-#include "Modules/ModuleTextures.h"
-#include "Transform.h"
+
+#include "../Application.h"
+#include "../Modules/ModuleRender.h"
+#include "../Modules/ModuleEditorCamera.h"
+#include "../Modules/ModuleTextures.h"
+#include "../Transform.h"
 #include "Material.h"
+#include <Leaks.h>
 
 Mesh::Mesh(const aiMesh* mesh) {
 	LoadVBO(mesh);

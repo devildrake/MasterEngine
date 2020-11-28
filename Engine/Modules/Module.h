@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Utilities/Globals.h"
+#include <Globals.h>
 
 class Application;
 

@@ -1,6 +1,6 @@
 #ifndef IMGUI_WINDOW_H
 #define IMGUI_WINDOW_H
-#include "ImGui/imgui.h"
+#include "../ImGui/imgui.h"
 #include <string>
 
 class ImGuiWindow {

@@ -1,14 +1,14 @@
-#include "../Utilities/Globals.h"
+#include <Globals.h>
 #include "../Application.h"
 #include "ModuleEditorCamera.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
-#include "../Model.h"
-#include "../Leaks.h"
+#include "../Rendering/Model.h"
+#include <Leaks.h>
 #define DEGTORAD 3.14159/180
 
 ModuleEditorCamera::ModuleEditorCamera() : nearPlaneDistance(0.1f), farPlaneDistance(200.0f), frustumPosition(0, 5, -3),
-cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f) {}
+cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f), context(nullptr), glcontext(nullptr), aspectRatio(1) {}
 
 // Destructor
 ModuleEditorCamera::~ModuleEditorCamera()
@@ -60,27 +60,27 @@ void ModuleEditorCamera::SendProjectionMatrix() {
 const float3 ModuleEditorCamera::GetCameraMovementInput() const {
 	float3 val = float3(0, 0, 0);
 
-	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+	if (App->input->GetKey(SDL_SCANCODE_W) == ModuleInput::KEY_REPEAT) {
 		val += frustum.Front();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+	if (App->input->GetKey(SDL_SCANCODE_S) == ModuleInput::KEY_REPEAT) {
 		val -= frustum.Front();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
+	if (App->input->GetKey(SDL_SCANCODE_A) == ModuleInput::KEY_REPEAT) {
 		val -= frustum.WorldRight();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+	if (App->input->GetKey(SDL_SCANCODE_D) == ModuleInput::KEY_REPEAT) {
 		val += frustum.WorldRight();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) {
+	if (App->input->GetKey(SDL_SCANCODE_E) == ModuleInput::KEY_REPEAT) {
 		val += frustum.Up();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) {
+	if (App->input->GetKey(SDL_SCANCODE_Q) == ModuleInput::KEY_REPEAT) {
 		val -= frustum.Up();
 	}
 	return val;
@@ -145,11 +145,11 @@ update_status ModuleEditorCamera::Update()
 	bool showCursor = true;
 	float3 cameraMovementInput = float3(0, 0, 0);
 
-	float speedFactor = App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT ? cameraSpeed * 3 : cameraSpeed;
+	float speedFactor = App->input->GetKey(SDL_SCANCODE_LSHIFT) == ModuleInput::KEY_REPEAT ? cameraSpeed * 3 : cameraSpeed;
 	const float3 mouseMotion = App->input->GetMouseMotion();
 
-	if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)) {
-		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+	if ((App->input->GetKey(SDL_SCANCODE_LALT) == ModuleInput::KEY_REPEAT)) {
+		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == ModuleInput::KEY_REPEAT) {
 
 			//Calculate focus positon
 			float3 boundingBoxCenter = targetModel->GetBoundingCenter();
@@ -184,7 +184,7 @@ update_status ModuleEditorCamera::Update()
 
 			showCursor = false;
 		}
-		else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
+		else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == ModuleInput::KEY_REPEAT) {
 			float totalMotion = mouseMotion.x + mouseMotion.y;
 			frustumPosition += frustum.Front() * totalMotion * speedFactor * App->GetDeltaTime();
 			showCursor = false;
@@ -192,14 +192,14 @@ update_status ModuleEditorCamera::Update()
 	}
 	//ALT NOT PRESSED
 	else {
-		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
+		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == ModuleInput::KEY_REPEAT) {
 			showCursor = false;
 			ApplyUpdatedPitchYawToFrustum();
 
 			frustumPosition += GetCameraMovementInput() * speedFactor * App->GetDeltaTime();
 		}
 
-		else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+		else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == ModuleInput::KEY_REPEAT) {
 			if (!App->input->IsMouseOverImGuiWindow()) {
 				const float3 mouseMotion = App->input->GetMouseMotion();
 				cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * rotationSpeed * App->GetDeltaTime();
@@ -210,7 +210,7 @@ update_status ModuleEditorCamera::Update()
 		}
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_F) == ModuleInput::KEY_DOWN) {
 		if (targetModel != nullptr) {
 			FocusOn(targetModel, focusDistance);
 		}

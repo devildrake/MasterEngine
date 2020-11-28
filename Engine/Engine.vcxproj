@@ -74,7 +74,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./SDL/include;$(ProjectDir)\glew-2.1.0\include\GL;$(ProjectDir)\DevIL\include;$(ProjectDir)\Assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./SDL/include;$(ProjectDir)\glew-2.1.0\include\GL;$(ProjectDir)\DevIL\include;$(ProjectDir)\Assimp\include;$(ProjectDir)\Utilities</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -106,7 +106,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./SDL/include;$(ProjectDir)\glew-2.1.0\include\GL;$(ProjectDir)\DevIL\include;$(ProjectDir)\Assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./SDL/include;$(ProjectDir)\glew-2.1.0\include\GL;$(ProjectDir)\DevIL\include;$(ProjectDir)\Assimp\include;$(ProjectDir)\Utilities</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -137,7 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AboutWindow.h" />
+    <ClInclude Include="ImGuiWindows\AboutWindow.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Assimp\include\assimp\aabb.h" />
     <ClInclude Include="Assimp\include\assimp\ai_assert.h" />
@@ -212,8 +212,8 @@
     <ClInclude Include="Assimp\include\assimp\Vertex.h" />
     <ClInclude Include="Assimp\include\assimp\XMLTools.h" />
     <ClInclude Include="Assimp\include\assimp\ZipArchiveIOSystem.h" />
-    <ClInclude Include="ConfigWindow.h" />
-    <ClInclude Include="ConsoleWindow.h" />
+    <ClInclude Include="ImGuiWindows\ConfigWindow.h" />
+    <ClInclude Include="ImGuiWindows\ConsoleWindow.h" />
     <ClInclude Include="DevIL\include\IL\devil_cpp_wrapper.hpp" />
     <ClInclude Include="DevIL\include\IL\devil_internal_exports.h" />
     <ClInclude Include="DevIL\include\IL\il.h" />
@@ -225,15 +225,15 @@
     <ClInclude Include="EditorMainMenu.h" />
     <ClInclude Include="Excercises\ModuleTransformedTexturedTriangleExcercise.h" />
     <ClInclude Include="Excercises\ModuleTransformedTriangleExcercise.h" />
-    <ClInclude Include="ImGuiWindow.h" />
-    <ClInclude Include="Leaks.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Model.h" />
+    <ClInclude Include="ImGuiWindows\ImGuiWindow.h" />
+    <ClInclude Include="Utilities\Leaks.h" />
+    <ClInclude Include="Rendering\Material.h" />
+    <ClInclude Include="Rendering\Mesh.h" />
+    <ClInclude Include="Rendering\Model.h" />
     <ClInclude Include="Modules\ModuleScene.h" />
     <ClInclude Include="Modules\ModuleTextures.h" />
-    <ClInclude Include="PropertiesWindow.h" />
-    <ClInclude Include="Shader.h" />
+    <ClInclude Include="ImGuiWindows\PropertiesWindow.h" />
+    <ClInclude Include="Rendering\Shader.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Utilities\debugdraw.h" />
     <ClInclude Include="Utilities\debug_draw.hpp" />
@@ -333,10 +333,10 @@
     <ClInclude Include="Utilities\Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AboutWindow.cpp" />
+    <ClCompile Include="ImGuiWindows\AboutWindow.cpp" />
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="ConfigWindow.cpp" />
-    <ClCompile Include="ConsoleWindow.cpp" />
+    <ClCompile Include="ImGuiWindows\ConfigWindow.cpp" />
+    <ClCompile Include="ImGuiWindows\ConsoleWindow.cpp" />
     <ClCompile Include="EditorMainMenu.cpp" />
     <ClCompile Include="Excercises\ModuleTransformedTexturedTriangleExcercise.cpp" />
     <ClCompile Include="Excercises\ModuleTransformedTriangleExcercise.cpp" />
@@ -346,13 +346,13 @@
     <ClCompile Include="ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="ImGui\imgui_impl_sdl.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Rendering\Material.cpp" />
+    <ClCompile Include="Rendering\Mesh.cpp" />
+    <ClCompile Include="Rendering\Model.cpp" />
     <ClCompile Include="Modules\ModuleScene.cpp" />
     <ClCompile Include="Modules\ModuleTextures.cpp" />
-    <ClCompile Include="PropertiesWindow.cpp" />
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ImGuiWindows\PropertiesWindow.cpp" />
+    <ClCompile Include="Rendering\Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities\log.cpp" />
     <ClCompile Include="Main.cpp" />

@@ -3,9 +3,9 @@
 
 #include "../Modules/Module.h"
 #include "../MathGeoLib/MathGeoLib.h"
-#include "glew.h"
+#include <glew.h>
 #include "../MathGeoLib/Geometry/Frustum.h"
-#include "../Utilities/Globals.h"
+#include <Globals.h>
 class ModuleTransformedTriangleExcercise :public Module {
 public:
 	ModuleTransformedTriangleExcercise();

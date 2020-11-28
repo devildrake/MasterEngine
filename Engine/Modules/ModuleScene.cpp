@@ -1,7 +1,7 @@
 #include "ModuleScene.h"
 #include "ModuleRender.h"
 #include "ModuleInput.h"
-#include "../Model.h"
+#include "../Rendering/Model.h"
 #include "../Application.h"
 #include "ModuleEditorCamera.h"
 #include "ModuleTextures.h"

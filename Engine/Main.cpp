@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include "Application.h"
 #include "Modules/ModuleRender.h"
-#include "Utilities/Globals.h"
+#include <Globals.h>
 
 #include "SDL/include/SDL.h"
 #pragma comment( lib, "SDL/lib/x86/SDL2.lib" )
 #pragma comment( lib, "SDL/lib/x86/SDL2main.lib" )
-#include "Leaks.h"
+#include <Leaks.h>
 
 enum main_states
 {

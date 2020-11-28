@@ -1,7 +1,7 @@
 #include "Shader.h"
-#include "glew.h"
-#include "Utilities/Globals.h"
-#include "Leaks.h"
+#include <glew.h>
+#include <Globals.h>
+#include <Leaks.h>
 
 Shader::Shader(const char* vertex_shader_file_name, const char* fragment_shader_file_name) {
 	char* vsSource = LoadShaderSource(vertex_shader_file_name);

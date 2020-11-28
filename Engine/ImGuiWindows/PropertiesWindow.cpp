@@ -1,9 +1,10 @@
 #include "PropertiesWindow.h"
-#include "Application.h"
-#include "Modules/ModuleScene.h"
-#include "Modules/ModuleWindow.h"
-#include "Model.h"
-#include "glew.h"
+#include "../Application.h"
+#include "../Modules/ModuleScene.h"
+#include "../Modules/ModuleWindow.h"
+#include "../Rendering/Model.h"
+#include <glew.h>
+#include <Leaks.h>
 
 PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName), triangleCount(0), textureSize(0) {
 

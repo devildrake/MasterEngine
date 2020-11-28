@@ -1,4 +1,4 @@
-#include "PreciseTimer.h"
+#include <PreciseTimer.h>
 
 
 PreciseTimer::PreciseTimer() :isPaused(false), startTick(0), lastTime(0) {

@@ -2,7 +2,7 @@
 
 #include "Utilities/Globals.h"
 #include "Modules/Module.h"
-#include "Utilities/Timer.h"
+#include <Timer.h>
 #include <list>
 
 class ModuleRender;

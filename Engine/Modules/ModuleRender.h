@@ -1,8 +1,8 @@
 #ifndef MODULE_RENDER_H
 #define MODULE_RENDER_H
 #include "Module.h"
-#include "SDL.h"
-#include "../Utilities/Globals.h"
+#include <SDL.h>
+#include <Globals.h>
 #include "../MathGeoLib/Math/float3.h"
 #include <list>
 class Shader;

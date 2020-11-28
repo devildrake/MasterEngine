@@ -1,7 +1,7 @@
 #ifndef MODULE_EDITOR_CAMERA_H
 #define MODULE_EDITOR_CAMERA_H
 #include "Module.h"
-#include "../Utilities/Globals.h"
+#include <Globals.h>
 #include <SDL.h>
 #include <glew.h>
 #include "../MathGeoLib/Geometry/Frustum.h"
