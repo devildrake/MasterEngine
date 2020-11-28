@@ -128,11 +128,7 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string& materialPa
 
 	bool success = false;
 
-
-	if (mat->GetTexture(aiTextureType_NONE, 0, &file) == AI_SUCCESS) {
-		LOG("%s was found to be a NONE type texture", matName);
-	}
-	else if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS) {
+	if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS) {
 		LOG("Trying to load  %s as Diffuse texture", matName);
 		materialPath = file.C_Str();
 		success = App->textures->LoadTexture(file.C_Str(), tex, texSize);
@@ -150,136 +146,6 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string& materialPa
 		}
 
 	}
-	else if (mat->GetTexture(aiTextureType_SPECULAR, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Specular texture", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_AMBIENT, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Ambient texture", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_EMISSIVE, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Emissive", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_HEIGHT, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as HeightMap", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_NORMALS, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Normals", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_SHININESS, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Shininess", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_OPACITY, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Opacity", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_DISPLACEMENT, 0, &file) == AI_SUCCESS) {
-		LOG("Loaded %s as Displacement", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_LIGHTMAP, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as LightMap", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_REFLECTION, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Reflection ", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_BASE_COLOR, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Base Color", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Normal camera", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_EMISSION_COLOR, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Emission color", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_METALNESS, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Metalness ", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Diffuse roughness", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Ambient Oclussion", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	else if (mat->GetTexture(aiTextureType_UNKNOWN, 0, &file) == AI_SUCCESS) {
-		LOG("Trying to load  %s as Unknown texture", matName);
-		materialPath = file.C_Str();
-		if (App->textures->LoadTexture(file.C_Str(), tex)) {
-			success = true;
-		}
-	}
-	//else {
-	//	LOG("Trying to load a hardcoded .png with material name %s", matName);
-	//	*materialPath = nameAsPNG(aiString(matName));
-
-	//	std::string actualFilePath = file.C_Str() + *materialPath;
-
-	//	if (App->textures->LoadTexture(*materialPath, &tex)) {
-	//		success = true;
-	//	}
-	//}
-
 	if (!success) {
 		LOG("Failed to load %s", matName);
 	}

@@ -170,6 +170,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Utilities\Timer.cpp" />
     <ClCompile Include="Utilities\PreciseTimer.cpp" />
+    <ClCompile Include="AboutWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -531,6 +532,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Utilities\Timer.h" />
     <ClInclude Include="Utilities\PreciseTimer.h" />
+    <ClInclude Include="AboutWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

@@ -15,6 +15,7 @@
 #include "ModuleInput.h";
 #include "../EditorMainMenu.h"
 #include "../PropertiesWindow.h"
+#include "../AboutWindow.h"
 #include "ModuleDebugDraw.h"
 
 ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
@@ -43,7 +44,8 @@ bool ModuleEditor::Start() {
 
 	configWindow = new ConfigWindow("Configuration");
 	propertiesWindow = new PropertiesWindow("Properties");
-	mainMenu = new EditorMainMenu(console->isOpen, configWindow->isOpen, propertiesWindow->isOpen);
+	aboutWindow = new AboutWindow("About");
+	mainMenu = new EditorMainMenu(console->isOpen, configWindow->isOpen, propertiesWindow->isOpen, aboutWindow->isOpen);
 
 	return true;
 }
@@ -69,14 +71,19 @@ update_status ModuleEditor::Update() {
 		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN) {
 			configWindow->isOpen = !configWindow->isOpen;
 		}
+		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) {
+			aboutWindow->isOpen = !aboutWindow->isOpen;
+		}
 	}
 
-	App->debugDraw->DrawGrid(gridMinSquares, gridMaxSquares, gridPosY, gridStep, gridColor);
-	App->debugDraw->DrawAxisTriad();
-
+	if (App->debugDraw != nullptr) {
+		App->debugDraw->DrawGrid(gridMinSquares, gridMaxSquares, gridPosY, gridStep, gridColor);
+		App->debugDraw->DrawAxisTriad();
+	}
 	console->Draw();
 	configWindow->Draw();
 	propertiesWindow->Draw();
+	aboutWindow->Draw();
 	return 	mainMenu->Draw();
 }
 update_status ModuleEditor::PostUpdate() {
@@ -106,6 +113,7 @@ bool ModuleEditor::CleanUp() {
 	delete console;
 	delete configWindow;
 	delete propertiesWindow;
+	delete aboutWindow;
 	delete mainMenu;
 	console = nullptr;
 	configWindow = nullptr;

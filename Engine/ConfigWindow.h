@@ -15,9 +15,6 @@ private:
 	float frames[FRAMECOUNT];
 	float times[FRAMECOUNT];
 	int frameCounter;
-	SDL_version sdl_version;
-	const char* imgui_version;
-	const char* glew_version;
 	int refresh_rate;
 	std::string caps;
 public:

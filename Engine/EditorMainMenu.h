@@ -10,8 +10,9 @@ private:
 	bool* consoleOpen = nullptr;
 	bool* configOpen = nullptr;
 	bool* propertiesOpen = nullptr;
+	bool* aboutOpen = nullptr;
 public:
-	EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen);
+	EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutOpen);
 	update_status Draw();
 };
 

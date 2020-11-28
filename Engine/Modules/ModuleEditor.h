@@ -8,6 +8,7 @@
 #include "../MathGeoLib/Math/float3.h"
 class ConfigWindow;
 class ConsoleWindow;
+class AboutWindow;
 class EditorMainMenu;
 
 class ModuleWindow;
@@ -22,6 +23,7 @@ class ModuleEditor :public Module {
 private:
 	ConfigWindow* configWindow;
 	ConsoleWindow* console;
+	AboutWindow* aboutWindow;
 	EditorMainMenu* mainMenu;
 	PropertiesWindow* propertiesWindow;
 	float gridMinSquares, gridMaxSquares, gridPosY, gridStep;
