@@ -110,10 +110,8 @@ void ConfigWindow::Draw() {
 		if (applicationHeaderActive) {
 			ImGui::Text("Options");
 
-			static char appNameBuff[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
-			static char organizationBuff[32] = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e";
+			static char appNameBuff[32] = "MasterEngine";
 			ImGui::InputText("App Name", appNameBuff, IM_ARRAYSIZE(appNameBuff));
-			ImGui::InputText("Organization", organizationBuff, IM_ARRAYSIZE(organizationBuff));
 
 			bool isFrameRateCapped = App->GetFrameCap() > 0;
 
@@ -238,20 +236,14 @@ void ConfigWindow::Draw() {
 		if (ImGui::Checkbox("Face Culling", &App->renderer->faceCulling)) {
 			App->renderer->ToggleFaceCulling();
 		}
-
+		ImGui::SameLine();
 		if (ImGui::Checkbox("Depth Test", &App->renderer->depthTest)) {
 			App->renderer->ToggleDepthTest();
 		}
-
+		ImGui::SameLine();
 		if (ImGui::Checkbox("WireFrame Mode", &App->renderer->wireFramePolygonMode)) {
 			App->renderer->ToggleWireFrameMode();
 		}
-
-		if (ImGui::ColorEdit3("Grid Color", App->editor->gridColor.ptr())) {}
-		if (ImGui::InputFloat("Grid Square Minium", &App->editor->gridMinSquares)) {}
-		if (ImGui::InputFloat("Grid Square Maxium", &App->editor->gridMaxSquares)) {}
-		if (ImGui::InputFloat("Grid Square Step", &App->editor->gridStep)) {}
-		if (ImGui::InputFloat("Grid Y Position", &App->editor->gridPosY)) {}
 
 	}
 
@@ -305,6 +297,17 @@ void ConfigWindow::Draw() {
 				ImGui::ColorEdit3("BG Color", App->renderer->bgColor.ptr());
 
 			}
+		}
+	}
+
+	if (App->debugDraw != nullptr) {
+		if (ImGui::CollapsingHeader("Debug")) {
+			ImGui::Text("Grid Drawing");
+			if (ImGui::ColorEdit3("Grid Color", App->editor->gridColor.ptr())) {}
+			if (ImGui::InputFloat("Grid Square Minium", &App->editor->gridMinSquares)) {}
+			if (ImGui::InputFloat("Grid Square Maxium", &App->editor->gridMaxSquares)) {}
+			if (ImGui::InputFloat("Grid Square Step", &App->editor->gridStep)) {}
+			if (ImGui::InputFloat("Grid Y Position", &App->editor->gridPosY)) {}
 		}
 	}
 
