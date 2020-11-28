@@ -6,6 +6,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditorCamera.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleInput.h"
 #include "Application.h"
 #include "glew.h"
 #include "Leaks.h"
@@ -248,6 +249,20 @@ void ConfigWindow::Draw() {
 		if (ImGui::Checkbox("WireFrame Mode", &App->renderer->wireFramePolygonMode)) {
 			App->renderer->ToggleWireFrameMode();
 		}
+
+		if (ImGui::ColorEdit3("Grid Color", App->editor->gridColor.ptr())) {}
+		if (ImGui::InputFloat("Grid Square Minium", &App->editor->gridMinSquares)) {}
+		if (ImGui::InputFloat("Grid Square Maxium", &App->editor->gridMaxSquares)) {}
+		if (ImGui::InputFloat("Grid Square Step", &App->editor->gridStep)) {}
+		if (ImGui::InputFloat("Grid Y Position", &App->editor->gridPosY)) {}
+
+	}
+
+	if (ImGui::CollapsingHeader("Input")) {
+		float3 mousePos = App->input->GetMousePosition();
+		ImGui::Text("Mouse Position: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%2.f , %2.f", mousePos.x, mousePos.y);
 	}
 
 	if (App->editorCamera != nullptr) {

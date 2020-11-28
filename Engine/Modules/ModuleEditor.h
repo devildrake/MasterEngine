@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include "../Utilities/PreciseTimer.h"
+#include "../MathGeoLib/Math/float3.h"
 class ConfigWindow;
 class ConsoleWindow;
 class EditorMainMenu;
@@ -13,7 +14,6 @@ class ModuleWindow;
 class ModuleRender;
 class ModuleEditorCamera;
 class PropertiesWindow;
-
 #define FRAMECOUNT 60
 #define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048
 #define GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049
@@ -24,6 +24,9 @@ private:
 	ConsoleWindow* console;
 	EditorMainMenu* mainMenu;
 	PropertiesWindow* propertiesWindow;
+	float gridMinSquares, gridMaxSquares, gridPosY, gridStep;
+	float3 gridColor;
+
 	int frameCap;
 public:
 	ModuleEditor();

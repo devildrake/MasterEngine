@@ -612,14 +612,17 @@ update_status  ModuleDebugDraw::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
+void ModuleDebugDraw::DrawGrid(float gridMinSquares, float gridMaxSquares, float gridPos, float gridStep, float3 color) {
+	dd::xzSquareGrid(gridMinSquares, gridMaxSquares, gridPos, gridStep, color);
+}
 
+void ModuleDebugDraw::DrawAxisTriad(float4x4 axisTransform, float axisWidth, float axisLength) {
+	dd::axisTriad(axisTransform, axisWidth, axisLength);
+}
 
 update_status ModuleDebugDraw::Update()
 {
-	dd::xzSquareGrid(-200, 200, 0.0f, 1.0f, dd::colors::Gray);
-	dd::axisTriad(ddMat4x4::identity, 0.1f, 1.0f);
 	Draw(App->editorCamera->GetFrustum()->ViewMatrix(), App->editorCamera->GetFrustum()->ProjectionMatrix(), App->window->GetWidth(), App->window->GetHeight());
-
 	return UPDATE_CONTINUE;
 }
 

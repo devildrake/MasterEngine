@@ -3,10 +3,10 @@
 #include "Application.h"
 #include "Modules/ModuleTextures.h"
 #include <assimp/cimport.h>
-#include <assimp/postprocess.h>
 #include "Leaks.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include "Utilities/PreciseTimer.h"
 
 Model::Model(const char* new_file) :transform(Transform()) {
 	Load(new_file);
@@ -14,7 +14,6 @@ Model::Model(const char* new_file) :transform(Transform()) {
 
 Model::~Model() {
 	ReleaseTextures();
-	materials.clear();
 
 	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
 		delete* it;
@@ -101,6 +100,7 @@ void Model::ReleaseTextures() {
 	for (std::vector<Material>::iterator it = materials.begin(); it != materials.end(); ++it) {
 		App->textures->ReleaseTexture((*it).GetTexturePath());
 	}
+	materials.clear();
 
 }
 
@@ -289,10 +289,20 @@ void Model::LoadMaterial(aiMaterial* mat, aiString file, std::string& materialPa
 
 }
 
+std::vector<Material>& Model::GetMaterials() {
+	return materials;
+}
+
+void Model::LoadMaterial(const char* matName, std::string materialPath, unsigned tex, std::pair<int, int> texSize) {
+
+	materials.push_back(Material(matName, materialPath.c_str(), tex, texSize));
+}
+
 const bool Model::Load(const char* file_name)
 {
-
+	PreciseTimer preciseTimer = PreciseTimer();
 	LOG("Trying to load %s...", file_name);
+	preciseTimer.Start();
 
 	//const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
 	Assimp::Importer importer;
@@ -342,11 +352,12 @@ const bool Model::Load(const char* file_name)
 			}
 
 		}
+		LOG("Loading %s took %lf seconds", file_name, preciseTimer.Read());
 		return true;
 	}
 	else
 	{
-		LOG("Error loading %lu: %lu", file_name, aiGetErrorString());
+		LOG("Error loading %s %s", file_name, aiGetErrorString());
 	}
 	return false;
 }

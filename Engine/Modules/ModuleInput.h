@@ -68,11 +68,11 @@ public:
 	const float3& GetMousePosition() const;
 	const float& GetMouseWheelMotion()const;
 	const bool IsMouseOverImGuiWindow()const;
-	const char* GetLastFileDroppedOnWindow() const;
+	std::string GetLastFileDroppedOnWindow() const;
 	void SetLastFileDroppedOnWindow(char* newF);
 private:
 	bool windowEvents[WE_COUNT];
-	char* lastFileDroppedOnWindow = nullptr;
+	std::string lastFileDroppedOnWindow;
 	KeyState* keyboard;
 	KeyState	mouse_buttons[NUM_MOUSE_BUTTONS];
 	float3 mouse_motion;

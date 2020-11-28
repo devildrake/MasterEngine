@@ -12,7 +12,8 @@
 
 #define MAX_KEYS 300
 
-ModuleInput::ModuleInput()
+ModuleInput::ModuleInput() : lastFileDroppedOnWindow("")
+
 {
 	keyboard = new KeyState[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
@@ -44,7 +45,7 @@ bool ModuleInput::Start() {
 	return true;
 }
 
-const char* ModuleInput::GetLastFileDroppedOnWindow() const {
+std::string ModuleInput::GetLastFileDroppedOnWindow() const {
 	return lastFileDroppedOnWindow;
 }
 
@@ -58,9 +59,10 @@ update_status ModuleInput::PreUpdate() {
 	mouse_motion.y = 0;
 	wheel_motion = 0;
 
-	if (lastFileDroppedOnWindow != nullptr) {
-		SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
-		lastFileDroppedOnWindow = nullptr;
+	if (lastFileDroppedOnWindow.size() > 0) {
+		//SDL_free(lastFileDroppedOnWindow.c_str());    // Free dropped_filedir memory
+		//lastFileDroppedOnWindow = nullptr;
+		lastFileDroppedOnWindow = "";
 	}
 
 	memset(windowEvents, false, WE_COUNT * sizeof(bool));
@@ -98,13 +100,16 @@ update_status ModuleInput::PreUpdate() {
 	while (SDL_PollEvent(&sdlEvent) != 0)
 	{
 		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+
+
 		switch (sdlEvent.type)
 		{
 		case (SDL_DROPFILE): {
 			//For one frame, upon dropping a file, its path will be stored so that other modules may access it and use it
-			if (lastFileDroppedOnWindow != nullptr) {
-				SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
-				lastFileDroppedOnWindow = nullptr;
+			if (lastFileDroppedOnWindow.size() > 0) {
+				//SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
+				//lastFileDroppedOnWindow = nullptr;
+				lastFileDroppedOnWindow = "";
 			}
 			lastFileDroppedOnWindow = sdlEvent.drop.file;
 
@@ -202,8 +207,11 @@ void ModuleInput::WarpMouseIfOutOfWindow() {
 bool ModuleInput::CleanUp()
 {
 
-	if (lastFileDroppedOnWindow != nullptr) {
-		SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
+	//if (lastFileDroppedOnWindow != nullptr) {
+	//	SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
+	//}
+	if (lastFileDroppedOnWindow.size() > 0) {
+		lastFileDroppedOnWindow.clear();
 	}
 
 	LOG("Quitting SDL event subsystem");

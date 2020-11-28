@@ -15,8 +15,9 @@
 #include "ModuleInput.h";
 #include "../EditorMainMenu.h"
 #include "../PropertiesWindow.h"
+#include "ModuleDebugDraw.h"
 
-ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr) {
+ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
 
 }
 
@@ -69,6 +70,9 @@ update_status ModuleEditor::Update() {
 			configWindow->isOpen = !configWindow->isOpen;
 		}
 	}
+
+	App->debugDraw->DrawGrid(gridMinSquares, gridMaxSquares, gridPosY, gridStep, gridColor);
+	App->debugDraw->DrawAxisTriad();
 
 	console->Draw();
 	configWindow->Draw();

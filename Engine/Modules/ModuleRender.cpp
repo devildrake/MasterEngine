@@ -133,6 +133,7 @@ const unsigned ModuleRender::GetDefaultShaderID() const {
 update_status ModuleRender::Update()
 {
 
+
 	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
 		(*it)->Draw();
 	}
