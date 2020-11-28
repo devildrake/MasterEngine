@@ -83,6 +83,7 @@ std::string ModuleTextures::GetTexturesFolderName() {
 
 
 const bool ModuleTextures::LoadTexture(std::string name, GLuint& tex, std::pair<int, int>& texSize) {
+	LOG("-----Trying to load texture with specified path----- (%s)", name.c_str());
 	ILboolean success;
 
 	if (textureMap[name] != NULL) {
@@ -99,7 +100,6 @@ const bool ModuleTextures::LoadTexture(std::string name, GLuint& tex, std::pair<
 	ilBindImage(newImageID); /* Binding of image name */
 
 
-	LOG("-----Trying to load texture with model specified path----- (%s)", name.c_str());
 	success = ilLoadImage(name.c_str()); /* Loading of image "image.jpg" */
 	if (success) /* If no error occured: */
 	{

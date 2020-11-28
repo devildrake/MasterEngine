@@ -4,7 +4,7 @@
 AboutWindow::AboutWindow(const char* windowName) :ImGuiWindow(windowName) {
 	SDL_GetVersion(&sdl_version);
 	imgui_version = ImGui::GetVersion();
-
+	isOpen = false;
 	glew_version = (const char*)glewGetString(GLEW_VERSION);
 }
 AboutWindow::~AboutWindow() {
@@ -17,6 +17,15 @@ void AboutWindow::Draw() {
 		ImGui::End();
 		return;
 	}
+
+
+	if (ImGui::BeginPopupContextItem()) {
+		if (ImGui::MenuItem("Close Window")) {
+			isOpen = false;
+		}
+		ImGui::EndPopup();
+	}
+
 
 	static char engineNameBuff[32] = "Master Engine";
 	static char descBuff[128] = "Engine made for the master's degree at UPC";

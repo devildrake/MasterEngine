@@ -35,6 +35,7 @@ update_status ModuleScene::Update() {
 				Model* newModel = new Model();
 
 				if (Model::SceneFound(lastFile.c_str())) {
+
 					App->renderer->RemoveModel(currentModel);
 					delete currentModel;
 					if (newModel->Load(lastFile.c_str())) {
