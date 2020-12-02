@@ -20,6 +20,15 @@ private:
 	bool faceCulling;
 	bool depthTest;
 	bool wireFramePolygonMode;
+
+	Shader* quadShader;
+	unsigned int quadVAO, quadVBO;
+	unsigned int framebuffer;
+	unsigned int texColorBuffer;
+	unsigned int rbo;
+
+
+
 public:
 
 	ModuleRender();
@@ -38,6 +47,7 @@ public:
 	void ToggleFaceCulling()const;
 	void ToggleDepthTest()const;
 	void ToggleWireFrameMode()const;
+	void RegenerateRenderBuffer();
 public:
 	friend class ConfigWindow;
 
