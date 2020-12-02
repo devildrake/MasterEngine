@@ -3,7 +3,7 @@
 #include <vector>
 #include "Mesh.h"
 #include <assimp/scene.h>
-#include "../Transform.h"
+#include "../Components/Transform.h"
 #include "Material.h"
 
 

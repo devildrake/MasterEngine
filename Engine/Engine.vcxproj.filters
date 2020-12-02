@@ -160,7 +160,6 @@
     <ClCompile Include="Modules\ModuleTextures.cpp" />
     <ClCompile Include="EditorMainMenu.cpp" />
     <ClCompile Include="Modules\ModuleScene.cpp" />
-    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities\Timer.cpp" />
     <ClCompile Include="Utilities\PreciseTimer.cpp" />
     <ClCompile Include="ImGuiWindows\AboutWindow.cpp" />
@@ -171,6 +170,9 @@
     <ClCompile Include="Rendering\Model.cpp" />
     <ClCompile Include="Rendering\Mesh.cpp" />
     <ClCompile Include="Rendering\Material.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Components\Component.cpp" />
+    <ClCompile Include="Components\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -520,7 +522,6 @@
     <ClInclude Include="Modules\ModuleTextures.h" />
     <ClInclude Include="EditorMainMenu.h" />
     <ClInclude Include="Modules\ModuleScene.h" />
-    <ClInclude Include="Transform.h" />
     <ClInclude Include="Utilities\Timer.h" />
     <ClInclude Include="Utilities\PreciseTimer.h" />
     <ClInclude Include="ImGuiWindows\AboutWindow.h" />
@@ -533,6 +534,9 @@
     <ClInclude Include="Rendering\Model.h" />
     <ClInclude Include="Rendering\Mesh.h" />
     <ClInclude Include="Rendering\Material.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Components\Component.h" />
+    <ClInclude Include="Components\Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

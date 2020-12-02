@@ -41,7 +41,7 @@ void PropertiesWindow::Draw() {
 			ImGui::EndPopup();
 		}
 
-		if (ImGui::DragFloat3("Position", App->scene->currentModel->transform.position.ptr())) {}
+		if (ImGui::DragFloat3("Position", App->scene->currentModel->transform.localPosition.ptr())) {}
 		if (ImGui::DragFloat3("Rotation", App->scene->currentModel->transform.rotation.ptr())) {}
 		if (ImGui::DragFloat3("Scale", App->scene->currentModel->transform.scale.ptr())) {
 

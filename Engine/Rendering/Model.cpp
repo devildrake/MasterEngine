@@ -38,11 +38,11 @@ void Model::SetScale(float3 newScale) {
 }
 
 void Model::SetPos(float3 newPos) {
-	transform.position = newPos;
+	transform.localPosition = newPos;
 }
 
 const float3 Model::Position()const {
-	return transform.position;
+	return transform.CalculatePosition();
 }
 
 const float3 Model::Scale()const {

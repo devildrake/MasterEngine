@@ -7,7 +7,7 @@
 #include "../Modules/ModuleRender.h"
 #include "../Modules/ModuleEditorCamera.h"
 #include "../Modules/ModuleTextures.h"
-#include "../Transform.h"
+#include "../Components/Transform.h"
 #include "Material.h"
 #include <Leaks.h>
 
@@ -108,7 +108,7 @@ void Mesh::Draw(const std::vector<Material>& model_textures, Transform transform
 	const float4x4& proj = App->editorCamera->GetFrustum()->ProjectionMatrix();
 	float4x4 model = float4x4::identity;
 	//model = float4x4::RotateX(DegToRad(transform.rotation.x)) * float4x4::RotateY(DegToRad(transform.rotation.y)) * float4x4::RotateZ(DegToRad(transform.rotation.z)) * float4x4::Translate(transform.position) * float4x4::Scale(transform.scale) * model;
-	model = float4x4::Translate(transform.position) * float4x4::RotateX(DegToRad(transform.rotation.x)) * float4x4::RotateY(DegToRad(transform.rotation.y)) * float4x4::RotateZ(DegToRad(transform.rotation.z)) * float4x4::Scale(transform.scale) * model;
+	model = float4x4::Translate(transform.CalculatePosition()) * float4x4::RotateX(DegToRad(transform.rotation.x)) * float4x4::RotateY(DegToRad(transform.rotation.y)) * float4x4::RotateZ(DegToRad(transform.rotation.z)) * float4x4::Scale(transform.scale) * model;
 
 	glUseProgram(program);
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&model);
