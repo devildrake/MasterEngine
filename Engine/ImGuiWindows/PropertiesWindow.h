@@ -6,16 +6,17 @@
 /*. A properties window with three sections: transformation, geometry and texture. All should give
 read-only information about the current loaded meshes and texture (triangle count, texture size).*/
 
+class GameObject;
+
 class PropertiesWindow :public ImGuiWindow {
 private:
-	std::string modelName;
-	int triangleCount;
-	int textureSize;
+	GameObject* currentTarget;
 
 public:
 	PropertiesWindow(const char* windowName);
 	~PropertiesWindow();
 	void Draw();
+	void SetTarget(GameObject* newTarget);
 	friend class ModuleEditor;
 };
 

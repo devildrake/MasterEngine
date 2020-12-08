@@ -320,19 +320,19 @@ public:
 	void Translate(const vec &offset);
 	AABB Translated(const vec &offset) const;
 
-	/// Applies a uniform scale to this AABB.
+	/// Applies a uniform localScale to this AABB.
 	/** This function scales this AABB structure in-place, using the given center point as the origin
 		for the scaling operation.
 		@param centerPoint Specifies the center of the scaling operation, in world space.
-		@param scaleFactor The uniform scale factor to apply to each world space axis.
+		@param scaleFactor The uniform localScale factor to apply to each world space axis.
 		@see Translate(), Transform(). */
 	void Scale(const vec &centerPoint, float scaleFactor);
 
-	/// Applies a non-uniform scale to this AABB.
+	/// Applies a non-uniform localScale to this AABB.
 	/** This function scales this AABB structure in-place, using the given center point as the origin
 		for the scaling operation.
 		@param centerPoint Specifies the center of the scaling operation, in world space.
-		@param scaleFactor The non-uniform scale factors to apply to each world space axis.
+		@param scaleFactor The non-uniform localScale factors to apply to each world space axis.
 		@see Translate(), Transform(). */
 	void Scale(const vec &centerPoint, const vec &scaleFactor);
 

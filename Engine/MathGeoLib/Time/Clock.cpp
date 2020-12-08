@@ -210,7 +210,7 @@ tick_t Clock::Tick()
 	return (tick_t)emscripten_get_now();
 #else
 	// emscripten_get_now() returns a wallclock time as a float in milliseconds (1e-3).
-	// scale it to microseconds (1e-6) and return as a tick.
+	// localScale it to microseconds (1e-6) and return as a tick.
 	return (tick_t)(((double)emscripten_get_now()) * 1e3);
 #endif
 

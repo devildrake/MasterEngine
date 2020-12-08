@@ -432,8 +432,8 @@ void float4::Scale3(float scalar)
 {
 #if defined(MATH_AUTOMATIC_SSE) && defined(MATH_SSE)
 	simd4f scale = setx_ps(scalar);
-	scale = _mm_shuffle_ps(scale, simd4fOne, _MM_SHUFFLE(0,0,0,0)); // scale = (1 1 s s)
-	scale = shuffle1_ps(scale, _MM_SHUFFLE(3,0,0,0)); // scale = (1 s s s)
+	scale = _mm_shuffle_ps(scale, simd4fOne, _MM_SHUFFLE(0,0,0,0)); // localScale = (1 1 s s)
+	scale = shuffle1_ps(scale, _MM_SHUFFLE(3,0,0,0)); // localScale = (1 s s s)
 	v = mul_ps(v, scale);
 #else
 	x *= scalar;

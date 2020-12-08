@@ -226,7 +226,7 @@ enum aiTextureType
 
     /** The texture is a height map.
      *
-     *  By convention, higher gray-scale values stand for
+     *  By convention, higher gray-localScale values stand for
      *  higher elevations from the base height.
      */
     aiTextureType_HEIGHT = 5,

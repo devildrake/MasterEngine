@@ -598,7 +598,7 @@ bool ImGui::ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool
             pressed = true;
         if (nav_activated_by_code || nav_activated_by_inputs || g.ActiveId == id)
         {
-            // Set active id so it can be queried by user via IsItemActive(), equivalent of holding the mouse button.
+            // Set enabled id so it can be queried by user via IsItemActive(), equivalent of holding the mouse button.
             g.NavActivateId = id; // This is so SetActiveId assign a Nav source
             SetActiveID(id, window);
             if ((nav_activated_by_code || nav_activated_by_inputs) && !(flags & ImGuiButtonFlags_NoNavFocus))
@@ -1640,7 +1640,7 @@ static bool Items_ArrayGetter(void* data, int idx, const char** out_text)
 // Getter for the old Combo() API: "item1\0item2\0item3\0"
 static bool Items_SingleStringGetter(void* data, int idx, const char** out_text)
 {
-    // FIXME-OPT: we could pre-compute the indices to fasten this. But only 1 active combo means the waste is limited.
+    // FIXME-OPT: we could pre-compute the indices to fasten this. But only 1 enabled combo means the waste is limited.
     const char* items_separated_by_zeros = (const char*)data;
     int items_count = 0;
     const char* p = items_separated_by_zeros;
@@ -2072,7 +2072,7 @@ TYPE ImGui::RoundScalarWithFormatT(const char* format, ImGuiDataType data_type, 
 // - DragIntRange2()
 //-------------------------------------------------------------------------
 
-// This is called by DragBehavior() when the widget is active (held by mouse or being manipulated with Nav controls)
+// This is called by DragBehavior() when the widget is enabled (held by mouse or being manipulated with Nav controls)
 template<typename TYPE, typename SIGNEDTYPE, typename FLOATTYPE>
 bool ImGui::DragBehaviorT(ImGuiDataType data_type, TYPE* v, float v_speed, const TYPE v_min, const TYPE v_max, const char* format, ImGuiSliderFlags flags)
 {
@@ -2108,7 +2108,7 @@ bool ImGui::DragBehaviorT(ImGuiDataType data_type, TYPE* v, float v_speed, const
     if (axis == ImGuiAxis_Y)
         adjust_delta = -adjust_delta;
 
-    // For logarithmic use our range is effectively 0..1 so scale the delta into that range
+    // For logarithmic use our range is effectively 0..1 so localScale the delta into that range
     if (is_logarithmic && (v_max - v_min < FLT_MAX) && ((v_max - v_min) > 0.000001f)) // Epsilon to avoid /0
         adjust_delta /= (float)(v_max - v_min);
 
@@ -3190,7 +3190,7 @@ int ImParseFormatPrecision(const char* fmt, int default_precision)
     return (precision == INT_MAX) ? default_precision : precision;
 }
 
-// Create text input in place of another active widget (e.g. used when doing a CTRL+Click on drag/slider widgets)
+// Create text input in place of another enabled widget (e.g. used when doing a CTRL+Click on drag/slider widgets)
 // FIXME: Facilitate using this in variety of other situations.
 bool ImGui::TempInputText(const ImRect& bb, ImGuiID id, const char* label, char* buf, int buf_size, ImGuiInputTextFlags flags)
 {
@@ -3205,7 +3205,7 @@ bool ImGui::TempInputText(const ImRect& bb, ImGuiID id, const char* label, char*
     bool value_changed = InputTextEx(label, NULL, buf, buf_size, bb.GetSize(), flags);
     if (init)
     {
-        // First frame we started displaying the InputText widget, we expect it to take the active id.
+        // First frame we started displaying the InputText widget, we expect it to take the enabled id.
         IM_ASSERT(g.ActiveId == id);
         g.TempInputId = g.ActiveId;
     }
@@ -3769,7 +3769,7 @@ static bool InputTextFilterCharacter(unsigned int* p_char, ImGuiInputTextFlags f
 // - buf_size account for the zero-terminator, so a buf_size of 6 can hold "Hello" but not "Hello!".
 //   This is so we can easily call InputText() on static arrays using ARRAYSIZE() and to match
 //   Note that in std::string world, capacity() would omit 1 byte used by the zero-terminator.
-// - When active, hold on a privately held copy of the text (and apply back to 'buf'). So changing 'buf' while the InputText is active has no effect.
+// - When enabled, hold on a privately held copy of the text (and apply back to 'buf'). So changing 'buf' while the InputText is enabled has no effect.
 // - If you want to use ImGui::InputText() with std::string, see misc/cpp/imgui_stdlib.h
 // (FIXME: Rather confusing and messy function, among the worse part of our codebase, expecting to rewrite a V2 at some point.. Partly because we are
 //  doing UTF8 > U16 > UTF8 conversions on the go to easily interface with stb_textedit. Ideally should stay in UTF-8 all the time. See https://github.com/nothings/stb/issues/188)
@@ -3845,7 +3845,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     if (hovered)
         g.MouseCursor = ImGuiMouseCursor_TextInput;
 
-    // We are only allowed to access the state if we are already the active widget.
+    // We are only allowed to access the state if we are already the enabled widget.
     ImGuiInputTextState* state = GetInputTextState(id);
 
     const bool focus_requested = FocusableItemRegister(window, id);
@@ -3942,7 +3942,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     bool enter_pressed = false;
 
     // When read-only we always use the live data passed to the function
-    // FIXME-OPT: Because our selection/cursor code currently needs the wide text we need to convert it when active, which is not ideal :(
+    // FIXME-OPT: Because our selection/cursor code currently needs the wide text we need to convert it when enabled, which is not ideal :(
     if (is_readonly && state != NULL && (render_cursor || render_selection))
     {
         const char* buf_end = NULL;
@@ -3985,7 +3985,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         state->UserCallback = callback;
         state->UserCallbackData = callback_user_data;
 
-        // Although we are active we don't prevent mouse from hovering other elements unless we are interacting right now with the widget.
+        // Although we are enabled we don't prevent mouse from hovering other elements unless we are interacting right now with the widget.
         // Down the line we should have a cleaner library-wide concept of Selected vs Active.
         g.ActiveIdAllowOverlap = !io.MouseDown[0];
         g.WantTextInputNextFrame = 1;
@@ -4211,9 +4211,9 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         if (apply_edit_back_to_user_buffer)
         {
             // Apply new value immediately - copy modified buffer back
-            // Note that as soon as the input box is active, the in-widget value gets priority over any underlying modification of the input buffer
+            // Note that as soon as the input box is enabled, the in-widget value gets priority over any underlying modification of the input buffer
             // FIXME: We actually always render 'buf' when calling DrawList->AddText, making the comment above incorrect.
-            // FIXME-OPT: CPU waste to do this every time the widget is active, should mark dirty state from the stb_textedit callbacks.
+            // FIXME-OPT: CPU waste to do this every time the widget is enabled, should mark dirty state from the stb_textedit callbacks.
             if (!is_readonly)
             {
                 state->TextAIsValid = true;
@@ -4338,7 +4338,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         state->UserCallbackData = NULL;
     }
 
-    // Release active ID at the end of the function (so e.g. pressing Return still does a final application of the value)
+    // Release enabled ID at the end of the function (so e.g. pressing Return still does a final application of the value)
     if (clear_active_id && g.ActiveId == id)
         ClearActiveID();
 
@@ -4365,7 +4365,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         buf_display_end = hint + strlen(hint);
     }
 
-    // Render text. We currently only render selection when the widget is active or while scrolling.
+    // Render text. We currently only render selection when the widget is enabled or while scrolling.
     // FIXME: We could remove the '&& render_cursor' to keep rendering selection when inactive.
     if (render_cursor || render_selection)
     {
@@ -4823,7 +4823,7 @@ bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flag
         EndDragDropTarget();
     }
 
-    // When picker is being actively used, use its active id so IsItemActive() will function on ColorEdit4().
+    // When picker is being actively used, use its enabled id so IsItemActive() will function on ColorEdit4().
     if (picker_active_window && g.ActiveId != 0 && g.ActiveIdWindow == picker_active_window)
         window->DC.LastItemId = g.ActiveId;
 
@@ -5691,7 +5691,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
     // - Double-click on label = Toggle on MouseDoubleClick (when _OpenOnDoubleClick=1)
     // - Double-click on arrow = Toggle on MouseDoubleClick (when _OpenOnDoubleClick=1 and _OpenOnArrow=0)
     // It is rather standard that arrow click react on Down rather than Up.
-    // We set ImGuiButtonFlags_PressedOnClickRelease on OpenOnDoubleClick because we want the item to be active on the initial MouseDown in order for drag and drop to work.
+    // We set ImGuiButtonFlags_PressedOnClickRelease on OpenOnDoubleClick because we want the item to be enabled on the initial MouseDown in order for drag and drop to work.
     if (is_mouse_x_over_arrow)
         button_flags |= ImGuiButtonFlags_PressedOnClick;
     else if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
@@ -6229,7 +6229,7 @@ int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_get
         return -1;
     const bool hovered = ItemHoverable(frame_bb, id);
 
-    // Determine scale from values if not specified
+    // Determine localScale from values if not specified
     if (scale_min == FLT_MAX || scale_max == FLT_MAX)
     {
         float v_min = FLT_MAX;
@@ -6654,7 +6654,7 @@ bool ImGui::BeginMenu(const char* label, bool enabled)
         ImGuiWindow* child_menu_window = (g.BeginPopupStack.Size < g.OpenPopupStack.Size && g.OpenPopupStack[g.BeginPopupStack.Size].SourceWindow == window) ? g.OpenPopupStack[g.BeginPopupStack.Size].Window : NULL;
         if (g.HoveredWindow == window && child_menu_window != NULL && !(window->Flags & ImGuiWindowFlags_MenuBar))
         {
-            // FIXME-DPI: Values should be derived from a master "scale" factor.
+            // FIXME-DPI: Values should be derived from a master "localScale" factor.
             ImRect next_window_rect = child_menu_window->Rect();
             ImVec2 ta = g.IO.MousePos - g.IO.MouseDelta;
             ImVec2 tb = (window->Pos.x < child_menu_window->Pos.x) ? next_window_rect.GetTL() : next_window_rect.GetTR();
@@ -7110,7 +7110,7 @@ static void ImGui::TabBarLayout(ImGuiTabBar* tab_bar)
 
         // Refresh tab width immediately, otherwise changes of style e.g. style.FramePadding.x would noticeably lag in the tab bar.
         // Additionally, when using TabBarAddTab() to manipulate tab bar order we occasionally insert new tabs that don't have a width yet,
-        // and we cannot wait for the next BeginTabItem() call. We cannot compute this width within TabBarAddTab() because font size depends on the active window.
+        // and we cannot wait for the next BeginTabItem() call. We cannot compute this width within TabBarAddTab() because font size depends on the enabled window.
         const char* tab_name = tab_bar->GetTabName(tab);
         const bool has_close_button = (tab->Flags & ImGuiTabItemFlags_NoCloseButton) == 0;
         tab->ContentWidth = TabItemCalcSize(tab_name, has_close_button).x;
@@ -7176,7 +7176,7 @@ static void ImGui::TabBarLayout(ImGuiTabBar* tab_bar)
         }
     }
 
-    // Layout all active tabs
+    // Layout all enabled tabs
     int section_tab_index = 0;
     float tab_offset = 0.0f;
     tab_bar->WidthAllTabs = 0.0f;
@@ -7201,7 +7201,7 @@ static void ImGui::TabBarLayout(ImGuiTabBar* tab_bar)
     // Clear name buffers
     tab_bar->TabsNames.Buf.resize(0);
 
-    // If we have lost the selected tab, select the next most recently active one
+    // If we have lost the selected tab, select the next most recently enabled one
     if (found_selected_tab_id == false)
         tab_bar->SelectedTabId = 0;
     if (tab_bar->SelectedTabId == 0 && tab_bar->NextSelectedTabId == 0 && most_recently_selected_tab != NULL)
@@ -7295,7 +7295,7 @@ void ImGui::TabBarAddTab(ImGuiTabBar* tab_bar, ImGuiTabItemFlags tab_flags, ImGu
 {
     ImGuiContext& g = *GImGui;
     IM_ASSERT(TabBarFindTabByID(tab_bar, window->ID) == NULL);
-    IM_ASSERT(g.CurrentTabBar != tab_bar);  // Can't work while the tab bar is active as our tab doesn't have an X offset yet, in theory we could/should test something like (tab_bar->CurrFrameVisible < g.FrameCount) but we'd need to solve why triggers the commented early-out assert in BeginTabBarEx() (probably dock node going from implicit to explicit in same frame)
+    IM_ASSERT(g.CurrentTabBar != tab_bar);  // Can't work while the tab bar is enabled as our tab doesn't have an X offset yet, in theory we could/should test something like (tab_bar->CurrFrameVisible < g.FrameCount) but we'd need to solve why triggers the commented early-out assert in BeginTabBarEx() (probably dock node going from implicit to explicit in same frame)
 
     ImGuiTabItem new_tab;
     new_tab.ID = window->ID;
@@ -7733,8 +7733,8 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
         tab_bar->NextSelectedTabId = id;
     hovered |= (g.HoveredId == id);
 
-    // Transfer active id window so the active id is not owned by the dock host (as StartMouseMovingWindow()
-    // will only do it on the drag). This allows FocusWindow() to be more conservative in how it clears active id.
+    // Transfer enabled id window so the enabled id is not owned by the dock host (as StartMouseMovingWindow()
+    // will only do it on the drag). This allows FocusWindow() to be more conservative in how it clears enabled id.
     if (held && docked_window && g.ActiveId == id && g.ActiveIdIsJustActivated)
         g.ActiveIdWindow = docked_window;
 
@@ -7847,7 +7847,7 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
     window->DC.CursorPos = backup_main_cursor_pos;
 
     // Tooltip (FIXME: Won't work over the close button because ItemOverlap systems messes up with HoveredIdTimer)
-    // We test IsItemHovered() to discard e.g. when another item is active or drag and drop over the tab bar (which g.HoveredId ignores)
+    // We test IsItemHovered() to discard e.g. when another item is enabled or drag and drop over the tab bar (which g.HoveredId ignores)
     if (text_clipped && g.HoveredId == id && !held && g.HoveredIdNotActiveTimer > 0.50f && IsItemHovered())
         if (!(tab_bar->Flags & ImGuiTabBarFlags_NoTooltip) && !(tab->Flags & ImGuiTabItemFlags_NoTooltip))
             SetTooltip("%.*s", (int)(FindRenderedTextEnd(label) - label), label);

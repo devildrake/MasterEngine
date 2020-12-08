@@ -15,6 +15,9 @@ class ModuleWindow;
 class ModuleRender;
 class ModuleEditorCamera;
 class PropertiesWindow;
+class SceneWindow;
+class GameObjectHierarchyWindow;
+
 #define FRAMECOUNT 60
 #define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048
 #define GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049
@@ -26,6 +29,8 @@ private:
 	AboutWindow* aboutWindow;
 	EditorMainMenu* mainMenu;
 	PropertiesWindow* propertiesWindow;
+	SceneWindow* sceneWindow;
+	GameObjectHierarchyWindow* hierarchyWindow;
 	float gridMinSquares, gridMaxSquares, gridPosY, gridStep;
 	float3 gridColor;
 
@@ -41,12 +46,11 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 	friend class ConfigWindow;
-	ConsoleWindow* GetConsole();
-
+	ConsoleWindow* GetConsole()const;
+	PropertiesWindow* GetProperties()const;
 #ifdef _WIN32
 #include <shellapi.h>
-	static void open_url(const std::string& url)
-	{
+	static void open_url(const std::string& url) {
 		ShellExecute(GetActiveWindow(),
 			"open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	}

@@ -48,8 +48,9 @@ public:
 	void ToggleDepthTest()const;
 	void ToggleWireFrameMode()const;
 	void RegenerateRenderBuffer();
+	unsigned GetRenderTextureID()const;
 public:
 	friend class ConfigWindow;
-
+	friend class SceneWindow;
 };
 #endif

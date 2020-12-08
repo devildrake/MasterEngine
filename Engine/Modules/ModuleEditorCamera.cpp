@@ -3,21 +3,23 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
-#include "../Rendering/Model.h"
+#include "ModuleEditor.h"
+#include "../ImGuiWindows/SceneWindow.h"
+#include "../Components/ComponentTransform.h"
+//#include "../Rendering/Model.h"
 #include <Leaks.h>
 #define DEGTORAD 3.14159/180
 
 ModuleEditorCamera::ModuleEditorCamera() : nearPlaneDistance(0.1f), farPlaneDistance(200.0f), frustumPosition(0, 5, -3),
-cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f), context(nullptr), glcontext(nullptr), aspectRatio(1.77f) {}
+cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f), context(nullptr), glcontext(nullptr), aspectRatio(1.77f) {
+}
 
 // Destructor
-ModuleEditorCamera::~ModuleEditorCamera()
-{
+ModuleEditorCamera::~ModuleEditorCamera() {
 }
 
 // Called before render is available
-bool ModuleEditorCamera::Init()
-{
+bool ModuleEditorCamera::Init() {
 	aspectRatio = (float)App->window->GetWidth() / (float)App->window->GetHeight();
 
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
@@ -30,8 +32,7 @@ bool ModuleEditorCamera::Init()
 	return true;
 }
 
-update_status ModuleEditorCamera::PreUpdate()
-{
+update_status ModuleEditorCamera::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
@@ -84,7 +85,6 @@ const float3 ModuleEditorCamera::GetCameraMovementInput() const {
 	return val;
 }
 
-
 const float ModuleEditorCamera::UpdateCameraYaw(const float3 mouseMotion) {
 
 	float prevYaw = yaw;
@@ -115,30 +115,28 @@ void ModuleEditorCamera::ApplyUpdatedPitchYawToFrustum() {
 
 	frustum.SetUp(newUp.Normalized());
 	frustum.SetFront(newFront.Normalized());
-
 }
 
-const float ModuleEditorCamera::GetDistanceBasedOnBoundingBox(Model* m, float distanceFactor)const {
-	float greatestDistance = 0;
+//const float ModuleEditorCamera::GetDistanceBasedOnBoundingBox(ComponentTransform* m, float distanceFactor)const {
+//	float greatestDistance = 0;
+//
+//	//float xBounds = math::Abs(m->BoundingBox().second.x - m->BoundingBox().first.x);
+//	//float yBounds = math::Abs(m->BoundingBox().second.y - m->BoundingBox().first.y);
+//	//float zBounds = math::Abs(m->BoundingBox().second.z - m->BoundingBox().first.z);
+//
+//	//greatestDistance = math::Max(xBounds, yBounds, zBounds);
+//
+//	return greatestDistance * distanceFactor;
+//}
 
-	float xBounds = math::Abs(m->BoundingBox().second.x - m->BoundingBox().first.x);
-	float yBounds = math::Abs(m->BoundingBox().second.y - m->BoundingBox().first.y);
-	float zBounds = math::Abs(m->BoundingBox().second.z - m->BoundingBox().first.z);
-
-	greatestDistance = math::Max(xBounds, yBounds, zBounds);
-
-	return greatestDistance * distanceFactor;
-}
-
-void ModuleEditorCamera::FocusOn(Model* m, float focusDistance) {
+void ModuleEditorCamera::FocusOn(ComponentTransform* m, float focusDistance) {
 	targetModel = m;
-	float3 boundingBoxCenter = m->GetBoundingCenter();
-	frustumPosition = boundingBoxCenter - (GetDistanceBasedOnBoundingBox(m, focusDistance) * frustum.Front());
+	float3 boundingBoxCenter = m->localPosition;//m->GetBoundingCenter();
+	frustumPosition = boundingBoxCenter; //- (GetDistanceBasedOnBoundingBox(m, focusDistance) * frustum.Front());
 }
 
 // Called every draw update
-update_status ModuleEditorCamera::Update()
-{
+update_status ModuleEditorCamera::Update() {
 	bool showCursor = true;
 	float3 cameraMovementInput = float3(0, 0, 0);
 
@@ -149,8 +147,10 @@ update_status ModuleEditorCamera::Update()
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == ModuleInput::KEY_REPEAT) {
 
 			//Calculate focus positon
-			float3 boundingBoxCenter = targetModel->GetBoundingCenter();
-			float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale()) + targetModel->Position();
+			//float3 boundingBoxCenter = targetModel->GetBoundingCenter();
+			//float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale()) + targetModel->Position();
+			float3 focusPosition = targetModel->CalculateGlobalPosition();
+
 
 			//Push camera position temporarily to focus position
 			frustumPosition -= focusPosition;
@@ -226,24 +226,21 @@ update_status ModuleEditorCamera::Update()
 	return UPDATE_CONTINUE;
 }
 
-void ModuleEditorCamera::SetTargetModel(Model* m) {
+void ModuleEditorCamera::SetTargetModel(ComponentTransform* m) {
 	FocusOn(m, focusDistance);
 }
 
 
-update_status ModuleEditorCamera::PostUpdate()
-{
+update_status ModuleEditorCamera::PostUpdate() {
 	return UPDATE_CONTINUE;
 }
 
 // Called before quitting
-bool ModuleEditorCamera::CleanUp()
-{
+bool ModuleEditorCamera::CleanUp() {
 	return true;
 }
 
-void ModuleEditorCamera::WindowResized(unsigned width, unsigned height)
-{
+void ModuleEditorCamera::WindowResized(unsigned width, unsigned height) {
 	SetAspectRatio((float)width / (float)height);
 }
 

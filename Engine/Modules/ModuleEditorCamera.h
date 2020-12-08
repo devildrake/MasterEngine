@@ -10,10 +10,9 @@ struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;
 
-class Model;
+class ComponentTransform;
 
-class ModuleEditorCamera : public Module
-{
+class ModuleEditorCamera : public Module {
 public:
 
 	ModuleEditorCamera();
@@ -34,8 +33,8 @@ public:
 	void SetNearPlane(float);
 	void SetFarPlane(float);
 	void SetAspectRatio(float);
-	void FocusOn(Model* m, float);
-	void SetTargetModel(Model* m);
+	void FocusOn(ComponentTransform* m, float);
+	void SetTargetModel(ComponentTransform* m);
 
 private:
 	friend class ConfigWindow;
@@ -50,7 +49,7 @@ private:
 	float zoomSpeed;
 	float3 frustumPosition;
 	float nearPlaneDistance, farPlaneDistance;
-	Model* targetModel = nullptr;
+	ComponentTransform* targetModel = nullptr;
 private:
 	const float4x4 GetTransposedProjectionMatrix()const;
 	const float4x4 GetTransposedViewModelMatrix()const;
@@ -59,7 +58,7 @@ private:
 	const float3 GetCameraMovementInput()const;
 
 	void ApplyUpdatedPitchYawToFrustum();
-	const float GetDistanceBasedOnBoundingBox(Model* m, float distanceFactor)const;
+	//const float GetDistanceBasedOnBoundingBox(ComponentTransfom* m, float distanceFactor)const;
 
 };
 #endif

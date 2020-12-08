@@ -92,7 +92,7 @@ unsigned ModuleTransformedTexturedTriangleExcercise::CreateQuadVBO() {
 
 	unsigned newVbo;
 	glGenBuffers(1, &newVbo);
-	glBindBuffer(GL_ARRAY_BUFFER, newVbo); // set vbo active
+	glBindBuffer(GL_ARRAY_BUFFER, newVbo); // set vbo enabled
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
 
 	return newVbo;
@@ -107,7 +107,7 @@ unsigned ModuleTransformedTexturedTriangleExcercise::CreateTriangleVBO()
 	};
 
 	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
+	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo enabled
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
 
 	return vbo;

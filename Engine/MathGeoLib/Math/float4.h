@@ -857,7 +857,7 @@ std::ostream &operator <<(std::ostream &out, const float4 &rhs);
 #endif
 
 /// Multiplies the x, y, z and w components of the vector by the given scalar. Note that if w != 0,
-/// this does NOT scale the length of the homogeneous 3D vector.
+/// this does NOT localScale the length of the homogeneous 3D vector.
 float4 operator *(float scalar, const float4 &rhs);
 
 #ifdef MATH_ENABLE_UNCOMMON_OPERATIONS

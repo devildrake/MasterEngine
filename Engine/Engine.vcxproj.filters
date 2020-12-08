@@ -167,12 +167,15 @@
     <ClCompile Include="ImGuiWindows\ConfigWindow.cpp" />
     <ClCompile Include="ImGuiWindows\PropertiesWindow.cpp" />
     <ClCompile Include="Rendering\Shader.cpp" />
-    <ClCompile Include="Rendering\Model.cpp" />
-    <ClCompile Include="Rendering\Mesh.cpp" />
     <ClCompile Include="Rendering\Material.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Components\Component.cpp" />
-    <ClCompile Include="Components\Transform.cpp" />
+    <ClCompile Include="ImGuiWindows\SceneWindow.cpp" />
+    <ClCompile Include="Modules\ModuleFileSystem.cpp" />
+    <ClCompile Include="ImGuiWindows\GameObjectHierarchyWindow.cpp" />
+    <ClCompile Include="Components\ComponentMeshRenderer.cpp" />
+    <ClCompile Include="Components\ComponentTransform.cpp" />
+    <ClCompile Include="Rendering\Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -531,12 +534,15 @@
     <ClInclude Include="ImGuiWindows\PropertiesWindow.h" />
     <ClInclude Include="Utilities\Leaks.h" />
     <ClInclude Include="Rendering\Shader.h" />
-    <ClInclude Include="Rendering\Model.h" />
-    <ClInclude Include="Rendering\Mesh.h" />
     <ClInclude Include="Rendering\Material.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Components\Component.h" />
-    <ClInclude Include="Components\Transform.h" />
+    <ClInclude Include="ImGuiWindows\SceneWindow.h" />
+    <ClInclude Include="Modules\ModuleFileSystem.h" />
+    <ClInclude Include="ImGuiWindows\GameObjectHierarchyWindow.h" />
+    <ClInclude Include="Components\ComponentMeshRenderer.h" />
+    <ClInclude Include="Components\ComponentTransform.h" />
+    <ClInclude Include="Rendering\Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

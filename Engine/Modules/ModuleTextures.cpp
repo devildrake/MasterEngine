@@ -48,8 +48,7 @@ const bool ModuleTextures::GenTexture(std::string path, GLuint& newTextureID) {
 
 	success = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); /* Convert every colour component into
 		  unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
-	if (!success)
-	{
+	if (!success) {
 		// Error occured 
 		return false;
 	}
@@ -87,7 +86,8 @@ const bool ModuleTextures::LoadTexture(std::string name, GLuint& tex, std::pair<
 	ILboolean success;
 
 	if (textureMap[name] != NULL) {
-		return textureMap[name];
+		tex = textureMap[name];
+		return true;
 	}
 	else {
 		textureMap.erase(name);

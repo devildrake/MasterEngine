@@ -110,7 +110,7 @@ public:
     static Logger *get();
 
     // ----------------------------------------------------------------------
-    /** @brief  Return whether a #NullLogger is currently active
+    /** @brief  Return whether a #NullLogger is currently enabled
      *  @return true if the current logger is a #NullLogger.
      *  Use create() or set() to setup a logger that does actually do
      *  something else than just rejecting all log messages. */

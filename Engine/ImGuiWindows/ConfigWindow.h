@@ -14,7 +14,7 @@ private:
 	float frames[FRAMECOUNT];
 	float times[FRAMECOUNT];
 	int frameCounter;
-	
+
 	//Screen refresh rate
 	int refresh_rate;
 

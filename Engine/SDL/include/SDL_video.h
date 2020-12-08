@@ -1193,12 +1193,12 @@ extern DECLSPEC int SDLCALL SDL_GL_MakeCurrent(SDL_Window * window,
                                                SDL_GLContext context);
 
 /**
- *  \brief Get the currently active OpenGL window.
+ *  \brief Get the currently enabled OpenGL window.
  */
 extern DECLSPEC SDL_Window* SDLCALL SDL_GL_GetCurrentWindow(void);
 
 /**
- *  \brief Get the currently active OpenGL context.
+ *  \brief Get the currently enabled OpenGL context.
  */
 extern DECLSPEC SDL_GLContext SDLCALL SDL_GL_GetCurrentContext(void);
 

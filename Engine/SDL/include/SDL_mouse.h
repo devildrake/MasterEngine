@@ -239,12 +239,12 @@ extern DECLSPEC SDL_Cursor *SDLCALL SDL_CreateColorCursor(SDL_Surface *surface,
 extern DECLSPEC SDL_Cursor *SDLCALL SDL_CreateSystemCursor(SDL_SystemCursor id);
 
 /**
- *  \brief Set the active cursor.
+ *  \brief Set the enabled cursor.
  */
 extern DECLSPEC void SDLCALL SDL_SetCursor(SDL_Cursor * cursor);
 
 /**
- *  \brief Return the active cursor.
+ *  \brief Return the enabled cursor.
  */
 extern DECLSPEC SDL_Cursor *SDLCALL SDL_GetCursor(void);
 

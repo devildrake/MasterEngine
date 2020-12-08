@@ -82,7 +82,7 @@ extern DECLSPEC SDL_TouchID SDLCALL SDL_GetTouchDevice(int index);
 extern DECLSPEC SDL_TouchDeviceType SDLCALL SDL_GetTouchDeviceType(SDL_TouchID touchID);
 
 /**
- *  \brief Get the number of active fingers for a given touch device.
+ *  \brief Get the number of enabled fingers for a given touch device.
  */
 extern DECLSPEC int SDLCALL SDL_GetNumTouchFingers(SDL_TouchID touchID);
 

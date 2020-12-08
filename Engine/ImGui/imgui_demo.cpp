@@ -777,7 +777,7 @@ static void ShowDemoWindowWidgets()
 
             // 'selection_mask' is dumb representation of what may be user-side selection state.
             //  You may retain selection state inside or outside your objects in whatever format you see fit.
-            // 'node_clicked' is temporary storage of what node we have clicked to process selection at the end
+            // 'nodeClicked' is temporary storage of what node we have clicked to process selection at the end
             /// of the loop. May be a pointer to your own node type, etc.
             static int selection_mask = (1 << 2);
             int node_clicked = -1;
@@ -829,7 +829,7 @@ static void ShowDemoWindowWidgets()
                 // (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
                 if (ImGui::GetIO().KeyCtrl)
                     selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
-                else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
+                else //if (!(selection_mask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
                     selection_mask = (1 << node_clicked);           // Click to single-select
             }
             if (align_label_with_current_x_position)
@@ -3221,7 +3221,7 @@ static void ShowDemoWindowPopups()
         // Note: As a quirk in this very specific example, we want to differentiate the parent of this menu from the
         // parent of the various popup menus above. To do so we are encloding the items in a PushID()/PopID() block
         // to make them two different menusets. If we don't, opening any popup above and hovering our menu here would
-        // open it. This is because once a menu is active, we allow to switch to a sibling menu by just hovering on it,
+        // open it. This is because once a menu is enabled, we allow to switch to a sibling menu by just hovering on it,
         // which is the desired behavior for regular menus.
         ImGui::PushID("foo");
         ImGui::MenuItem("Menu item", "CTRL+M");
@@ -4427,7 +4427,7 @@ struct ExampleAppConsole
         // - That your items are evenly spaced (same height)
         // - That you have cheap random access to your elements (you can access them given their index,
         //   without processing all the ones before)
-        // You cannot this code as-is if a filter is active because it breaks the 'cheap random-access' property.
+        // You cannot this code as-is if a filter is enabled because it breaks the 'cheap random-access' property.
         // We would need random-access on the post-filtered list.
         // A typical application wanting coarse clipping and filtering may want to pre-compute an array of indices
         // or offsets of items that passed the filtering test, recomputing this array when user changes the filter,
@@ -5447,9 +5447,9 @@ void ShowExampleAppDockSpace(bool* p_open)
         window_flags |= ImGuiWindowFlags_NoBackground;
 
     // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-    // all active windows docked into it will lose their parent and become undocked.
-    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+    // This is because we want to keep our DockSpace() enabled. If a DockSpace() is inactive,
+    // all enabled windows docked into it will lose their parent and become undocked.
+    // We cannot preserve the docking relationship between an enabled window and an inactive docking, otherwise
     // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
     if (!opt_padding)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));

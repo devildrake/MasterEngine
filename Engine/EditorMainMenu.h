@@ -11,8 +11,9 @@ private:
 	bool* configOpen = nullptr;
 	bool* propertiesOpen = nullptr;
 	bool* aboutOpen = nullptr;
+	bool* hierarchyOpen = nullptr;
 public:
-	EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutOpen);
+	EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutOpen, bool& hierarchyOpen);
 	update_status Draw();
 };
 

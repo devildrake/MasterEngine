@@ -45,4 +45,8 @@ public:
 	{
 		return true;
 	}
+
+	virtual void WindowResized(unsigned newW, unsigned newH) {
+
+	}
 };

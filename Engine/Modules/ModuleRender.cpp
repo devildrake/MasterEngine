@@ -4,7 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include <glew.h>
-#include "../Rendering/Model.h"
+//#include "../Rendering/Model.h"
 #include "../Rendering/Shader.h"
 #include <assimp/cimport.h>
 #include <Leaks.h>
@@ -14,8 +14,7 @@ ModuleRender::ModuleRender() :bgColor(0.2f, 0.2f, 0.2f), context(nullptr), defau
 }
 
 // Destructor
-ModuleRender::~ModuleRender()
-{
+ModuleRender::~ModuleRender() {
 	if (default_shader != nullptr)
 		delete default_shader;
 }
@@ -36,8 +35,7 @@ float quadVertices[] = { // vertex attributes for a quad that fills the entire s
 };
 
 // Called before render is available
-bool ModuleRender::Init()
-{
+bool ModuleRender::Init() {
 	LOG("Creating Renderer context");
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
@@ -81,10 +79,15 @@ bool ModuleRender::Init()
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glGenTextures(1, &texColorBuffer);
 
 
 
 	return true;
+}
+
+unsigned ModuleRender::GetRenderTextureID()const {
+	return texColorBuffer;
 }
 
 void ModuleRender::RegenerateRenderBuffer() {
@@ -104,7 +107,6 @@ void ModuleRender::RegenerateRenderBuffer() {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
 	// generate texture
-	glGenTextures(1, &texColorBuffer);
 	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, App->window->GetWidth(), App->window->GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -169,8 +171,7 @@ bool ModuleRender::Start() {
 	return true;
 }
 
-update_status ModuleRender::PreUpdate()
-{
+update_status ModuleRender::PreUpdate() {
 	SDL_GetWindowSize(App->window->window,
 		&App->window->screen_surface->w, &App->window->screen_surface->h);
 
@@ -195,18 +196,16 @@ const unsigned ModuleRender::GetDefaultShaderID() const {
 
 
 // Called every draw update
-update_status ModuleRender::Update()
-{
+update_status ModuleRender::Update() {
 
-	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
-		(*it)->Draw();
-	}
+	//for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
+	//	(*it)->Draw();
+	//}
 
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleRender::PostUpdate()
-{
+update_status ModuleRender::PostUpdate() {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -215,10 +214,10 @@ update_status ModuleRender::PostUpdate()
 	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glUseProgram(quadShader->GetID());
-	glBindVertexArray(quadVAO);
-	glBindTexture(GL_TEXTURE_2D, texColorBuffer);	// use the color attachment texture as the texture of the quad plane
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	//glUseProgram(quadShader->GetID());
+	//glBindVertexArray(quadVAO);
+	//glBindTexture(GL_TEXTURE_2D, texColorBuffer);	// use the color attachment texture as the texture of the quad plane
+	//glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
 	SDL_GL_SwapWindow(App->window->window);
@@ -226,8 +225,7 @@ update_status ModuleRender::PostUpdate()
 }
 
 // Called before quitting
-bool ModuleRender::CleanUp()
-{
+bool ModuleRender::CleanUp() {
 	LOG("Destroying renderer");
 
 	for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
@@ -237,8 +235,7 @@ bool ModuleRender::CleanUp()
 	}
 	models.clear();
 
-	if (default_shader != nullptr)
-	{
+	if (default_shader != nullptr) {
 		delete default_shader;
 		default_shader = nullptr;
 	}
@@ -257,8 +254,7 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-void ModuleRender::WindowResized(unsigned width, unsigned height)
-{
+void ModuleRender::WindowResized(unsigned width, unsigned height) {
 	RegenerateRenderBuffer();
 }
 

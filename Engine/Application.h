@@ -2,8 +2,7 @@
 
 #include "Utilities/Globals.h"
 #include "Modules/Module.h"
-#include <Timer.h>
-#include <list>
+#include <vector>
 
 class ModuleRender;
 class ModuleWindow;
@@ -14,6 +13,8 @@ class ModuleEditorCamera;
 class ModuleEditor;
 class ModuleDebugDraw;
 class ModuleScene;
+class Timer;
+
 class Application
 {
 public:
@@ -25,9 +26,10 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
+	void WindowResized(unsigned, unsigned);
 	float GetDeltaTime();
 	void SetFrameCap(int frameCap);
-	const int GetFrameCap()const;
+	const int& GetFrameCap()const;
 
 public:
 	ModuleRender* renderer = nullptr;
@@ -39,10 +41,10 @@ public:
 	ModuleScene* scene = nullptr;
 	ModuleTextures* textures = nullptr;
 private:
-	Uint32 frameCap, millisPerFrame;
+	unsigned int frameCap, millisPerFrame;
 	float lastDeltaTime;
-	std::list<Module*> modules;
-	Timer capTimer;
+	std::vector<Module*> modules;
+	Timer* capTimer;
 };
 
 extern Application* App;

@@ -452,7 +452,7 @@ FORCE_INLINE void mat3x4_inverse_orthonormal(const simd4f *mat, simd4f *out)
 	// out[3] = assumed to be [1,0,0,0] - no need to write back.
 }
 
-/// Inverts a 3x4 affine transformation matrix (in row-major format) that only consists of rotation (+possibly mirroring), uniform scale and translation.
+/// Inverts a 3x4 affine transformation matrix (in row-major format) that only consists of rotation (+possibly mirroring), uniform localScale and translation.
 FORCE_INLINE void mat3x4_inverse_orthogonal_uniformscale(const simd4f *mat, simd4f *out)
 {
 	// mat[0]: [tx,02,01,00]

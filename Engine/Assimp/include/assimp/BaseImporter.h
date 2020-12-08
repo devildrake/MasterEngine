@@ -83,7 +83,7 @@ class ASSIMP_API BaseImporter {
     friend class Importer;
 
 private:
-    /* Pushes state into importer for the importer scale */
+    /* Pushes state into importer for the importer localScale */
     virtual void UpdateImporterScale( Importer* pImp );
 
 public:
@@ -168,7 +168,7 @@ public:
     virtual const aiImporterDesc* GetInfo() const = 0;
 
     /**
-     * Will be called only by scale process when scaling is requested.
+     * Will be called only by localScale process when scaling is requested.
      */
     virtual void SetFileScale(double scale)
     {

@@ -244,10 +244,10 @@ public:
 	/** param pointOnAxis If specified, the rotation is performed using this point as the center point. */
 	static float4x4 FromQuat(const Quat &orientation, const float3 &pointOnAxis);
 
-	/// Creates a new float4x4 as a combination of translation, rotation and scale.
+	/// Creates a new float4x4 as a combination of translation, rotation and localScale.
 	/** This function creates a new float4x4 M of the form M = T * R * S, where T is a translation matrix, R a
-		(rotation) matrix and S a scale matrix. Transforming a vector v using this matrix computes the vector
-		v' == M * v == T*R*S*v == (T * (R * (S * v))), which means that the scale operation is applied to the
+		(rotation) matrix and S a localScale matrix. Transforming a vector v using this matrix computes the vector
+		v' == M * v == T*R*S*v == (T * (R * (S * v))), which means that the localScale operation is applied to the
 		vector first, followed by rotation and finally translation. */
 	static float4x4 FromTRS(const float3 &translate, const Quat &rotate, const float3 &scale);
 	static float4x4 FromTRS(const float3 &translate, const float3x3 &rotate, const float3 &scale);
@@ -276,15 +276,15 @@ public:
 	static ScaleOp Scale(const float3 &scale);
 
 	/// Creates a new float4x4 that scales with respect to the given center point.
-	/** @param scale The amount of scale to apply to the x, y and z directions.
+	/** @param localScale The amount of localScale to apply to the x, y and z directions.
 		@param scaleCenter The coordinate system center point for the scaling. If omitted, the origin (0,0,0) will
-			be used as the origin for the scale operation. */
+			be used as the origin for the localScale operation. */
 	static float4x4 Scale(const float3 &scale, const float3 &scaleCenter);
 
 	/// Creates a new float4x4 that scales points along the given axis.
 	/** @param axis A normalized direction vector that specifies the direction of scaling.
 		@param scalingFactor The amount of scaling to apply along the specified axis. */
-	/** @param scaleCenter If specified, this point will be used as the origin for the scale operation. */
+	/** @param scaleCenter If specified, this point will be used as the origin for the localScale operation. */
 	static float4x4 ScaleAlongAxis(const float3 &axis, float scalingFactor, const float3 &scaleCenter);
 	static float4x4 ScaleAlongAxis(const float3 &axis, float scalingFactor);
 
@@ -458,7 +458,7 @@ public:
 	/// Returns the translation part.
 	/** The translation part is stored in the fourth column of this matrix.
 		This is equivalent to decomposing this matrix in the form M = T * M', i.e. this translation is applied last,
-		after applying rotation and scale. If this matrix represents a local->world space transformation for an object,
+		after applying rotation and localScale. If this matrix represents a local->world space transformation for an object,
 		then this gives the world space position of the object.
 		@note This function assumes that this matrix does not contain projection (the fourth row of this matrix is [0 0 0 1]). */
 	CONST_WIN32 float3 TranslatePart() const;
@@ -729,10 +729,10 @@ public:
 	/// This function may not be called if this matrix contains any projection (last row differs from (0 0 0 1)).
 	/// @note The returned matrix will be row-orthogonal, but not column-orthogonal in general.
 	/// The returned matrix will be column-orthogonal iff the original matrix M was row-orthogonal as well.
-	/// (in which case S had uniform scale, InverseOrthogonalUniformScale() could have been used instead)
+	/// (in which case S had uniform localScale, InverseOrthogonalUniformScale() could have been used instead)
 	bool InverseColOrthogonal();
 
-	/// Inverts a matrix that is a concatenation of only translate, rotate and uniform scale operations.
+	/// Inverts a matrix that is a concatenation of only translate, rotate and uniform localScale operations.
 	/// If a matrix is of form M=T*R*S, where T is an affine translation matrix,
 	/// R is a rotation matrix and S is a diagonal matrix with non-zero and uniform scaling factors (possibly mirroring),
 	/// then the matrix M is both column- and row-orthogonal and this function can be used to compute the inverse.
@@ -792,7 +792,7 @@ public:
 	/// M' has unitary column vectors and S is a diagonal matrix. Then replaces this matrix with M'.
 	/// @note This function assumes that this matrix does not contain projection (the fourth row of this matrix is [0 0 0 1]).
 	/// @note This function assumes that this matrix has orthogonal basis vectors (row and column vector sets are orthogonal).
-	/// @note This function does not remove reflection (-1 scale along some axis).
+	/// @note This function does not remove reflection (-1 localScale along some axis).
 	void RemoveScale();
 
 	/// Reduces this matrix to its row-echelon form.
@@ -904,7 +904,7 @@ public:
 	/// Returns true if this matrix does not perform any scaling.
 	/** A matrix does not do any scaling if the column vectors of this
 		matrix are normalized in length, compared to the given epsilon. Note that this matrix may still perform
-		reflection, i.e. it has a -1 scale along some axis.
+		reflection, i.e. it has a -1 localScale along some axis.
 		@note This function only examines the upper 3-by-3 part of this matrix.
 		@note This function assumes that this matrix does not contain projection (the fourth row of this matrix is [0 0 0 1]). */
 	bool HasUnitaryScale(float epsilon = 1e-3f) const;
@@ -968,26 +968,26 @@ public:
 	float3 ToEulerZXY() const; ///< [similarOverload: ToEulerXYX] [hideIndex]
 	float3 ToEulerZYX() const; ///< [similarOverload: ToEulerXYX] [hideIndex]
 
-	/// Returns the scale components of this matrix.
+	/// Returns the localScale components of this matrix.
 	/** This function decomposes this matrix M into a form M = M' * S, where M' has unitary column vectors and S is a diagonal matrix.
-		@return ExtractScale returns the diagonal entries of S, i.e. the scale of the columns of this matrix . If this matrix
-		represents a local->world space transformation for an object, then this scale represents a 'local scale', i.e.
+		@return ExtractScale returns the diagonal entries of S, i.e. the localScale of the columns of this matrix . If this matrix
+		represents a local->world space transformation for an object, then this localScale represents a 'local localScale', i.e.
 		scaling that is performed before translating and rotating the object from its local coordinate system to its world
 		position.
 		@note This function assumes that this matrix does not contain projection (the fourth row of this matrix is [0 0 0 1]).
-		@note This function does not detect and return reflection (-1 scale along some axis). */
+		@note This function does not detect and return reflection (-1 localScale along some axis). */
 	float3 ExtractScale() const;
 
-	/// Decomposes this matrix to translate, rotate and scale parts.
+	/// Decomposes this matrix to translate, rotate and localScale parts.
 	/** This function decomposes this matrix M to a form M = T * R * S, where T is a translation matrix, R a rotation matrix and S a
-		scale matrix.
-		@note Remember that in the convention of this class, transforms are applied in the order M * v, so scale is
+		localScale matrix.
+		@note Remember that in the convention of this class, transforms are applied in the order M * v, so localScale is
 		applied first, then rotation, and finally the translation last.
 		@note This function assumes that this matrix does not contain projection (the fourth row of this matrix is [0 0 0 1]).
 		@param translate [out] This vector receives the translation component this matrix performs. The translation is applied last
 			after rotation and scaling.
 		@param rotate [out] This object receives the rotation part of this transform.
-		@param scale [out] This vector receives the scaling along the local (before transformation by R) X, Y and Z axes
+		@param localScale [out] This vector receives the scaling along the local (before transformation by R) X, Y and Z axes
 			performed by this matrix. */
 	void Decompose(float3 &translate, Quat &rotate, float3 &scale) const;
 	void Decompose(float3 &translate, float3x3 &rotate, float3 &scale) const;

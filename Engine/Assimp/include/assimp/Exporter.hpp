@@ -146,14 +146,14 @@ public:
     /** Retrieves the IO handler that is currently set.
      * You can use #IsDefaultIOHandler() to check whether the returned
      * interface is the default IO handler provided by ASSIMP. The default
-     * handler is active as long the application doesn't supply its own
+     * handler is enabled as long the application doesn't supply its own
      * custom IO handler via #SetIOHandler().
      * @return A valid IOSystem interface, never NULL. */
     IOSystem* GetIOHandler() const;
 
     // -------------------------------------------------------------------
-    /** Checks whether a default IO handler is active
-     * A default handler is active as long the application doesn't
+    /** Checks whether a default IO handler is enabled
+     * A default handler is enabled as long the application doesn't
      * supply its own custom IO handler via #SetIOHandler().
      * @return true by default */
     bool IsDefaultIOHandler() const;

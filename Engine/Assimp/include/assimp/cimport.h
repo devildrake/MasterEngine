@@ -313,7 +313,7 @@ ASSIMP_API C_ENUM aiReturn aiDetachLogStream(
     const C_STRUCT aiLogStream* stream);
 
 // --------------------------------------------------------------------------------
-/** Detach all active log streams from the libraries' logging system.
+/** Detach all enabled log streams from the libraries' logging system.
  *  This ensures that the logging system is terminated properly and all
  *  resources allocated by it are actually freed. If you attached a stream,
  *  don't forget to detach it again.

@@ -114,7 +114,7 @@ public:
 	/// Applies a transformation to this Circle.
 	/** @param transform The transformation to apply to this Circle. This transformation must be
 		affine, and must contain an orthogonal set of column vectors (may not contain shear or projection).
-		The transformation can only contain uniform scale, and may not contain mirroring.
+		The transformation can only contain uniform localScale, and may not contain mirroring.
 		@see Translate(), Scale(), classes float3x3, float3x4, float4x4, Quat. */
 	void Transform(const float3x3 &transform);
 	void Transform(const float3x4 &transform);

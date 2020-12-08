@@ -4,7 +4,7 @@
 #include "Application.h"
 #include "Modules/ModuleWindow.h"
 
-EditorMainMenu::EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutWindowOpen) : consoleOpen(&consoleWindowOpen), configOpen(&configWindowOpen), propertiesOpen(&propertiesWindowOpen), aboutOpen(&aboutWindowOpen) {}
+EditorMainMenu::EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutWindowOpen, bool& hierarchyOpen) : consoleOpen(&consoleWindowOpen), configOpen(&configWindowOpen), propertiesOpen(&propertiesWindowOpen), aboutOpen(&aboutWindowOpen), hierarchyOpen(&hierarchyOpen) {}
 
 update_status EditorMainMenu::Draw() {
 
@@ -18,6 +18,11 @@ update_status EditorMainMenu::Draw() {
 				if (ImGui::MenuItem("Configuration Window", "ALT+U", configOpen)) {}
 			if (propertiesOpen != nullptr)
 				if (ImGui::MenuItem("Properties Window", "ALT+P", propertiesOpen)) {}
+
+			if (hierarchyOpen != nullptr)
+				if (ImGui::MenuItem("Hierarchys Window", "ALT+H", hierarchyOpen)) {}
+
+
 
 #ifdef _WIN32
 			if (ImGui::MenuItem("Open Github repository", "")) {

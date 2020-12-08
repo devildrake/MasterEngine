@@ -240,7 +240,7 @@ extern DECLSPEC int SDLCALL SDL_GetRendererOutputSize(SDL_Renderer * renderer,
  *  \param h      The height of the texture in pixels.
  *
  *  \return The created texture is returned, or NULL if no rendering context was
- *          active,  the format was unsupported, or the width or height were out
+ *          enabled,  the format was unsupported, or the width or height were out
  *          of range.
  *
  *  \note The contents of the texture are not defined at creation.

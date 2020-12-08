@@ -16,11 +16,13 @@
 #include "../ImGuiWindows/ConfigWindow.h"
 #include "../ImGuiWindows/PropertiesWindow.h"
 #include "../ImGuiWindows/AboutWindow.h"
+#include "../ImGuiWindows/SceneWindow.h"
+#include "../ImGuiWindows/GameObjectHierarchyWindow.h"
 
 #include "../EditorMainMenu.h"
 #include <Leaks.h>
 
-ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr),aboutWindow(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
+ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr), aboutWindow(nullptr), hierarchyWindow(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
 
 }
 
@@ -47,8 +49,9 @@ bool ModuleEditor::Start() {
 	configWindow = new ConfigWindow("Configuration");
 	propertiesWindow = new PropertiesWindow("Properties");
 	aboutWindow = new AboutWindow("About");
-	mainMenu = new EditorMainMenu(console->isOpen, configWindow->isOpen, propertiesWindow->isOpen, aboutWindow->isOpen);
-
+	sceneWindow = new SceneWindow("Scene");
+	hierarchyWindow = new GameObjectHierarchyWindow("Hierarchy", App->scene);
+	mainMenu = new EditorMainMenu(console->isOpen, configWindow->isOpen, propertiesWindow->isOpen, aboutWindow->isOpen, hierarchyWindow->isOpen);
 	return true;
 }
 
@@ -76,6 +79,10 @@ update_status ModuleEditor::Update() {
 		if (App->input->GetKey(SDL_SCANCODE_A) == ModuleInput::KEY_DOWN) {
 			aboutWindow->isOpen = !aboutWindow->isOpen;
 		}
+		if (App->input->GetKey(SDL_SCANCODE_H) == ModuleInput::KEY_DOWN) {
+			hierarchyWindow->isOpen = !hierarchyWindow->isOpen;
+		}
+
 	}
 
 	if (App->debugDraw != nullptr) {
@@ -86,17 +93,24 @@ update_status ModuleEditor::Update() {
 	configWindow->Draw();
 	propertiesWindow->Draw();
 	aboutWindow->Draw();
+	hierarchyWindow->Draw();
+
+
+	sceneWindow->Draw();
 	return 	mainMenu->Draw();
 }
+
+
 update_status ModuleEditor::PostUpdate() {
 
+
+	//ImGui::ShowDemoWindow();
 	ImGui::Render();
 	//ImGuiContext handling
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 		SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();
 		SDL_GLContext backupCurrentContext = SDL_GL_GetCurrentContext();
 		ImGui::UpdatePlatformWindows();
@@ -112,18 +126,21 @@ bool ModuleEditor::CleanUp() {
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-	delete console;
-	delete configWindow;
-	delete propertiesWindow;
-	delete aboutWindow;
-	delete mainMenu;
-	console = nullptr;
-	configWindow = nullptr;
-	mainMenu = nullptr;
-	propertiesWindow = nullptr;
+	RELEASE(console);
+	RELEASE(configWindow);
+	RELEASE(propertiesWindow);
+	RELEASE(aboutWindow);
+	RELEASE(hierarchyWindow);
+	RELEASE(mainMenu);
+
 	return true;
 }
 
-ConsoleWindow* ModuleEditor::GetConsole() {
+ConsoleWindow* ModuleEditor::GetConsole() const {
 	return console;
 }
+
+PropertiesWindow* ModuleEditor::GetProperties() const {
+	return propertiesWindow;
+}
+

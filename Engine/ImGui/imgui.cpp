@@ -336,7 +336,7 @@ CODE
  - Keyboard:
     - Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard to enable.
       NewFrame() will automatically fill io.NavInputs[] based on your io.KeysDown[] + io.KeyMap[] arrays.
-    - When keyboard navigation is active (io.NavActive + ImGuiConfigFlags_NavEnableKeyboard), the io.WantCaptureKeyboard flag
+    - When keyboard navigation is enabled (io.NavActive + ImGuiConfigFlags_NavEnableKeyboard), the io.WantCaptureKeyboard flag
       will be set. For more advanced uses, you may want to read from:
        - io.NavActive: true when a window is focused and it doesn't have the ImGuiWindowFlags_NoNavInputs flag set.
        - io.NavVisible: true when the navigation cursor is visible (and usually goes false when mouse is used).
@@ -522,7 +522,7 @@ CODE
  - 2017/11/18 (1.53) - Style: renamed style.ChildWindowRounding to style.ChildRounding, ImGuiStyleVar_ChildWindowRounding to ImGuiStyleVar_ChildRounding.
  - 2017/11/02 (1.53) - obsoleted IsRootWindowOrAnyChildHovered() in favor of using IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
  - 2017/10/24 (1.52) - renamed IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCS/IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCS to IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS/IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS for consistency.
- - 2017/10/20 (1.52) - changed IsWindowHovered() default parameters behavior to return false if an item is active in another window (e.g. click-dragging item from another window to this window). You can use the newly introduced IsWindowHovered() flags to requests this specific behavior if you need it.
+ - 2017/10/20 (1.52) - changed IsWindowHovered() default parameters behavior to return false if an item is enabled in another window (e.g. click-dragging item from another window to this window). You can use the newly introduced IsWindowHovered() flags to requests this specific behavior if you need it.
  - 2017/10/20 (1.52) - marked IsItemHoveredRect()/IsMouseHoveringWindow() as obsolete, in favor of using the newly introduced flags for IsItemHovered() and IsWindowHovered(). See https://github.com/ocornut/imgui/issues/1382 for details.
                        removed the IsItemRectHovered()/IsWindowRectHovered() names introduced in 1.51 since they were merely more consistent names for the two functions we are now obsoleting.
                          IsItemHoveredRect()        --> IsItemHovered(ImGuiHoveredFlags_RectOnly)
@@ -1000,8 +1000,8 @@ ImGuiStyle::ImGuiStyle()
     ImGui::StyleColorsDark(this);
 }
 
-// To scale your entire UI (e.g. if you want your app to use High DPI or generally be DPI aware) you may use this helper function. Scaling the fonts is done separately and is up to you.
-// Important: This operation is lossy because we round all sizes to integer. If you need to change your scale multiples, call this over a freshly initialized ImGuiStyle structure rather than scaling multiple times.
+// To localScale your entire UI (e.g. if you want your app to use High DPI or generally be DPI aware) you may use this helper function. Scaling the fonts is done separately and is up to you.
+// Important: This operation is lossy because we round all sizes to integer. If you need to change your localScale multiples, call this over a freshly initialized ImGuiStyle structure rather than scaling multiple times.
 void ImGuiStyle::ScaleAllSizes(float scale_factor)
 {
     WindowPadding = ImFloor(WindowPadding * scale_factor);
@@ -2180,7 +2180,7 @@ void ImGui::CalcListClipping(int items_count, float items_height, int* out_items
     ImGuiWindow* window = g.CurrentWindow;
     if (g.LogEnabled)
     {
-        // If logging is active, do not perform any clipping
+        // If logging is enabled, do not perform any clipping
         *out_items_display_start = 0;
         *out_items_display_end = items_count;
         return;
@@ -3094,7 +3094,7 @@ void ImGui::MarkItemEdited(ImGuiID id)
 
 static inline bool IsWindowContentHoverable(ImGuiWindow* window, ImGuiHoveredFlags flags)
 {
-    // An active popup disable hovering on other windows (apart from its own children)
+    // An enabled popup disable hovering on other windows (apart from its own children)
     // FIXME-OPT: This could be cached/stored within the window.
     ImGuiContext& g = *GImGui;
     if (g.NavWindow)
@@ -3140,12 +3140,12 @@ bool ImGui::IsItemHovered(ImGuiHoveredFlags flags)
     if (g.HoveredRootWindow != window->RootWindow && !(flags & ImGuiHoveredFlags_AllowWhenOverlapped))
         return false;
 
-    // Test if another item is active (e.g. being dragged)
+    // Test if another item is enabled (e.g. being dragged)
     if (!(flags & ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
         if (g.ActiveId != 0 && g.ActiveId != window->DC.LastItemId && !g.ActiveIdAllowOverlap && g.ActiveId != window->MoveId)
             return false;
 
-    // Test if interactions on this window are blocked by an active popup or modal.
+    // Test if interactions on this window are blocked by an enabled popup or modal.
     // The ImGuiHoveredFlags_AllowWhenBlockedByPopup flag will be tested here.
     if (!IsWindowContentHoverable(window, flags))
         return false;
@@ -3253,7 +3253,7 @@ bool ImGui::FocusableItemRegister(ImGuiWindow* window, ImGuiID id)
             return true;
         }
 
-        // If another item is about to be focused, we clear our own active id
+        // If another item is about to be focused, we clear our own enabled id
         if (g.ActiveId == id)
             ClearActiveID();
     }
@@ -3993,7 +3993,7 @@ void ImGui::NewFrame()
     g.HoveredIdAllowOverlap = false;
     g.HoveredIdDisabled = false;
 
-    // Update ActiveId data (clear reference to active widget if the widget isn't alive anymore)
+    // Update ActiveId data (clear reference to enabled widget if the widget isn't alive anymore)
     if (g.ActiveIdIsAlive != g.ActiveId && g.ActiveIdPreviousFrame == g.ActiveId && g.ActiveId != 0)
         ClearActiveID();
     if (g.ActiveId)
@@ -4058,7 +4058,7 @@ void ImGui::NewFrame()
     g.PlatformImePos = ImVec2(1.0f, 1.0f); // OS Input Method Editor showing on top-left of our window by default
     g.PlatformImePosViewport = NULL;
 
-    // Mouse wheel scrolling, scale
+    // Mouse wheel scrolling, localScale
     UpdateMouseWheel();
 
     // Update legacy TAB focus
@@ -4080,7 +4080,7 @@ void ImGui::NewFrame()
             GcCompactTransientWindowBuffers(window);
     }
 
-    // Closing the focused window restore focus to the first active root window in descending z-order
+    // Closing the focused window restore focus to the first enabled root window in descending z-order
     if (g.NavWindow && !g.NavWindow->WasActive)
         FocusTopMostWindowUnderOne(NULL, NULL);
 
@@ -4337,7 +4337,7 @@ static void AddWindowToDrawData(ImGuiWindow* window, int layer)
     for (int i = 0; i < window->DC.ChildWindows.Size; i++)
     {
         ImGuiWindow* child = window->DC.ChildWindows[i];
-        if (IsWindowActiveAndVisible(child)) // Clipped children may have been marked not active
+        if (IsWindowActiveAndVisible(child)) // Clipped children may have been marked not enabled
             AddWindowToDrawData(child, layer);
     }
 }
@@ -4448,7 +4448,7 @@ static void ImGui::EndFrameDrawDimmedBackgrounds()
     if (dim_bg_for_window_list && g.NavWindowingTargetAnim->Active)
     {
         // Choose a draw list that will be front-most across all our children
-        // In the unlikely case that the window wasn't made active we can't rely on its drawlist and skip rendering all-together.
+        // In the unlikely case that the window wasn't made enabled we can't rely on its drawlist and skip rendering all-together.
         ImGuiWindow* window = g.NavWindowingTargetAnim;
         ImDrawList* draw_list = FindFrontMostVisibleChildWindow(window->RootWindow)->DrawList;
         draw_list->PushClipRectFullScreen();
@@ -4546,7 +4546,7 @@ void ImGui::EndFrame()
     for (int i = 0; i != g.Windows.Size; i++)
     {
         ImGuiWindow* window = g.Windows[i];
-        if (window->Active && (window->Flags & ImGuiWindowFlags_ChildWindow))       // if a child is active its parent will add it
+        if (window->Active && (window->Flags & ImGuiWindowFlags_ChildWindow))       // if a child is enabled its parent will add it
             continue;
         AddWindowToSortBuffer(&g.WindowsTempSortBuffer, window);
     }
@@ -4579,7 +4579,7 @@ void ImGui::Render()
 
     CallContextHooks(&g, ImGuiContextHookType_RenderPre);
 
-    // Add background ImDrawList (for each active viewport)
+    // Add background ImDrawList (for each enabled viewport)
     for (int n = 0; n != g.Viewports.Size; n++)
     {
         ImGuiViewportP* viewport = g.Viewports[n];
@@ -4614,7 +4614,7 @@ void ImGui::Render()
         viewport->DrawDataBuilder.FlattenIntoSingleLayer();
 
         // Draw software mouse cursor if requested by io.MouseDrawCursor flag
-        // (note we scale cursor by current viewport/monitor, however Windows 10 for its own hardware cursor seems to be using a different scale factor)
+        // (note we localScale cursor by current viewport/monitor, however Windows 10 for its own hardware cursor seems to be using a different localScale factor)
         if (mouse_cursor_size.x > 0.0f && mouse_cursor_size.y > 0.0f)
         {
             float scale = g.Style.MouseCursorScale * viewport->DpiScale;
@@ -4622,7 +4622,7 @@ void ImGui::Render()
                 RenderMouseCursor(GetForegroundDrawList(viewport), g.IO.MousePos, scale, g.MouseCursor, IM_COL32_WHITE, IM_COL32_BLACK, IM_COL32(0, 0, 0, 48));
         }
 
-        // Add foreground ImDrawList (for each active viewport)
+        // Add foreground ImDrawList (for each enabled viewport)
         if (viewport->DrawLists[1] != NULL)
             AddDrawListToDrawData(&viewport->DrawDataBuilder.Layers[0], GetForegroundDrawList(viewport));
 
@@ -6840,8 +6840,8 @@ void ImGui::FocusWindow(ImGuiWindow* window)
     ImGuiDockNode* dock_node = window ? window->DockNode : NULL;
     bool active_id_window_is_dock_node_host = (g.ActiveIdWindow && dock_node && dock_node->HostWindow == g.ActiveIdWindow);
 
-    // Steal active widgets. Some of the cases it triggers includes:
-    // - Focus a window while an InputText in another window is active, if focus happens before the old InputText can run.
+    // Steal enabled widgets. Some of the cases it triggers includes:
+    // - Focus a window while an InputText in another window is enabled, if focus happens before the old InputText can run.
     // - When using Nav to activate menu items (due to timing of activating on press->new window appears->losing ActiveId)
     // - Using dock host items (tab, collapse button) can trigger this before we redirect the ActiveIdWindow toward the child window.
     if (g.ActiveId != 0 && g.ActiveIdWindow && g.ActiveIdWindow->RootWindowDockStop != focus_front_window)
@@ -6876,7 +6876,7 @@ void ImGui::FocusTopMostWindowUnderOne(ImGuiWindow* under_this_window, ImGuiWind
     }
     for (int i = start_idx; i >= 0; i--)
     {
-        // We may later decide to test for different NoXXXInputs based on the active navigation input (mouse vs nav) but that may feel more confusing to the user.
+        // We may later decide to test for different NoXXXInputs based on the enabled navigation input (mouse vs nav) but that may feel more confusing to the user.
         ImGuiWindow* window = g.WindowsFocusOrder[i];
         if (window != ignore_window && window->WasActive && window->RootWindowDockStop == window)
             if ((window->Flags & (ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoNavInputs)) != (ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoNavInputs))
@@ -7753,7 +7753,7 @@ bool ImGui::ItemAdd(const ImRect& bb, ImGuiID id, const ImRect* nav_bb_arg)
         // Navigation processing runs prior to clipping early-out
         //  (a) So that NavInitRequest can be honored, for newly opened windows to select a default widget
         //  (b) So that we can scroll up/down past clipped items. This adds a small O(N) cost to regular navigation requests
-        //      unfortunately, but it is still limited to one window. It may not scale very well for windows with ten of
+        //      unfortunately, but it is still limited to one window. It may not localScale very well for windows with ten of
         //      thousands of item, but at least NavMoveRequest is only set on user interaction, aka maximum once a frame.
         //      We could early out with "if (is_clipped && !g.NavInitRequest) return false;" but when we wouldn't be able
         //      to reach unclipped widgets. This would work if user had explicit scrolling control (e.g. mapped on a stick).
@@ -9302,7 +9302,7 @@ static ImVec2 ImGui::NavCalcPreferredRefPos()
     }
     else
     {
-        // When navigation is active and mouse is disabled, decide on an arbitrary position around the bottom left of the currently navigated item.
+        // When navigation is enabled and mouse is disabled, decide on an arbitrary position around the bottom left of the currently navigated item.
         const ImRect& rect_rel = g.NavWindow->NavRectRel[g.NavLayer];
         ImVec2 pos = g.NavWindow->Pos + ImVec2(rect_rel.Min.x + ImMin(g.Style.FramePadding.x * 4, rect_rel.GetWidth()), rect_rel.Max.y - ImMin(g.Style.FramePadding.y, rect_rel.GetHeight()));
         ImRect visible_rect = g.NavWindow->Viewport->GetMainRect();
@@ -10087,7 +10087,7 @@ void ImGui::ClearDragDrop()
     memset(&g.DragDropPayloadBufLocal, 0, sizeof(g.DragDropPayloadBufLocal));
 }
 
-// Call when current ID is active.
+// Call when current ID is enabled.
 // When this returns true you need to: a) call SetDragDropPayload() exactly once, b) you may render the payload visual/description, c) call EndDragDropSource()
 bool ImGui::BeginDragDropSource(ImGuiDragDropFlags flags)
 {
@@ -10866,7 +10866,7 @@ static void WindowSettingsHandler_ApplyAll(ImGuiContext* ctx, ImGuiSettingsHandl
 
 static void WindowSettingsHandler_WriteAll(ImGuiContext* ctx, ImGuiSettingsHandler* handler, ImGuiTextBuffer* buf)
 {
-    // Gather data from windows that were active during this session
+    // Gather data from windows that were enabled during this session
     // (if a window wasn't opened in this session we preserve its settings)
     ImGuiContext& g = *ctx;
     for (int i = 0; i != g.Windows.Size; i++)
@@ -11211,7 +11211,7 @@ static void ImGui::UpdateViewportsNewFrame()
         if ((viewport->Flags & ImGuiViewportFlags_CanHostOtherWindows) && (viewport_delta_pos.x != 0.0f || viewport_delta_pos.y != 0.0f))
             TranslateWindowsInViewport(viewport, viewport->LastPos, viewport->Pos);
 
-        // Update DPI scale
+        // Update DPI localScale
         float new_dpi_scale;
         if (g.PlatformIO.Platform_GetWindowDpiScale && platform_funcs_available)
             new_dpi_scale = g.PlatformIO.Platform_GetWindowDpiScale(viewport);
@@ -11229,7 +11229,7 @@ static void ImGui::UpdateViewportsNewFrame()
 
             // Scale our window moving pivot so that the window will rescale roughly around the mouse position.
             // FIXME-VIEWPORT: This currently creates a resizing feedback loop when a window is straddling a DPI transition border.
-            // (Minor: since our sizes do not perfectly linearly scale, deferring the click offset scale until we know the actual window scale ratio may get us slightly more precise mouse positioning.)
+            // (Minor: since our sizes do not perfectly linearly localScale, deferring the click offset localScale until we know the actual window localScale ratio may get us slightly more precise mouse positioning.)
             //if (g.MovingWindow != NULL && g.MovingWindow->Viewport == viewport)
             //    g.ActiveIdClickOffset = ImFloor(g.ActiveIdClickOffset * scale_factor);
         }
@@ -11242,7 +11242,7 @@ static void ImGui::UpdateViewportsNewFrame()
         return;
     }
 
-    // Mouse handling: decide on the actual mouse viewport for this frame between the active/focused viewport and the hovered viewport.
+    // Mouse handling: decide on the actual mouse viewport for this frame between the enabled/focused viewport and the hovered viewport.
     // Note that 'viewport_hovered' should skip over any viewport that has the ImGuiViewportFlags_NoInputs flags set.
     ImGuiViewportP* viewport_hovered = NULL;
     if (g.IO.BackendFlags & ImGuiBackendFlags_HasMouseHoveredViewport)
@@ -11277,7 +11277,7 @@ static void ImGui::UpdateViewportsNewFrame()
     // When dragging something, always refer to the last hovered viewport.
     // - when releasing a moving window we will revert to aiming behind (at viewport_hovered)
     // - when we are between viewports, our dragged preview will tend to show in the last viewport _even_ if we don't have tooltips in their viewports (when lacking monitor info)
-    // - consider the case of holding on a menu item to browse child menus: even thou a mouse button is held, there's no active id because menu items only react on mouse release.
+    // - consider the case of holding on a menu item to browse child menus: even thou a mouse button is held, there's no enabled id because menu items only react on mouse release.
     const bool is_mouse_dragging_with_an_expected_destination = g.DragDropActive;
     if (is_mouse_dragging_with_an_expected_destination && viewport_hovered == NULL)
         viewport_hovered = g.MouseLastHoveredViewport;
@@ -11509,7 +11509,7 @@ void ImGui::UpdatePlatformWindows()
     if (!(g.ConfigFlagsCurrFrame & ImGuiConfigFlags_ViewportsEnable))
         return;
 
-    // Create/resize/destroy platform windows to match each active viewport.
+    // Create/resize/destroy platform windows to match each enabled viewport.
     // Skip the main viewport (index 0), which is always fully handled by the application!
     for (int i = 1; i < g.Viewports.Size; i++)
     {
@@ -11897,7 +11897,7 @@ namespace ImGui
 // Docking: ImGuiDockContext
 //-----------------------------------------------------------------------------
 // The lifetime model is different from the one of regular windows: we always create a ImGuiDockNode for each ImGuiDockNodeSettings,
-// or we always hold the entire docking node tree. Nodes are frequently hidden, e.g. if the window(s) or child nodes they host are not active.
+// or we always hold the entire docking node tree. Nodes are frequently hidden, e.g. if the window(s) or child nodes they host are not enabled.
 // At boot time only, we run a simple GC to remove nodes that have no references.
 // Because dock node settings (which are small, contiguous structures) are always mirrored by their corresponding dock nodes (more complete structures),
 // we can also very easily recreate the nodes from scratch given the settings data (this is what DockContextRebuild() does).
@@ -13024,7 +13024,7 @@ static void ImGui::DockNodeUpdate(ImGuiDockNode* node)
         node->HasWindowMenuButton = (node->Windows.Size > 0) && (node_flags & ImGuiDockNodeFlags_NoWindowMenuButton) == 0;
         for (int window_n = 0; window_n < node->Windows.Size; window_n++)
         {
-            // FIXME-DOCK: Setting DockIsActive here means that for single active window in a leaf node, DockIsActive will be cleared until the next Begin() call.
+            // FIXME-DOCK: Setting DockIsActive here means that for single enabled window in a leaf node, DockIsActive will be cleared until the next Begin() call.
             ImGuiWindow* window = node->Windows[window_n];
             window->DockIsActive = (node->Windows.Size > 1);
             node->EnableCloseButton |= window->HasCloseButton;
@@ -14115,7 +14115,7 @@ void ImGui::DockNodeTreeUpdateSplitter(ImGuiDockNode* node)
             ImGuiID splitter_id = GetID("##Splitter");
             if (g.ActiveId == splitter_id)
             {
-                // Only process when splitter is active
+                // Only process when splitter is enabled
                 DockNodeTreeUpdateSplitterFindTouchingNode(child_0, axis, 1, &touching_nodes[0]);
                 DockNodeTreeUpdateSplitterFindTouchingNode(child_1, axis, 0, &touching_nodes[1]);
                 for (int touching_node_n = 0; touching_node_n < touching_nodes[0].Size; touching_node_n++)
@@ -14527,7 +14527,7 @@ void ImGui::DockBuilderRemoveNodeChildNodes(ImGuiID root_id)
     ImGuiDataAuthority backup_root_node_authority_for_pos = root_node ? root_node->AuthorityForPos : ImGuiDataAuthority_Auto;
     ImGuiDataAuthority backup_root_node_authority_for_size = root_node ? root_node->AuthorityForSize : ImGuiDataAuthority_Auto;
 
-    // Process active windows
+    // Process enabled windows
     ImVector<ImGuiDockNode*> nodes_to_remove;
     for (int n = 0; n < dc->Nodes.Data.Size; n++)
         if (ImGuiDockNode* node = (ImGuiDockNode*)dc->Nodes.Data[n].val_p)
@@ -15044,7 +15044,7 @@ void ImGui::BeginDockableDragDropTarget(ImGuiWindow* window)
             // Cannot assume that node will != NULL even though we passed the rectangle test: it depends on padding/spacing handled by DockNodeTreeFindVisibleNodeByPos().
             node = DockNodeTreeFindVisibleNodeByPos(window->DockNodeAsHost, g.IO.MousePos);
 
-            // There is an edge case when docking into a dockspace which only has _inactive_ nodes (because none of the windows are active)
+            // There is an edge case when docking into a dockspace which only has _inactive_ nodes (because none of the windows are enabled)
             // In this case we need to fallback into any leaf mode, possibly the central node.
             // FIXME-20181220: We should not have to test for IsLeafNode() here but we have another bug to fix first.
             if (node && node->IsDockSpace() && node->IsRootNode())
@@ -15943,7 +15943,7 @@ void ImGui::DebugNodeDrawList(ImGuiWindow* window, ImGuiViewportP* viewport, con
     if (draw_list == GetWindowDrawList())
     {
         SameLine();
-        TextColored(ImVec4(1.0f, 0.4f, 0.4f, 1.0f), "CURRENTLY APPENDING"); // Can't display stats for active draw list! (we don't have the data double-buffered)
+        TextColored(ImVec4(1.0f, 0.4f, 0.4f, 1.0f), "CURRENTLY APPENDING"); // Can't display stats for enabled draw list! (we don't have the data double-buffered)
         if (node_open)
             TreePop();
         return;

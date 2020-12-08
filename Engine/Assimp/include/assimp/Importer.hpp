@@ -314,15 +314,15 @@ public:
     /** Retrieves the IO handler that is currently set.
      * You can use #IsDefaultIOHandler() to check whether the returned
      * interface is the default IO handler provided by ASSIMP. The default
-     * handler is active as long the application doesn't supply its own
+     * handler is enabled as long the application doesn't supply its own
      * custom IO handler via #SetIOHandler().
      * @return A valid IOSystem interface, never NULL.
      */
     IOSystem* GetIOHandler() const;
 
     // -------------------------------------------------------------------
-    /** Checks whether a default IO handler is active
-     * A default handler is active as long the application doesn't
+    /** Checks whether a default IO handler is enabled
+     * A default handler is enabled as long the application doesn't
      * supply its own custom IO handler via #SetIOHandler().
      * @return true by default
      */
@@ -345,15 +345,15 @@ public:
     /** Retrieves the progress handler that is currently set.
      * You can use #IsDefaultProgressHandler() to check whether the returned
      * interface is the default handler provided by ASSIMP. The default
-     * handler is active as long the application doesn't supply its own
+     * handler is enabled as long the application doesn't supply its own
      * custom handler via #SetProgressHandler().
      * @return A valid ProgressHandler interface, never NULL.
      */
     ProgressHandler* GetProgressHandler() const;
 
     // -------------------------------------------------------------------
-    /** Checks whether a default progress handler is active
-     * A default handler is active as long the application doesn't
+    /** Checks whether a default progress handler is enabled
+     * A default handler is enabled as long the application doesn't
      * supply its own custom progress handler via #SetProgressHandler().
      * @return true by default
      */
@@ -409,7 +409,7 @@ public:
      * destroy it upon destruction. If the import fails, NULL is returned.
      * A human-readable error description can be retrieved by calling
      * GetErrorString(). The previous scene will be deleted during this call.
-     * Calling this method doesn't affect the active IOSystem.
+     * Calling this method doesn't affect the enabled IOSystem.
      * @param pBuffer Pointer to the file data
      * @param pLength Length of pBuffer, in bytes
      * @param pFlags Optional post processing steps to be executed after

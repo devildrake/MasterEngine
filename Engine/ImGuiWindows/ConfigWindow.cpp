@@ -85,8 +85,7 @@ void ConfigWindow::Draw() {
 	if (!isOpen)return;
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 
-	if (!ImGui::Begin(windowName, &isOpen))
-	{
+	if (!ImGui::Begin(windowName, &isOpen)) {
 		ImGui::End();
 		return;
 	}

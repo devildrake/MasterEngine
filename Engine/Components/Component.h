@@ -1,26 +1,29 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
+#include<string>
 
 class GameObject;
 
 class Component {
 public:
 	GameObject* owner;
+	std::string name;
 	enum ComponentType {
-		Transformation,
-		Mesh,
-		Material,
-		Light
+		CTTransformation,
+		CTMeshRenderer,
+		CTLight
 	};
 	ComponentType type;
-	bool active;
+	bool enabled;
 public:
-	Component();
+	Component(ComponentType aType, GameObject* anOwner);
 	~Component();
 	virtual void Enable();
 	virtual void Update();
 	virtual void Disable();
-
+	virtual void DrawEditor();
+	virtual void OnNewParent(GameObject* prevParent, GameObject* newParent);
+	std::string Component::ComponentTypeToString(ComponentType type)const;
 	//GameObject* owner;
 };
 
