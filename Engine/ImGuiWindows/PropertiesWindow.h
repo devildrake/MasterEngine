@@ -10,13 +10,12 @@ class GameObject;
 
 class PropertiesWindow :public ImGuiWindow {
 private:
-	GameObject* currentTarget;
 
 public:
 	PropertiesWindow(const char* windowName);
 	~PropertiesWindow();
 	void Draw();
-	void SetTarget(GameObject* newTarget);
+
 	friend class ModuleEditor;
 };
 

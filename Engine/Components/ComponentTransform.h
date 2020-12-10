@@ -10,6 +10,7 @@ public:
 	Quat quatRotation;
 private:
 	float4x4 transformationMatrix;
+	float4x4 localTransformationMatrix;
 	float3 prevLocalPosition;
 	float3 prevLocalScale;
 	Quat   prevQuatRotation;
@@ -21,12 +22,19 @@ public:
 	void Update()override;
 	void Disable()override;
 	void DrawEditor() override;
+	void DrawGizmos()override;
 	void OnNewParent(GameObject* prevParent, GameObject* newParent)override;
 
 	float3 CalculateGlobalPosition()const;
 	Quat CalculateGlobalRotation()const;
 	float3 CalculateGlobalScale()const;
-	float4x4 GetTransformMatrix()const;
+
+	void GenerateWorldMatrix();
+	void GenerateLocalMatrix();
+	float4x4 GetWorldMatrix()const;
+private:
+	//Editor values (may be discarded)
+	float3 prevRotDummy;
 };
 
 #endif

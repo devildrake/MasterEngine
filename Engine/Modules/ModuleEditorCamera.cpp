@@ -8,9 +8,8 @@
 #include "../Components/ComponentTransform.h"
 //#include "../Rendering/Model.h"
 #include <Leaks.h>
-#define DEGTORAD 3.14159/180
 
-ModuleEditorCamera::ModuleEditorCamera() : nearPlaneDistance(0.1f), farPlaneDistance(200.0f), frustumPosition(0, 5, -3),
+ModuleEditorCamera::ModuleEditorCamera() :Module("Editor Camera"), nearPlaneDistance(0.1f), farPlaneDistance(200.0f), frustumPosition(0, 5, -3),
 cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f), context(nullptr), glcontext(nullptr), aspectRatio(1.77f) {
 }
 
@@ -197,7 +196,10 @@ update_status ModuleEditorCamera::Update() {
 		}
 
 		else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == ModuleInput::KEY_REPEAT) {
-			if (!App->input->IsMouseOverImGuiWindow()) {
+
+
+
+			if (App->editor->GetScene()->IsMouseOverWindow()) {
 				const float3 mouseMotion = App->input->GetMouseMotion();
 				cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * rotationSpeed * App->GetDeltaTime();
 				cameraMovementInput += frustum.Up() * mouseMotion.y * rotationSpeed * App->GetDeltaTime();
@@ -216,9 +218,9 @@ update_status ModuleEditorCamera::Update() {
 	SDL_ShowCursor(showCursor);
 
 	const float mouseWheelMotion = App->input->GetMouseWheelMotion();
-	if (mouseWheelMotion != 0 && !App->input->IsMouseOverImGuiWindow()) {
-		frustumPosition += mouseWheelMotion * frustum.Front() * zoomSpeed * App->GetDeltaTime();
-	}
+	//if (mouseWheelMotion != 0 && !App->input->IsMouseOverImGuiWindow()) {
+	frustumPosition += mouseWheelMotion * frustum.Front() * zoomSpeed * App->GetDeltaTime();
+	//}
 
 	frustum.SetPos(frustumPosition);
 	SendViewModelMatrix();

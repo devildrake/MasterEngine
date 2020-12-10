@@ -1,6 +1,8 @@
 #include "Component.h"
 #include "../GameObject.h"
 #include "../ImGui/imgui.h"
+#include "../Utilities/Leaks.h"
+
 
 Component::Component(ComponentType aType, GameObject* anOwner) : enabled(true), owner(anOwner), type(aType) {
 	name = ComponentTypeToString(type);
@@ -45,4 +47,7 @@ void Component::DrawEditor() {
 
 void Component::OnNewParent(GameObject* prevParent, GameObject* newParent) {
 
+}
+
+void Component::DrawGizmos() {
 }

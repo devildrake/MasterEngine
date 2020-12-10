@@ -1,9 +1,12 @@
 #include "ComponentTransform.h"
 #include "../GameObject.h"
 #include "../ImGui/imgui.h"
+#include "../Utilities/Leaks.h"
+#include "../Application.h"
+#include "../Modules/ModuleDebugDraw.h"
 
 
-ComponentTransform::ComponentTransform(GameObject* anOwner, float3 pos, Quat rot, float3 scale) :Component(ComponentType::CTTransformation, anOwner), localPosition(pos), prevLocalPosition(pos), quatRotation(rot), prevQuatRotation(rot), localScale(scale), prevLocalScale(scale) {
+ComponentTransform::ComponentTransform(GameObject* anOwner, float3 pos, Quat rot, float3 scale) :Component(ComponentType::CTTransformation, anOwner), localPosition(pos), prevLocalPosition(pos), quatRotation(rot), prevQuatRotation(rot), localScale(scale), prevLocalScale(scale), prevRotDummy(float3::zero) {
 	transformationMatrix = float4x4::Translate(CalculateGlobalPosition()) * float4x4::FromQuat(quatRotation) * float4x4::Scale(localScale) * float4x4::identity;
 }
 
@@ -18,14 +21,37 @@ void ComponentTransform::Enable() {
 void ComponentTransform::Update() {
 	if (!enabled) return;
 
-	//TO DO OPTIMIZE CALLS SO IT ONLY UPDATES WHENEVER TRANSFORM WAS CHANGED
-	//if (
-		/*localPosition.x != prevLocalPosition.x || localPosition.y != prevLocalPosition.y || localPosition.z != prevLocalPosition.z ||
+	if (
+		localPosition.x != prevLocalPosition.x || localPosition.y != prevLocalPosition.y || localPosition.z != prevLocalPosition.z ||
 		localScale.x != prevLocalScale.x || localScale.y != prevLocalScale.y || localScale.z != prevLocalScale.z ||
-		quatRotation.x != quatRotation.x || quatRotation.z != quatRotation.z || quatRotation.y != quatRotation.y || quatRotation.w != quatRotation.w
-		) {*/
-	transformationMatrix = float4x4::FromTRS(CalculateGlobalPosition(), CalculateGlobalRotation(), CalculateGlobalScale());
-	//}
+		quatRotation.x != prevQuatRotation.x || quatRotation.z != prevQuatRotation.z || quatRotation.y != prevQuatRotation.y || quatRotation.w != prevQuatRotation.w
+		) {
+		GenerateLocalMatrix();
+		GenerateWorldMatrix();
+	}
+}
+
+void ComponentTransform::GenerateLocalMatrix() {
+	localTransformationMatrix = float4x4::FromTRS(localPosition, quatRotation, localScale);
+	prevLocalPosition = localPosition;
+	prevLocalScale = localScale;
+	prevQuatRotation = quatRotation;
+}
+
+void ComponentTransform::GenerateWorldMatrix() {
+	transformationMatrix = localTransformationMatrix;
+	if (owner != nullptr) {
+		if (owner->parent != nullptr) {
+			ComponentTransform* parentTransform = (ComponentTransform*)owner->parent->GetComponentOfType(ComponentType::CTTransformation);
+			if (parentTransform != nullptr) {
+				transformationMatrix = parentTransform->transformationMatrix * localTransformationMatrix;
+			}
+		}
+
+		for (std::list<GameObject*>::iterator it = owner->children.begin(); it != owner->children.end(); ++it) {
+			((ComponentTransform*)(*it)->GetComponentOfType(ComponentType::CTTransformation))->GenerateWorldMatrix();
+		}
+	}
 
 }
 
@@ -39,10 +65,24 @@ void ComponentTransform::DrawEditor() {
 
 	float3 rotDummy = quatRotation.ToEulerXYZ();
 	rotDummy = RadToDeg(rotDummy);
+
 	ImGui::DragFloat3("Rotation", rotDummy.ptr());
 
-	ImGui::DragFloat3("scale", localScale.ptr());
+	if (prevRotDummy.x != rotDummy.x || prevRotDummy.y != rotDummy.y || prevRotDummy.z != rotDummy.z) {
 
+		//This triggers some weird interactions, may have to be modified 
+		quatRotation = Quat::FromEulerXYZ(DegToRad(rotDummy.x), DegToRad(rotDummy.y), DegToRad(rotDummy.z));
+
+		prevRotDummy = rotDummy;
+
+	}
+
+	ImGui::DragFloat3("scale", localScale.ptr());
+}
+
+void ComponentTransform::DrawGizmos() {
+	App->debugDraw->DrawAxisTriad(transformationMatrix);
+	//App->debugDraw->DrawAxisTriad(transformationMatrix);
 }
 
 void ComponentTransform::OnNewParent(GameObject* prevParent, GameObject* newParent) {
@@ -99,7 +139,7 @@ float3 ComponentTransform::CalculateGlobalPosition()const {
 	return localPosition;
 }
 
-float4x4 ComponentTransform::GetTransformMatrix()const {
+float4x4 ComponentTransform::GetWorldMatrix()const {
 	return transformationMatrix;
 }
 

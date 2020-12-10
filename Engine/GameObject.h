@@ -17,7 +17,7 @@ private:
 	ModuleScene* scene;
 public:
 	GameObject();
-	GameObject(const char* name, GameObject* parentObject = nullptr);
+	GameObject(const char* name, ModuleScene* scene = nullptr, GameObject* parentObject = nullptr);
 	~GameObject();
 	void Update();
 	Component* CreateComponent(Component::ComponentType type);
@@ -27,7 +27,7 @@ public:
 	void SetScene(ModuleScene* newScene);
 	int GetID()const;
 	bool IsChild(GameObject* g)const;
-
+	void DrawGizmos()const;
 public:
 	friend class PropertiesWindow;
 

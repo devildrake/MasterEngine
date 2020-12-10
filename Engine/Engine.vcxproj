@@ -138,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Components\Component.h" />
+    <ClInclude Include="Components\ComponentCamera.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ImGuiWindows\AboutWindow.h" />
     <ClInclude Include="Application.h" />
@@ -339,6 +340,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Components\Component.cpp" />
+    <ClCompile Include="Components\ComponentCamera.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGuiWindows\AboutWindow.cpp" />
     <ClCompile Include="Application.cpp" />

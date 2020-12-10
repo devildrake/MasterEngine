@@ -77,7 +77,6 @@ public:
 	const float3& GetMouseMotion() const;
 	const float3& GetMousePosition() const;
 	const float& GetMouseWheelMotion()const;
-	const bool IsMouseOverImGuiWindow()const;
 	std::string GetLastFileDroppedOnWindow() const;
 	void SetLastFileDroppedOnWindow(char* newF);
 

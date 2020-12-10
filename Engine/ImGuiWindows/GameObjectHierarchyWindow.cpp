@@ -5,6 +5,7 @@
 #include "../Modules/ModuleEditor.h"
 #include "../ImGuiWindows/PropertiesWindow.h"
 #include "../Application.h"
+#include "../Utilities/Leaks.h"
 
 
 int nodeClicked = -1;
@@ -21,14 +22,12 @@ static int selection_mask = (1 << 2);;
 
 void GameObjectHierarchyWindow::Draw() {
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
 	if (!isOpen)return;
-
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 	if (!ImGui::Begin(windowName, &isOpen)) {
 		ImGui::End();
 		return;
@@ -36,8 +35,20 @@ void GameObjectHierarchyWindow::Draw() {
 
 	ImGui::Text("Hierarchy");
 
+
+
+
 	if (currentScene != nullptr) {
 		if (currentScene->GetRoot() != nullptr) {
+			ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+
+			if (ImGui::BeginPopupContextWindow()) {
+				if (ImGui::Selectable("Create GameObject")) {
+					currentScene->CreateGameObject("GameObject", nodeClicked > -1 ? currentScene->GetGameObjectWithID(nodeClicked) : currentScene->GetRoot());
+				}
+				ImGui::EndPopup();
+			}
+
 			std::pair<int, int>parentModifyingPair = DrawChildren(currentScene->GetRoot());
 
 			if (parentModifyingPair.first > -1) {
@@ -45,6 +56,14 @@ void GameObjectHierarchyWindow::Draw() {
 			}
 
 			if (nodeClicked != -1) {
+
+				if (ImGui::BeginPopupContextWindow()) {
+					if (ImGui::Selectable("Destroy")) {
+						currentScene->DestroyGameObject(currentScene->GetGameObjectWithID(nodeClicked));
+					}
+					ImGui::EndPopup();
+				}
+
 				// Update selection state
 				// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
 				if (App->input->GetKey(SDL_SCANCODE_LCTRL) == ModuleInput::KEY_REPEAT)
@@ -54,12 +73,14 @@ void GameObjectHierarchyWindow::Draw() {
 
 				if (nodeClicked != prevNodeClicked) {
 					prevNodeClicked = nodeClicked;
-					App->editor->GetProperties()->SetTarget(currentScene->GetGameObjectWithID(nodeClicked));
+					App->editor->SetTargetObject(currentScene->GetGameObjectWithID(nodeClicked));
 				}
 			}
+
+			//End Scrolling Region
+			ImGui::EndChild();
 		}
 	}
-
 	ImGui::End();
 }
 
@@ -81,7 +102,10 @@ std::pair<int, int> GameObjectHierarchyWindow::DrawChildren(GameObject* target) 
 	if (target->children.size() > 0) {
 
 		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)id, node_flags, target->name.c_str(), id);
-		if (ImGui::IsItemClicked()) {
+
+
+
+		if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
 			nodeClicked = id;
 		}
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
@@ -122,7 +146,8 @@ std::pair<int, int> GameObjectHierarchyWindow::DrawChildren(GameObject* target) 
 
 		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 		ImGui::TreeNodeEx((void*)(intptr_t)id, node_flags, target->name.c_str());
-		if (ImGui::IsItemClicked()) {
+
+		if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
 			nodeClicked = id;
 		}
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {

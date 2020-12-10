@@ -7,10 +7,11 @@
 EditorMainMenu::EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutWindowOpen, bool& hierarchyOpen) : consoleOpen(&consoleWindowOpen), configOpen(&configWindowOpen), propertiesOpen(&propertiesWindowOpen), aboutOpen(&aboutWindowOpen), hierarchyOpen(&hierarchyOpen) {}
 
 update_status EditorMainMenu::Draw() {
-
 	ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
 
-	if (ImGui::BeginMainMenuBar()) {
+	//if (ImGui::BeginMainMenuBar()) {
+
+	if (ImGui::BeginMenuBar()) {
 		if (ImGui::BeginMenu("MainMenu")) {
 			if (consoleOpen != nullptr)
 				if (ImGui::MenuItem("Console Window", "ALT+Y", consoleOpen)) {}
@@ -46,7 +47,8 @@ update_status EditorMainMenu::Draw() {
 			ImGui::EndMenu();
 		}
 
-		ImGui::EndMainMenuBar();
+		//ImGui::EndMainMenuBar();
+		ImGui::EndMenuBar();
 	}
 	return UPDATE_CONTINUE;
 }

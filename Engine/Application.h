@@ -40,6 +40,7 @@ public:
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTextures* textures = nullptr;
+
 private:
 	unsigned int frameCap, millisPerFrame;
 	float lastDeltaTime;

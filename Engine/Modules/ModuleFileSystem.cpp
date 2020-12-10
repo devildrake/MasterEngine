@@ -1,9 +1,17 @@
 #include "ModuleFileSystem.h"
 
+ModuleFileSystem::ModuleFileSystem() :Module("ModuleFileSystem") {
+
+}
+
+ModuleFileSystem::~ModuleFileSystem() {
+
+}
+
 unsigned int ModuleFileSystem::Load(const char* path, const char* file, char** buffer)const {
 	return 0;
 }
-unsigned int ModuleFileSystem::Save(const char* file, const void* buffer, unsigned int size, bool append )const {
+unsigned int ModuleFileSystem::Save(const char* file, const void* buffer, unsigned int size, bool append)const {
 	return 0;
 }
 bool ModuleFileSystem::Remove(const char* file) {

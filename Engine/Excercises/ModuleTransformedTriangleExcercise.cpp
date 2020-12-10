@@ -6,7 +6,7 @@
 #include <debug_draw.hpp>
 #include <Leaks.h>
 
-ModuleTransformedTriangleExcercise::ModuleTransformedTriangleExcercise() {
+ModuleTransformedTriangleExcercise::ModuleTransformedTriangleExcercise() :Module("TransformedTriangleExcercise") {
 
 }
 
@@ -70,8 +70,7 @@ bool ModuleTransformedTriangleExcercise::CleanUp() {
 	return true;
 }
 
-unsigned ModuleTransformedTriangleExcercise::CreateTriangleVBO()
-{
+unsigned ModuleTransformedTriangleExcercise::CreateTriangleVBO() {
 	float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo enabled
@@ -80,8 +79,7 @@ unsigned ModuleTransformedTriangleExcercise::CreateTriangleVBO()
 }
 
 // This function must be called one time at creation of vertex buffer
-void ModuleTransformedTriangleExcercise::DestroyVBO(unsigned vbo)
-{
+void ModuleTransformedTriangleExcercise::DestroyVBO(unsigned vbo) {
 	glDeleteBuffers(1, &vbo);
 }
 
@@ -99,8 +97,7 @@ void ModuleTransformedTriangleExcercise::DestroyVBO(unsigned vbo)
 //}
 
  //This function must be called each frame for drawing the triangles
-void ModuleTransformedTriangleExcercise::RenderVBO(unsigned vbo)
-{
+void ModuleTransformedTriangleExcercise::RenderVBO(unsigned vbo) {
 	glUseProgram(shaderID);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
@@ -126,13 +123,11 @@ void ModuleTransformedTriangleExcercise::RenderVBO(unsigned vbo)
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-char* ModuleTransformedTriangleExcercise::LoadShaderSource(const char* shader_file_name)
-{
+char* ModuleTransformedTriangleExcercise::LoadShaderSource(const char* shader_file_name) {
 	char* data = nullptr;
 	FILE* file = nullptr;
 	fopen_s(&file, shader_file_name, "rb");
-	if (file)
-	{
+	if (file) {
 		fseek(file, 0, SEEK_END);
 		int size = ftell(file);
 
@@ -153,12 +148,10 @@ unsigned ModuleTransformedTriangleExcercise::CompileShader(unsigned type, const 
 	glCompileShader(shader_id);
 	int res = GL_FALSE;
 	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
-	if (res == GL_FALSE)
-	{
+	if (res == GL_FALSE) {
 		int len = 0;
 		glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0)
-		{
+		if (len > 0) {
 			int written = 0;
 			char* info = (char*)malloc(len);
 			glGetShaderInfoLog(shader_id, len, &written, info);
@@ -172,20 +165,17 @@ unsigned ModuleTransformedTriangleExcercise::CompileShader(unsigned type, const 
 	return shader_id;
 }
 
-unsigned ModuleTransformedTriangleExcercise::CreateProgram(unsigned vtx_shader, unsigned frg_shader)
-{
+unsigned ModuleTransformedTriangleExcercise::CreateProgram(unsigned vtx_shader, unsigned frg_shader) {
 	unsigned program_id = glCreateProgram();
 	glAttachShader(program_id, vtx_shader);
 	glAttachShader(program_id, frg_shader);
 	glLinkProgram(program_id);
 	int res;
 	glGetProgramiv(program_id, GL_LINK_STATUS, &res);
-	if (res == GL_FALSE)
-	{
+	if (res == GL_FALSE) {
 		int len = 0;
 		glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0)
-		{
+		if (len > 0) {
 			int written = 0;
 
 			char* info = (char*)malloc(len);

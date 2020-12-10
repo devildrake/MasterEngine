@@ -12,8 +12,7 @@
 #include <Leaks.h>
 
 
-Application::Application()
-{
+Application::Application() {
 	modules.reserve(8);
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
@@ -26,14 +25,14 @@ Application::Application()
 	modules.push_back(renderer = new ModuleRender());
 
 	modules.push_back(debugDraw = new ModuleDebugDraw());
+
+
 	capTimer = new Timer();
 	SetFrameCap(60);
 }
 
-Application::~Application()
-{
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
-	{
+Application::~Application() {
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end(); ++it) {
 		delete* it;
 	}
 }
@@ -42,8 +41,7 @@ float Application::GetDeltaTime() {
 	return lastDeltaTime;
 }
 
-bool Application::Init()
-{
+bool Application::Init() {
 
 	bool ret = true;
 	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
@@ -52,19 +50,29 @@ bool Application::Init()
 	return ret;
 }
 
-bool Application::Start()
-{
+bool Application::Start() {
 
 	bool ret = true;
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it) {
 		ret = (*it)->Start();
+	}
+
+
+	std::string order = "";
+
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end(); ++it) {
+		order += (*it)->GetModuleName();
+		if (it != modules.end() - 1)
+			order += " --> ";
+	}
+
+	LOG("Established module order: %s", order.c_str());
 
 	return ret;
 }
 
 
-update_status Application::Update()
-{
+update_status Application::Update() {
 	capTimer->Start();
 
 	update_status ret = UPDATE_CONTINUE;
@@ -108,8 +116,7 @@ const int& Application::GetFrameCap() const {
 	return frameCap;
 }
 
-bool Application::CleanUp()
-{
+bool Application::CleanUp() {
 	bool ret = true;
 
 	for (std::vector<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)

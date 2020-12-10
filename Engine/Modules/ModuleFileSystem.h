@@ -2,7 +2,9 @@
 #define MODULE_FILE_SYSTEM_H
 #include "Module.h"
 
-class ModuleFileSystem {
+class ModuleFileSystem :public Module {
+	ModuleFileSystem();
+	~ModuleFileSystem();
 	unsigned int Load(const char* path, const char* file, char** buffer)const;
 	unsigned int Save(const char* file, const void* buffer, unsigned int size, bool append = false)const;
 	bool Remove(const char* file);

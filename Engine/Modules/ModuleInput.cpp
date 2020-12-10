@@ -9,10 +9,11 @@
 #include "../SDL/include/SDL.h"
 #include "ModuleEditor.h"
 #include <Leaks.h>
+#include "../ImGuiWindows/SceneWindow.h"
 
 #define MAX_KEYS 300
 
-ModuleInput::ModuleInput() : lastFileDroppedOnWindow("")
+ModuleInput::ModuleInput() :Module("Input"), lastFileDroppedOnWindow("")
 
 {
 	keyboard = new KeyState[MAX_KEYS];
@@ -21,20 +22,17 @@ ModuleInput::ModuleInput() : lastFileDroppedOnWindow("")
 }
 
 // Destructor
-ModuleInput::~ModuleInput()
-{
+ModuleInput::~ModuleInput() {
 
 }
 
 // Called before render is available
-bool ModuleInput::Init()
-{
+bool ModuleInput::Init() {
 	LOG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
 
-	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
-	{
+	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0) {
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
@@ -69,17 +67,14 @@ update_status ModuleInput::PreUpdate() {
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
-	for (int i = 0; i < MAX_KEYS; ++i)
-	{
-		if (keys[i] == 1)
-		{
+	for (int i = 0; i < MAX_KEYS; ++i) {
+		if (keys[i] == 1) {
 			if (keyboard[i] == KEY_IDLE)
 				keyboard[i] = KEY_DOWN;
 			else
 				keyboard[i] = KEY_REPEAT;
 		}
-		else
-		{
+		else {
 			if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
 				keyboard[i] = KEY_UP;
 			else
@@ -87,8 +82,7 @@ update_status ModuleInput::PreUpdate() {
 		}
 	}
 
-	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
-	{
+	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
 		if (mouse_buttons[i] == KEY_DOWN)
 			mouse_buttons[i] = KEY_REPEAT;
 
@@ -97,13 +91,11 @@ update_status ModuleInput::PreUpdate() {
 	}
 
 
-	while (SDL_PollEvent(&sdlEvent) != 0)
-	{
+	while (SDL_PollEvent(&sdlEvent) != 0) {
 		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 
 
-		switch (sdlEvent.type)
-		{
+		switch (sdlEvent.type) {
 		case (SDL_DROPFILE): {
 			//For one frame, upon dropping a file, its path will be stored so that other modules may access it and use it
 			if (lastFileDroppedOnWindow.size() > 0) {
@@ -120,9 +112,13 @@ update_status ModuleInput::PreUpdate() {
 			windowEvents[WE_QUIT] = true;
 			return UPDATE_STOP;
 		case SDL_WINDOWEVENT:
-			//if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-
-			//	LOG("%d", sdlEvent.window.windowID);
+			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+				//Hardcoded one for main window, will have to change it for an id detection
+				if (sdlEvent.window.windowID == 1) {
+					App->window->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+					App->editor->WindowFocused();
+				}
+				//LOG("%d", sdlEvent.window.windowID);
 
 			//	if (sdlEvent.window.windowID == App->editor->GetEditorWindowID()/*SDL_GetWindowID(App->window->window)*/) {
 			//		if (App->renderer != nullptr) {
@@ -137,9 +133,18 @@ update_status ModuleInput::PreUpdate() {
 			//		}
 			//	}
 
-			//}
-			/*else*/ if (sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
+			}
+			else if (sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
 				windowEvents[WE_QUIT] = true;
+			}
+			else if (sdlEvent.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
+				if (sdlEvent.window.windowID == 1)
+					App->editor->WindowFocused();
+			}
+			else if (sdlEvent.window.event == SDL_WINDOWEVENT_MOVED) {
+				if (sdlEvent.window.windowID == 1) {
+					App->editor->WindowFocused();
+				}
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
@@ -153,13 +158,11 @@ update_status ModuleInput::PreUpdate() {
 
 		case SDL_MOUSEMOTION:
 
-			if (math::Abs(sdlEvent.motion.xrel) < 150)
-			{
+			if (math::Abs(sdlEvent.motion.xrel) < 150) {
 				mouse_motion.x = sdlEvent.motion.xrel;
 			}
 
-			if (math::Abs(sdlEvent.motion.yrel) < 150)
-			{
+			if (math::Abs(sdlEvent.motion.yrel) < 150) {
 				mouse_motion.y = sdlEvent.motion.yrel;
 			}
 
@@ -183,8 +186,7 @@ update_status ModuleInput::PreUpdate() {
 }
 
 // Called every draw update
-update_status ModuleInput::Update()
-{
+update_status ModuleInput::Update() {
 	return UPDATE_CONTINUE;
 }
 
@@ -207,8 +209,7 @@ void ModuleInput::WarpMouseIfOutOfWindow() {
 }
 
 // Called before quitting
-bool ModuleInput::CleanUp()
-{
+bool ModuleInput::CleanUp() {
 
 	//if (lastFileDroppedOnWindow != nullptr) {
 	//	SDL_free(lastFileDroppedOnWindow);    // Free dropped_filedir memory
@@ -227,8 +228,7 @@ bool ModuleInput::CleanUp()
 }
 
 // ---------
-bool ModuleInput::GetWindowEvent(EventWindow ev) const
-{
+bool ModuleInput::GetWindowEvent(EventWindow ev) const {
 	return windowEvents[ev];
 }
 
@@ -236,17 +236,10 @@ const float& ModuleInput::GetMouseWheelMotion()const {
 	return wheel_motion;
 }
 
-const float3& ModuleInput::GetMousePosition() const
-{
+const float3& ModuleInput::GetMousePosition() const {
 	return mouse;
 }
 
-const float3& ModuleInput::GetMouseMotion() const
-{
+const float3& ModuleInput::GetMouseMotion() const {
 	return mouse_motion;
-}
-
-
-const bool ModuleInput::IsMouseOverImGuiWindow()const {
-	return ImGui::GetIO().WantCaptureMouse;
 }

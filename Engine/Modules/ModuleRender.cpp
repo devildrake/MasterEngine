@@ -9,7 +9,7 @@
 #include <assimp/cimport.h>
 #include <Leaks.h>
 
-ModuleRender::ModuleRender() :bgColor(0.2f, 0.2f, 0.2f), context(nullptr), default_shader(nullptr), glcontext(nullptr), faceCulling(true), depthTest(true), wireFramePolygonMode(false), quadShader(nullptr) {
+ModuleRender::ModuleRender() :Module("Renderer"), bgColor(0.2f, 0.2f, 0.2f), context(nullptr), default_shader(nullptr), glcontext(nullptr), faceCulling(true), depthTest(true), wireFramePolygonMode(false), quadShader(nullptr) {
 
 }
 

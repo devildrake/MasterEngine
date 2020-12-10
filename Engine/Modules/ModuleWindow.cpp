@@ -4,26 +4,23 @@
 #include "SDL.h"
 #include "../Utilities/Leaks.h"
 
-ModuleWindow::ModuleWindow() :fullscreen(false), borderless(false), fullDtp(false), resizable(true), brightness(1.0f), width(0), height(0) {}
+ModuleWindow::ModuleWindow() :Module("Window"), fullscreen(false), borderless(false), fullDtp(false), resizable(true), brightness(1.0f), width(0), height(0) {}
 
 // Destructor
-ModuleWindow::~ModuleWindow()
-{
+ModuleWindow::~ModuleWindow() {
 }
 
 // Called before render is available
-bool ModuleWindow::Init()
-{
+bool ModuleWindow::Init() {
+
 	LOG("Init SDL window & surface");
 	bool ret = true;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-	else
-	{
+	else {
 		//Create window
 		SDL_DisplayMode dm;
 		SDL_GetDesktopDisplayMode(0, &dm);
@@ -31,23 +28,20 @@ bool ModuleWindow::Init()
 		width = dm.w / 8 * 6;
 		height = dm.h / 8 * 6;
 
-		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | !SDL_WINDOW_MOUSE_CAPTURE | SDL_WINDOW_INPUT_FOCUS;
 		fullscreen = borderless = fullDtp = false;
 		resizable = true;
-		if (FULLSCREEN == true)
-		{
+		if (FULLSCREEN == true) {
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
 		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
-		if (window == NULL)
-		{
+		if (window == NULL) {
 			LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			ret = false;
 		}
-		else
-		{
+		else {
 			//Get window surface
 
 			screen_surface = SDL_GetWindowSurface(window);
@@ -58,13 +52,11 @@ bool ModuleWindow::Init()
 }
 
 // Called before quitting
-bool ModuleWindow::CleanUp()
-{
+bool ModuleWindow::CleanUp() {
 	LOG("Destroying SDL window and quitting all SDL systems");
 
 	//Destroy window
-	if (window != NULL)
-	{
+	if (window != NULL) {
 		SDL_DestroyWindow(window);
 	}
 
@@ -96,8 +88,8 @@ void ModuleWindow::SetFlag(SDL_WindowFlags flag) {
 }
 
 
-void ModuleWindow::WindowResized(unsigned width, unsigned height)
-{
+
+void ModuleWindow::WindowResized(unsigned width, unsigned height) {
 	this->width = width;
 	this->height = height;
 }
@@ -107,10 +99,15 @@ void ModuleWindow::SetBrightness(float newB) {
 	SDL_SetWindowBrightness(window, newB);
 }
 
-const int ModuleWindow::GetWidth()const
-{
+int ModuleWindow::GetWidth()const {
 	return width;
 }
-const int ModuleWindow::GetHeight()const {
+int ModuleWindow::GetHeight()const {
 	return height;
+}
+
+std::pair<int, int> ModuleWindow::GetWindowPos()const {
+	std::pair<int, int> ret;
+	SDL_GetWindowPosition(window, &ret.first, &ret.second);
+	return ret;
 }

@@ -12,16 +12,14 @@
 #include <Leaks.h>
 
 class DDRenderInterfaceCoreGL final
-	: public dd::RenderInterface
-{
+	: public dd::RenderInterface {
 public:
 
 	//
 	// dd::RenderInterface overrides:
 	//
 
-	void drawPointList(const dd::DrawVertex* points, int count, bool depthEnabled) override
-	{
+	void drawPointList(const dd::DrawVertex* points, int count, bool depthEnabled) override {
 		assert(points != nullptr);
 		assert(count > 0 && count <= DEBUG_DRAW_VERTEX_BUFFER_SIZE);
 
@@ -33,12 +31,10 @@ public:
 
 		bool already = glIsEnabled(GL_DEPTH_TEST);
 
-		if (depthEnabled)
-		{
+		if (depthEnabled) {
 			glEnable(GL_DEPTH_TEST);
 		}
-		else
-		{
+		else {
 			glDisable(GL_DEPTH_TEST);
 		}
 
@@ -54,19 +50,16 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		checkGLError(__FILE__, __LINE__);
 
-		if (already)
-		{
+		if (already) {
 			glEnable(GL_DEPTH_TEST);
 		}
-		else
-		{
+		else {
 			glDisable(GL_DEPTH_TEST);
 		}
 
 	}
 
-	void drawLineList(const dd::DrawVertex* lines, int count, bool depthEnabled) override
-	{
+	void drawLineList(const dd::DrawVertex* lines, int count, bool depthEnabled) override {
 		assert(lines != nullptr);
 		assert(count > 0 && count <= DEBUG_DRAW_VERTEX_BUFFER_SIZE);
 
@@ -78,12 +71,10 @@ public:
 
 		bool already = glIsEnabled(GL_DEPTH_TEST);
 
-		if (depthEnabled)
-		{
+		if (depthEnabled) {
 			glEnable(GL_DEPTH_TEST);
 		}
-		else
-		{
+		else {
 			glDisable(GL_DEPTH_TEST);
 		}
 
@@ -99,19 +90,16 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		checkGLError(__FILE__, __LINE__);
 
-		if (already)
-		{
+		if (already) {
 			glEnable(GL_DEPTH_TEST);
 		}
-		else
-		{
+		else {
 			glDisable(GL_DEPTH_TEST);
 		}
 
 	}
 
-	void drawGlyphList(const dd::DrawVertex* glyphs, int count, dd::GlyphTextureHandle glyphTex) override
-	{
+	void drawGlyphList(const dd::DrawVertex* glyphs, int count, dd::GlyphTextureHandle glyphTex) override {
 		assert(glyphs != nullptr);
 		assert(count > 0 && count <= DEBUG_DRAW_VERTEX_BUFFER_SIZE);
 
@@ -124,16 +112,14 @@ public:
 			static_cast<GLfloat>(width),
 			static_cast<GLfloat>(height));
 
-		if (glyphTex != nullptr)
-		{
+		if (glyphTex != nullptr) {
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, handleToGL(glyphTex));
 		}
 
 		bool already_blend = glIsEnabled(GL_BLEND);
 
-		if (!already_blend)
-		{
+		if (!already_blend) {
 			glEnable(GL_BLEND);
 		}
 
@@ -146,8 +132,7 @@ public:
 
 		glDrawArrays(GL_TRIANGLES, 0, count); // Issue the draw call
 
-		if (!already_blend)
-		{
+		if (!already_blend) {
 			glDisable(GL_BLEND);
 		}
 
@@ -157,14 +142,12 @@ public:
 		glBindTexture(GL_TEXTURE_2D, 0);
 		checkGLError(__FILE__, __LINE__);
 
-		if (already)
-		{
+		if (already) {
 			glEnable(GL_DEPTH_TEST);
 		}
 	}
 
-	dd::GlyphTextureHandle createGlyphTexture(int width, int height, const void* pixels) override
-	{
+	dd::GlyphTextureHandle createGlyphTexture(int width, int height, const void* pixels) override {
 		assert(width > 0 && height > 0);
 		assert(pixels != nullptr);
 
@@ -188,10 +171,8 @@ public:
 		return GLToHandle(textureId);
 	}
 
-	void destroyGlyphTexture(dd::GlyphTextureHandle glyphTex) override
-	{
-		if (glyphTex == nullptr)
-		{
+	void destroyGlyphTexture(dd::GlyphTextureHandle glyphTex) override {
+		if (glyphTex == nullptr) {
 			return;
 		}
 
@@ -221,8 +202,7 @@ public:
 		, linePointVAO(0)
 		, linePointVBO(0)
 		, textVAO(0)
-		, textVBO(0)
-	{
+		, textVBO(0) {
 		//std::printf("\n");
 		//std::printf("GL_VENDOR    : %s\n",   glGetString(GL_VENDOR));
 		//std::printf("GL_RENDERER  : %s\n",   glGetString(GL_RENDERER));
@@ -244,8 +224,7 @@ public:
 		//std::printf("DDRenderInterfaceCoreGL ready!\n\n");
 	}
 
-	~DDRenderInterfaceCoreGL()
-	{
+	~DDRenderInterfaceCoreGL() {
 		glDeleteProgram(linePointProgram);
 		glDeleteProgram(textProgram);
 
@@ -256,8 +235,7 @@ public:
 		glDeleteBuffers(1, &textVBO);
 	}
 
-	void setupShaderPrograms()
-	{
+	void setupShaderPrograms() {
 		//std::printf("> DDRenderInterfaceCoreGL::setupShaderPrograms()\n");
 
 		//
@@ -281,8 +259,7 @@ public:
 			linkProgram(linePointProgram);
 
 			linePointProgram_MvpMatrixLocation = glGetUniformLocation(linePointProgram, "u_MvpMatrix");
-			if (linePointProgram_MvpMatrixLocation < 0)
-			{
+			if (linePointProgram_MvpMatrixLocation < 0) {
 				//errorF("Unable to get u_MvpMatrix uniform location!");
 			}
 			checkGLError(__FILE__, __LINE__);
@@ -310,14 +287,12 @@ public:
 			linkProgram(textProgram);
 
 			textProgram_GlyphTextureLocation = glGetUniformLocation(textProgram, "u_glyphTexture");
-			if (textProgram_GlyphTextureLocation < 0)
-			{
+			if (textProgram_GlyphTextureLocation < 0) {
 				//errorF("Unable to get u_glyphTexture uniform location!");
 			}
 
 			textProgram_ScreenDimensions = glGetUniformLocation(textProgram, "u_screenDimensions");
-			if (textProgram_ScreenDimensions < 0)
-			{
+			if (textProgram_ScreenDimensions < 0) {
 				//errorF("Unable to get u_screenDimensions uniform location!");
 			}
 
@@ -325,8 +300,7 @@ public:
 		}
 	}
 
-	void setupVertexBuffers()
-	{
+	void setupVertexBuffers() {
 		//std::printf("> DDRenderInterfaceCoreGL::setupVertexBuffers()\n");
 
 		//
@@ -430,29 +404,24 @@ public:
 		}
 	}
 
-	static GLuint handleToGL(dd::GlyphTextureHandle handle)
-	{
+	static GLuint handleToGL(dd::GlyphTextureHandle handle) {
 		const std::size_t temp = reinterpret_cast<std::size_t>(handle);
 		return static_cast<GLuint>(temp);
 	}
 
-	static dd::GlyphTextureHandle GLToHandle(const GLuint id)
-	{
+	static dd::GlyphTextureHandle GLToHandle(const GLuint id) {
 		const std::size_t temp = static_cast<std::size_t>(id);
 		return reinterpret_cast<dd::GlyphTextureHandle>(temp);
 	}
 
-	static void checkGLError(const char* file, const int line)
-	{
+	static void checkGLError(const char* file, const int line) {
 		GLenum err;
-		while ((err = glGetError()) != GL_NO_ERROR)
-		{
+		while ((err = glGetError()) != GL_NO_ERROR) {
 			//errorF("%s(%d) : GL_CORE_ERROR=0x%X - %s", file, line, err, errorToString(err));
 		}
 	}
 
-	static void compileShader(const GLuint shader)
-	{
+	static void compileShader(const GLuint shader) {
 		glCompileShader(shader);
 		checkGLError(__FILE__, __LINE__);
 
@@ -460,16 +429,14 @@ public:
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 		checkGLError(__FILE__, __LINE__);
 
-		if (status == GL_FALSE)
-		{
+		if (status == GL_FALSE) {
 			GLchar strInfoLog[1024] = { 0 };
 			glGetShaderInfoLog(shader, sizeof(strInfoLog) - 1, nullptr, strInfoLog);
 			//errorF("\n>>> Shader compiler errors:\n%s", strInfoLog);
 		}
 	}
 
-	static void linkProgram(const GLuint program)
-	{
+	static void linkProgram(const GLuint program) {
 		glLinkProgram(program);
 		checkGLError(__FILE__, __LINE__);
 
@@ -477,8 +444,7 @@ public:
 		glGetProgramiv(program, GL_LINK_STATUS, &status);
 		checkGLError(__FILE__, __LINE__);
 
-		if (status == GL_FALSE)
-		{
+		if (status == GL_FALSE) {
 			GLchar strInfoLog[1024] = { 0 };
 			glGetProgramInfoLog(program, sizeof(strInfoLog) - 1, nullptr, strInfoLog);
 			//errorF("\n>>> Program linker errors:\n%s", strInfoLog);
@@ -585,24 +551,20 @@ const char* DDRenderInterfaceCoreGL::textFragShaderSrc = "\n"
 
 DDRenderInterfaceCoreGL* ModuleDebugDraw::implementation = 0;
 
-ModuleDebugDraw::ModuleDebugDraw()
-{
+ModuleDebugDraw::ModuleDebugDraw() :Module("Debug Draw") {
 }
 
-ModuleDebugDraw::~ModuleDebugDraw()
-{
+ModuleDebugDraw::~ModuleDebugDraw() {
 }
 
-bool ModuleDebugDraw::Init()
-{
+bool ModuleDebugDraw::Init() {
 	implementation = new DDRenderInterfaceCoreGL;
 	dd::initialize(implementation);
 	return true;
 }
 
 
-bool ModuleDebugDraw::CleanUp()
-{
+bool ModuleDebugDraw::CleanUp() {
 	dd::shutdown();
 
 	delete implementation;
@@ -623,8 +585,12 @@ void ModuleDebugDraw::DrawAxisTriad(float4x4 axisTransform, float axisWidth, flo
 	dd::axisTriad(axisTransform, axisWidth, axisLength);
 }
 
-update_status ModuleDebugDraw::Update()
-{
+void ModuleDebugDraw::DrawFrustum(const Frustum& frustum) {
+	dd::frustum(frustum.ViewProjMatrix().Inverted(), float3(1.0f, 1.0f, 1.0f));
+}
+
+
+update_status ModuleDebugDraw::Update() {
 	Draw(App->editorCamera->GetFrustum()->ViewMatrix(), App->editorCamera->GetFrustum()->ProjectionMatrix(), App->window->GetWidth(), App->window->GetHeight());
 	return UPDATE_CONTINUE;
 }
@@ -633,8 +599,7 @@ update_status ModuleDebugDraw::PostUpdate() {
 	return UPDATE_CONTINUE;
 }
 
-void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height)
-{
+void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height) {
 	implementation->width = width;
 	implementation->height = height;
 	implementation->mvpMatrix = proj * view;

@@ -25,7 +25,7 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
-	GameObject* CreateGameObject(const char* name);
+	GameObject* CreateGameObject(const char* name, GameObject* parent = nullptr);
 	GameObject* GetRoot()const;
 	update_status UpdateGameObject(GameObject* target);
 	GameObject* LoadModel(std::string path);
@@ -33,6 +33,7 @@ public:
 	Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	void UpdateGameObjectHierarchy();
 	GameObject* GetGameObjectWithID(const int& id) const;
+	void DestroyGameObject(GameObject* go);
 
 public:
 	friend class PropertiesWindow;

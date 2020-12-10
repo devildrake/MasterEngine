@@ -18,11 +18,11 @@
 #include "../ImGuiWindows/AboutWindow.h"
 #include "../ImGuiWindows/SceneWindow.h"
 #include "../ImGuiWindows/GameObjectHierarchyWindow.h"
-
+#include "../GameObject.h"
 #include "../EditorMainMenu.h"
 #include <Leaks.h>
 
-ModuleEditor::ModuleEditor() :console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr), aboutWindow(nullptr), hierarchyWindow(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
+ModuleEditor::ModuleEditor() :Module("Editor"), currentTarget(nullptr), console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr), aboutWindow(nullptr), hierarchyWindow(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
 
 }
 
@@ -87,8 +87,11 @@ update_status ModuleEditor::Update() {
 
 	if (App->debugDraw != nullptr) {
 		App->debugDraw->DrawGrid(gridMinSquares, gridMaxSquares, gridPosY, gridStep, gridColor);
-		App->debugDraw->DrawAxisTriad();
+
 	}
+
+	DrawGizmos();
+
 	console->Draw();
 	configWindow->Draw();
 	propertiesWindow->Draw();
@@ -97,20 +100,21 @@ update_status ModuleEditor::Update() {
 
 
 	sceneWindow->Draw();
-	return 	mainMenu->Draw();
+	//mainMenu->Draw();
+
+	return update_status::UPDATE_CONTINUE;
 }
 
+void ModuleEditor::DrawMenu() {
+	mainMenu->Draw();
+}
 
 update_status ModuleEditor::PostUpdate() {
 
-
-	//ImGui::ShowDemoWindow();
 	ImGui::Render();
-	//ImGuiContext handling
-
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable | ImGuiConfigFlags_DockingEnable) {
 		SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();
 		SDL_GLContext backupCurrentContext = SDL_GL_GetCurrentContext();
 		ImGui::UpdatePlatformWindows();
@@ -121,6 +125,13 @@ update_status ModuleEditor::PostUpdate() {
 	return UPDATE_CONTINUE;
 
 }
+
+void ModuleEditor::DrawGizmos() {
+	if (currentTarget != nullptr) {
+		currentTarget->DrawGizmos();
+	}
+}
+
 bool ModuleEditor::CleanUp() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -131,6 +142,7 @@ bool ModuleEditor::CleanUp() {
 	RELEASE(propertiesWindow);
 	RELEASE(aboutWindow);
 	RELEASE(hierarchyWindow);
+	RELEASE(sceneWindow);
 	RELEASE(mainMenu);
 
 	return true;
@@ -142,5 +154,24 @@ ConsoleWindow* ModuleEditor::GetConsole() const {
 
 PropertiesWindow* ModuleEditor::GetProperties() const {
 	return propertiesWindow;
+}
+
+
+SceneWindow* ModuleEditor::GetScene() const {
+	return sceneWindow;
+}
+
+void ModuleEditor::WindowFocused()const {
+	if (sceneWindow != nullptr) {
+		sceneWindow->WindowFocused();
+	}
+}
+
+void ModuleEditor::SetTargetObject(GameObject* newTarget) {
+	currentTarget = newTarget;
+}
+
+GameObject* ModuleEditor::GetTargetObject()const {
+	return currentTarget;
 }
 

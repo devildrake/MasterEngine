@@ -8,26 +8,38 @@
 #include "../GameObject.h"
 #include "assimp/postprocess.h"
 #include "../Components/ComponentTransform.h"
+#include "../Components/ComponentCamera.h"
 #include "../Rendering/Mesh.h"
 #include "../Rendering/Material.h"
-
-ModuleScene::ModuleScene() :currentGameObject(nullptr) {
+#include "ModuleEditor.h"
+#include "../ImGuiWindows/PropertiesWindow.h"
+ModuleScene::ModuleScene() : Module("Scene"), currentGameObject(nullptr), root(nullptr) {
 	//root = CreateGameObject("Root");
 	//root->CreateComponent(Component::ComponentType::CTTransformation);
 }
 ModuleScene::~ModuleScene() {
-	
+
 }
 bool ModuleScene::Init() {
 	return true;
 }
 
-GameObject* ModuleScene::CreateGameObject(const char* name) {
-	GameObject* ret = new GameObject(name);
+GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent) {
+	GameObject* ret = new GameObject(name, this, parent);
 	ret->SetScene(this);
 
 	gameObjects.push_back(ret);
+	UpdateGameObjectHierarchy();
 	return ret;
+}
+
+void ModuleScene::DestroyGameObject(GameObject* go) {
+	App->editor->SetTargetObject(nullptr);
+	gameObjects.erase(gameObjects.begin() + go->GetID());
+	if (go->parent != nullptr) {
+		go->parent->children.remove(go);
+	}
+	RELEASE(go);
 }
 
 Mesh* ModuleScene::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
@@ -47,7 +59,17 @@ bool ModuleScene::Start() {
 
 	currentGameObject = root;
 	App->editorCamera->SetTargetModel(firstTransform);
+
+	GameObject* cameraObj = CreateGameObject("Camera", root);
+	ComponentTransform* cameraTrans = (ComponentTransform*)cameraObj->CreateComponent(Component::ComponentType::CTTransformation);
+	ComponentCamera* cameraComp = (ComponentCamera*)cameraObj->CreateComponent(Component::ComponentType::CTCamera);
+
+
+
 	UpdateGameObjectHierarchy();
+
+
+
 	return true;
 }
 
@@ -194,11 +216,8 @@ update_status ModuleScene::PostUpdate() {
 	return UPDATE_CONTINUE;
 }
 bool ModuleScene::CleanUp() {
-
-	if (currentGameObject != nullptr) {
-		//App->renderer->RemoveModel(currentGameObject);
-		delete currentGameObject;
-		currentGameObject = nullptr;
+	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); ++it) {
+		RELEASE(*it);
 	}
 
 	return true;
@@ -206,7 +225,9 @@ bool ModuleScene::CleanUp() {
 
 void ModuleScene::UpdateGameObjectHierarchy() {
 	int id = 0;
-	root->UpdateID(id);
+	if (root != nullptr) {
+		root->UpdateID(id);
+	}
 }
 
 GameObject* ModuleScene::GetGameObjectWithID(const int& id) const {

@@ -11,17 +11,19 @@ public:
 	enum ComponentType {
 		CTTransformation,
 		CTMeshRenderer,
+		CTCamera,
 		CTLight
 	};
 	ComponentType type;
 	bool enabled;
 public:
 	Component(ComponentType aType, GameObject* anOwner);
-	~Component();
+	virtual ~Component();
 	virtual void Enable();
 	virtual void Update();
 	virtual void Disable();
 	virtual void DrawEditor();
+	virtual void DrawGizmos();
 	virtual void OnNewParent(GameObject* prevParent, GameObject* newParent);
 	std::string Component::ComponentTypeToString(ComponentType type)const;
 	//GameObject* owner;

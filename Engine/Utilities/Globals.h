@@ -34,7 +34,7 @@ enum update_status
 		 }\
 	 }
 
-
+#define DEGTORAD 3.14159/180
 #define FULLSCREEN false
 #define VSYNC true
 #define TITLE "Super Awesome Engine"

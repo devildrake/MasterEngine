@@ -7,7 +7,7 @@
 #include "../Modules/ModuleTextures.h"
 #include <Leaks.h>
 
-ModuleTransformedTexturedTriangleExcercise::ModuleTransformedTexturedTriangleExcercise() {
+ModuleTransformedTexturedTriangleExcercise::ModuleTransformedTexturedTriangleExcercise():Module("TransformedTexturedTriangleExcercise") {
 	info = new ILinfo();
 	ui = ExcerciseUI();
 }

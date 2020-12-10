@@ -2,21 +2,18 @@
 #include "../Application.h"
 #include "../Modules/ModuleScene.h"
 #include "../Modules/ModuleWindow.h"
+#include "../Modules/ModuleEditor.h"
 //#include "../Rendering/Model.h"
 #include <glew.h>
 #include <Leaks.h>
 #include "../GameObject.h"
 
-PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName), currentTarget(nullptr) {
+PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName){
 
 }
 
 PropertiesWindow::~PropertiesWindow() {
 
-}
-
-void PropertiesWindow::SetTarget(GameObject* newTarget) {
-	currentTarget = newTarget;
 }
 
 
@@ -38,11 +35,11 @@ void PropertiesWindow::Draw() {
 		ImGui::EndPopup();
 	}
 
-	if (currentTarget != nullptr) {
+	if (App->editor->GetTargetObject() != nullptr) {
 
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), currentTarget->name.c_str());
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), App->editor->GetTargetObject()->name.c_str());
 
-		for (std::vector<Component*>::iterator it = currentTarget->components.begin(); it != currentTarget->components.end(); ++it) {
+		for (std::vector<Component*>::iterator it = App->editor->GetTargetObject()->components.begin(); it != App->editor->GetTargetObject()->components.end(); ++it) {
 			(*it)->DrawEditor();
 		}
 	}

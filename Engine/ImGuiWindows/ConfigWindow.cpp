@@ -143,6 +143,7 @@ void ConfigWindow::Draw() {
 				SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
 				App->renderer->WindowResized(App->window->width, App->window->height);
 			}
+
 			if (ImGui::SliderInt("Height", &App->window->height, 480, 1080)) {
 				SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
 				App->renderer->WindowResized(App->window->width, App->window->height);

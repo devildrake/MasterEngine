@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
+#include "Components/ComponentCamera.h"
 #include "Modules/ModuleScene.h"
 #include "Utilities/Globals.h"
 
@@ -8,13 +9,33 @@ GameObject::GameObject() :parent(nullptr), name(""), id(-1), scene(nullptr) {
 
 }
 
-GameObject::GameObject(const char* name, GameObject* parentObject) : parent(parentObject), name(name), id(-1), scene(nullptr) {
-
+GameObject::GameObject(const char* name, ModuleScene* scene, GameObject* parentObject) : parent(nullptr), name(name), id(-1), scene(scene) {
+	SetNewParent(parentObject);
 }
+
 
 
 GameObject::~GameObject() {
 
+	/*	for (std::list<GameObject*>::iterator it = children.begin(); it != children.end(); ++it) {
+		RELEASE(*it);
+	}
+
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
+		RELEASE(*it);
+	}
+
+	if (parent != nullptr) {
+		parent->children.remove(this);
+	}
+
+
+	scene->UpdateGameObjectHierarchy();*/
+
+
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
+		RELEASE(*it);
+	}
 }
 
 void GameObject::Update() {
@@ -33,6 +54,9 @@ Component* GameObject::CreateComponent(Component::ComponentType type) {
 		ret = new ComponentMeshRenderer(this);
 		break;
 	case Component::CTLight:
+		break;
+	case Component::CTCamera:
+		ret = new ComponentCamera(this);
 		break;
 	default:
 		break;
@@ -57,21 +81,27 @@ Component* GameObject::GetComponentOfType(Component::ComponentType type) {
 }
 
 void GameObject::SetNewParent(GameObject* newParent) {
+	if (newParent != nullptr) {
+		if (!IsChild(newParent)) {
+			GameObject* prevParent = parent;
 
-	if (!IsChild(newParent)) {
-		GameObject* prevParent = parent;
+			if (parent != nullptr) {
+				parent->children.remove(this);
+			}
 
-		//parent->children.erase(this);
-		parent->children.remove(this);
-		parent = &(*newParent);
+			parent = &(*newParent);
 
-		parent->children.push_back(this);
+			parent->children.push_back(this);
 
-		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
-			(*it)->OnNewParent(prevParent, newParent);
+			for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
+				(*it)->OnNewParent(prevParent, newParent);
+			}
+
+			scene->UpdateGameObjectHierarchy();
 		}
-
-		scene->UpdateGameObjectHierarchy();
+	}
+	else {
+		parent = nullptr;
 	}
 }
 
@@ -105,4 +135,10 @@ bool GameObject::IsChild(GameObject* g)const {
 	}
 
 	return isChild;
+}
+
+void GameObject::DrawGizmos()const {
+	for (std::vector<Component*>::const_iterator it = components.begin(); it != components.end(); ++it) {
+		(*it)->DrawGizmos();
+	}
 }

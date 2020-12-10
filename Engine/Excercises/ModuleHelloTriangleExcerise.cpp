@@ -3,7 +3,7 @@
 #include <string>
 #include <Leaks.h>
 
-ModuleHelloTriangleExcercise::ModuleHelloTriangleExcercise() {
+ModuleHelloTriangleExcercise::ModuleHelloTriangleExcercise() :Module("HelloTriangleExcercise") {
 
 }
 
@@ -60,8 +60,7 @@ bool ModuleHelloTriangleExcercise::CleanUp() {
 	return true;
 }
 
-unsigned ModuleHelloTriangleExcercise::CreateTriangleVBO()
-{
+unsigned ModuleHelloTriangleExcercise::CreateTriangleVBO() {
 	float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo enabled
@@ -70,14 +69,12 @@ unsigned ModuleHelloTriangleExcercise::CreateTriangleVBO()
 }
 
 // This function must be called one time at creation of vertex buffer
-void ModuleHelloTriangleExcercise::DestroyVBO(unsigned vbo)
-{
+void ModuleHelloTriangleExcercise::DestroyVBO(unsigned vbo) {
 	glDeleteBuffers(1, &vbo);
 }
 
 // This function must be called each frame for drawing the triangles
-void ModuleHelloTriangleExcercise::RenderVBO(unsigned vbo)
-{
+void ModuleHelloTriangleExcercise::RenderVBO(unsigned vbo) {
 	glUseProgram(shaderID);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
@@ -88,13 +85,11 @@ void ModuleHelloTriangleExcercise::RenderVBO(unsigned vbo)
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-char* ModuleHelloTriangleExcercise::LoadShaderSource(const char* shader_file_name)
-{
+char* ModuleHelloTriangleExcercise::LoadShaderSource(const char* shader_file_name) {
 	char* data = nullptr;
 	FILE* file = nullptr;
 	fopen_s(&file, shader_file_name, "rb");
-	if (file)
-	{
+	if (file) {
 		fseek(file, 0, SEEK_END);
 		int size = ftell(file);
 
@@ -115,12 +110,10 @@ unsigned ModuleHelloTriangleExcercise::CompileShader(unsigned type, const char* 
 	glCompileShader(shader_id);
 	int res = GL_FALSE;
 	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
-	if (res == GL_FALSE)
-	{
+	if (res == GL_FALSE) {
 		int len = 0;
 		glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0)
-		{
+		if (len > 0) {
 			int written = 0;
 			char* info = (char*)malloc(len);
 			glGetShaderInfoLog(shader_id, len, &written, info);
@@ -134,20 +127,17 @@ unsigned ModuleHelloTriangleExcercise::CompileShader(unsigned type, const char* 
 	return shader_id;
 }
 
-unsigned ModuleHelloTriangleExcercise::CreateProgram(unsigned vtx_shader, unsigned frg_shader)
-{
+unsigned ModuleHelloTriangleExcercise::CreateProgram(unsigned vtx_shader, unsigned frg_shader) {
 	unsigned program_id = glCreateProgram();
 	glAttachShader(program_id, vtx_shader);
 	glAttachShader(program_id, frg_shader);
 	glLinkProgram(program_id);
 	int res;
 	glGetProgramiv(program_id, GL_LINK_STATUS, &res);
-	if (res == GL_FALSE)
-	{
+	if (res == GL_FALSE) {
 		int len = 0;
 		glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0)
-		{
+		if (len > 0) {
 			int written = 0;
 
 			char* info = (char*)malloc(len);
@@ -166,8 +156,7 @@ unsigned ModuleHelloTriangleExcercise::CreateProgram(unsigned vtx_shader, unsign
 	return program_id;
 }
 
-void ModuleHelloTriangleExcercise::RenderVBO(unsigned vbo, unsigned program)
-{
+void ModuleHelloTriangleExcercise::RenderVBO(unsigned vbo, unsigned program) {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
 	// size = 3 float per vertex
@@ -180,8 +169,7 @@ void ModuleHelloTriangleExcercise::RenderVBO(unsigned vbo, unsigned program)
 
 #if _DEBUG
 
-void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-{
+void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
 	const char* tmp_source = "", * tmp_type = "", * tmp_severity = "";
 	switch (source) {
 	case GL_DEBUG_SOURCE_API: tmp_source = "API"; break;
