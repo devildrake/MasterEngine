@@ -42,3 +42,9 @@ void ComponentCamera::DrawGizmos() {
 		App->debugDraw->DrawFrustum(frustum);
 	}
 }
+
+void ComponentCamera::OnTransformModified(float3 newPos, Quat newRot) {
+	frustum.SetPos(newPos);
+	frustum.SetFront(newRot * float3::unitZ);
+	frustum.SetUp(newRot * float3::unitY);
+}

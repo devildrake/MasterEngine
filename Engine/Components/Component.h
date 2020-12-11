@@ -1,7 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 #include<string>
-
+#include "../MathGeoLib/MathGeoLib.h"
 class GameObject;
 
 class Component {
@@ -26,6 +26,8 @@ public:
 	virtual void DrawGizmos();
 	virtual void OnNewParent(GameObject* prevParent, GameObject* newParent);
 	std::string Component::ComponentTypeToString(ComponentType type)const;
+	virtual void OnTransformModified(float3 newPos, Quat newRot);
+	virtual void OnSave();
 	//GameObject* owner;
 };
 

@@ -58,7 +58,7 @@ bool ModuleScene::Start() {
 	firstChild->parent = root;
 
 	currentGameObject = root;
-	App->editorCamera->SetTargetModel(firstTransform);
+	App->editorCamera->SetTargetGameObject(firstChild);
 
 	GameObject* cameraObj = CreateGameObject("Camera", root);
 	ComponentTransform* cameraTrans = (ComponentTransform*)cameraObj->CreateComponent(Component::ComponentType::CTTransformation);
@@ -115,12 +115,8 @@ GameObject* ModuleScene::ProcessNode(aiNode* node, const aiScene* scene, std::st
 		transform->quatRotation = Quat(rot.x, rot.y, rot.z, rot.w);
 		transform->localScale = float3(scale.x, scale.y, scale.z);
 
-
-		//Setting name of the gameObject
-		//newObj->name = mesh->mName.C_Str();
 		ComponentMeshRenderer* meshRenderer = (ComponentMeshRenderer*)newObj->CreateComponent(Component::ComponentType::CTMeshRenderer);
 		meshRenderer->SetMesh(newMesh);
-		//aiString file, std::string& materialPath, std::string modelPath);
 		Material* newMat = new Material(scene->mMaterials[scene->mMeshes[i]->mMaterialIndex], path);
 
 
@@ -140,7 +136,7 @@ GameObject* ModuleScene::ProcessNode(aiNode* node, const aiScene* scene, std::st
 
 GameObject* ModuleScene::LoadModel(std::string path) {
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		LOG("ERROR::ASSIMP:: %s", import.GetErrorString());
@@ -167,7 +163,7 @@ update_status ModuleScene::Update() {
 					if (newModel->Load(lastFile.c_str(), tempScene)) {
 						currentGameObject = newModel;
 						App->renderer->AddModel(currentGameObject);
-						App->editorCamera->SetTargetModel(currentGameObject);
+						App->editorCamera->SetTargetGameObject(currentGameObject);
 					}
 					else {
 						currentGameObject = nullptr;

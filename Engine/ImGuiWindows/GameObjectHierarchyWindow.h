@@ -16,7 +16,7 @@ public:
 
 	GameObjectHierarchyWindow(const char* windowName, ModuleScene* currentScene);
 	~GameObjectHierarchyWindow();
-	void Draw();
+	void Draw()override;
 	const bool IsMouseOverWindow()const;
 	friend class ModuleEditor;
 };

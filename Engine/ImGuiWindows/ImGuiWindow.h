@@ -18,10 +18,10 @@ public:
 		return ImGui::GetWindowViewport()->ID;
 	}
 
-	virtual void Draw(const char* windowName, bool& p_open) {
-		if (!ImGui::Begin(windowName, &p_open)) {
-			ImGui::End();
-		}
+	virtual void Draw() {
+		//if (!ImGui::Begin(windowName, &p_open)) {
+		//	ImGui::End();
+		//}
 	}
 };
 

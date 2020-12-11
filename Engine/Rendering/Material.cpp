@@ -17,7 +17,6 @@ Material::Material(aiMaterial* mat, aiString file, std::string& materialPath, st
 
 	const char* matName = mat->GetName().C_Str();
 	GLuint tex;
-	std::pair<int, int>texSize{ 0,0 };
 
 	int lastSlash = 0;
 	for (int i = modelPath.size(); i > 0 && lastSlash == 0; --i) {
@@ -65,7 +64,6 @@ Material::Material(aiMaterial* mat, std::string modelPath) : id(0) {
 
 	const char* matName = mat->GetName().C_Str();
 	GLuint tex;
-	std::pair<int, int>texSize{ 0,0 };
 
 	int lastSlash = 0;
 	for (int i = modelPath.size(); i > 0 && lastSlash == 0; --i) {

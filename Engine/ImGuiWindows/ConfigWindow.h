@@ -23,7 +23,7 @@ private:
 public:
 	ConfigWindow(const char* windowName);
 	~ConfigWindow();
-	void Draw();
+	void Draw()override;
 	std::string GetCapsString();
 	void AddFrame(float deltaTime);
 	friend class ModuleEditor;

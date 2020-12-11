@@ -172,10 +172,7 @@ bool ModuleRender::Start() {
 }
 
 update_status ModuleRender::PreUpdate() {
-	SDL_GetWindowSize(App->window->window,
-		&App->window->screen_surface->w, &App->window->screen_surface->h);
 
-	glViewport(0, 0, App->window->screen_surface->w, App->window->screen_surface->h);
 	//glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
 
 	//GenerateRenderBuffer();
@@ -255,6 +252,10 @@ bool ModuleRender::CleanUp() {
 }
 
 void ModuleRender::WindowResized(unsigned width, unsigned height) {
+	SDL_GetWindowSize(App->window->window,
+		&App->window->screen_surface->w, &App->window->screen_surface->h);
+
+	glViewport(0, 0, App->window->screen_surface->w, App->window->screen_surface->h);
 	RegenerateRenderBuffer();
 }
 

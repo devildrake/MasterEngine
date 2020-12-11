@@ -7,7 +7,8 @@
 
 
 ComponentTransform::ComponentTransform(GameObject* anOwner, float3 pos, Quat rot, float3 scale) :Component(ComponentType::CTTransformation, anOwner), localPosition(pos), prevLocalPosition(pos), quatRotation(rot), prevQuatRotation(rot), localScale(scale), prevLocalScale(scale), prevRotDummy(float3::zero) {
-	transformationMatrix = float4x4::Translate(CalculateGlobalPosition()) * float4x4::FromQuat(quatRotation) * float4x4::Scale(localScale) * float4x4::identity;
+	GenerateLocalMatrix();
+	GenerateWorldMatrix();
 }
 
 ComponentTransform::~ComponentTransform() {
@@ -28,6 +29,7 @@ void ComponentTransform::Update() {
 		) {
 		GenerateLocalMatrix();
 		GenerateWorldMatrix();
+		owner->OnTransformChanged(CalculateGlobalPosition(), CalculateGlobalRotation());
 	}
 }
 
@@ -60,24 +62,27 @@ void ComponentTransform::Disable() {
 }
 
 void ComponentTransform::DrawEditor() {
-	ImGui::DragFloat3("position", localPosition.ptr());
-	//ImGui::DragFloat3("rotation", localPosition.ptr());
+	if (ImGui::CollapsingHeader("Transform")) {
 
-	float3 rotDummy = quatRotation.ToEulerXYZ();
-	rotDummy = RadToDeg(rotDummy);
+		ImGui::DragFloat3("position", localPosition.ptr());
+		//ImGui::DragFloat3("rotation", localPosition.ptr());
 
-	ImGui::DragFloat3("Rotation", rotDummy.ptr());
+		float3 rotDummy = quatRotation.ToEulerXYZ();
+		rotDummy = RadToDeg(rotDummy);
 
-	if (prevRotDummy.x != rotDummy.x || prevRotDummy.y != rotDummy.y || prevRotDummy.z != rotDummy.z) {
+		ImGui::DragFloat3("Rotation", rotDummy.ptr());
 
-		//This triggers some weird interactions, may have to be modified 
-		quatRotation = Quat::FromEulerXYZ(DegToRad(rotDummy.x), DegToRad(rotDummy.y), DegToRad(rotDummy.z));
+		if (prevRotDummy.x != rotDummy.x || prevRotDummy.y != rotDummy.y || prevRotDummy.z != rotDummy.z) {
 
-		prevRotDummy = rotDummy;
+			//This triggers some weird interactions, may have to be modified 
+			quatRotation = Quat::FromEulerXYZ(DegToRad(rotDummy.x), DegToRad(rotDummy.y), DegToRad(rotDummy.z));
 
+			prevRotDummy = rotDummy;
+
+		}
+
+		ImGui::DragFloat3("scale", localScale.ptr());
 	}
-
-	ImGui::DragFloat3("scale", localScale.ptr());
 }
 
 void ComponentTransform::DrawGizmos() {

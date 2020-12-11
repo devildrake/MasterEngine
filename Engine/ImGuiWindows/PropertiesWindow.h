@@ -14,7 +14,7 @@ private:
 public:
 	PropertiesWindow(const char* windowName);
 	~PropertiesWindow();
-	void Draw();
+	void Draw()override;
 
 	friend class ModuleEditor;
 };

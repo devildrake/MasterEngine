@@ -61,6 +61,8 @@ const bool ModuleTextures::GenTexture(std::string path, GLuint& newTextureID) {
 	ILinfo info = ILinfo();
 	iluGetImageInfo(&info);
 
+	//Flipping is done via ASSIMP 
+
 	//if (info.Origin == IL_ORIGIN_UPPER_LEFT) {
 	//	iluFlipImage();
 	//}

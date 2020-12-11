@@ -11,6 +11,7 @@
 //#include <Leaks.h>
 
 Mesh::Mesh(const aiMesh* mesh) {
+	LoadAABB(mesh);
 	LoadVBO(mesh);
 	LoadEBO(mesh);
 	CreateVAO();
@@ -18,6 +19,7 @@ Mesh::Mesh(const aiMesh* mesh) {
 
 Mesh::Mesh(const aiMesh* mesh, const char* matname) {
 	texture_path = std::string(matname);
+	LoadAABB(mesh);
 	LoadVBO(mesh);
 	LoadEBO(mesh);
 	CreateVAO();
@@ -37,12 +39,26 @@ void Mesh::SetTexture(int index, std::string path) {
 	material_index = index;
 }
 
-const int Mesh::GetTris()const {
+const int& Mesh::GetTris()const {
 	return num_faces;
 }
 
-const int Mesh::GetVertices()const {
+const int& Mesh::GetVertices()const {
 	return num_vertices;
+}
+
+const AABB& Mesh::GetAABB()const {
+	return aabb;
+}
+
+void Mesh::LoadAABB(const aiMesh* mesh) {
+	aabb.minPoint.x = mesh->mAABB.mMin.x;
+	aabb.minPoint.y = mesh->mAABB.mMin.y;
+	aabb.minPoint.z = mesh->mAABB.mMin.z;
+
+	aabb.maxPoint.x = mesh->mAABB.mMax.x;
+	aabb.maxPoint.y = mesh->mAABB.mMax.y;
+	aabb.maxPoint.z = mesh->mAABB.mMax.z;
 }
 
 

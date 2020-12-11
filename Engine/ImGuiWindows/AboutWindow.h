@@ -13,7 +13,7 @@ private:
 public:
 	AboutWindow(const char* windowName);
 	~AboutWindow();
-	void Draw();
+	void Draw() override;
 public:
 	friend class ModuleEditor;
 	friend class EditorMainMenu;

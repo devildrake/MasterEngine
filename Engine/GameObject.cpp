@@ -142,3 +142,10 @@ void GameObject::DrawGizmos()const {
 		(*it)->DrawGizmos();
 	}
 }
+
+
+void GameObject::OnTransformChanged(float3 newPos, Quat newRot) {
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
+		(*it)->OnTransformModified(newPos, newRot);
+	}
+}

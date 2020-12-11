@@ -28,6 +28,8 @@ public:
 	int GetID()const;
 	bool IsChild(GameObject* g)const;
 	void DrawGizmos()const;
+	void OnTransformChanged(float3 newPos, Quat newRot);
+
 public:
 	friend class PropertiesWindow;
 

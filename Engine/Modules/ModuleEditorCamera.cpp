@@ -5,7 +5,9 @@
 #include "ModuleInput.h"
 #include "ModuleEditor.h"
 #include "../ImGuiWindows/SceneWindow.h"
+#include "../GameObject.h"
 #include "../Components/ComponentTransform.h"
+#include "../Components/ComponentMeshRenderer.h"
 //#include "../Rendering/Model.h"
 #include <Leaks.h>
 
@@ -116,26 +118,33 @@ void ModuleEditorCamera::ApplyUpdatedPitchYawToFrustum() {
 	frustum.SetFront(newFront.Normalized());
 }
 
-//const float ModuleEditorCamera::GetDistanceBasedOnBoundingBox(ComponentTransform* m, float distanceFactor)const {
-//	float greatestDistance = 0;
-//
-//	//float xBounds = math::Abs(m->BoundingBox().second.x - m->BoundingBox().first.x);
-//	//float yBounds = math::Abs(m->BoundingBox().second.y - m->BoundingBox().first.y);
-//	//float zBounds = math::Abs(m->BoundingBox().second.z - m->BoundingBox().first.z);
-//
-//	//greatestDistance = math::Max(xBounds, yBounds, zBounds);
-//
-//	return greatestDistance * distanceFactor;
-//}
-
+//FocusPosition is recalculated here, frustum is also repositioned so that targeted AABB (if found) fits inside frustum
 void ModuleEditorCamera::FocusOn(ComponentTransform* m, float focusDistance) {
-	targetModel = m;
-	float3 boundingBoxCenter = m->localPosition;//m->GetBoundingCenter();
-	frustumPosition = boundingBoxCenter; //- (GetDistanceBasedOnBoundingBox(m, focusDistance) * frustum.Front());
+
+	ComponentMeshRenderer* meshRenderer = ((ComponentMeshRenderer*)m->owner->GetComponentOfType(Component::ComponentType::CTMeshRenderer));
+
+	if (meshRenderer != nullptr) {
+
+		focusPosition = meshRenderer->GetAABB().CenterPoint();
+		frustumPosition = focusPosition;
+		frustum.SetPos(frustumPosition);
+
+		//Dangerous while over here. Big distances may cause problems, emergency exit at 1000 iterations may be required(?)
+		while (!frustum.Contains(meshRenderer->GetAABB())) {
+			frustumPosition -= frustum.Front() * 10;
+			frustum.SetPos(frustumPosition);
+		}
+	}
+	else {
+		focusPosition = m->CalculateGlobalPosition();
+		frustumPosition = m->CalculateGlobalPosition() - frustum.Front() * focusDistance;
+	}
 }
 
 // Called every draw update
 update_status ModuleEditorCamera::Update() {
+	//Camera movement inputs will not be processed if the mouse is not over the scene editor view
+	if (!App->editor->GetScene()->IsHovered())return UPDATE_CONTINUE;
 	bool showCursor = true;
 	float3 cameraMovementInput = float3(0, 0, 0);
 
@@ -144,12 +153,6 @@ update_status ModuleEditorCamera::Update() {
 
 	if ((App->input->GetKey(SDL_SCANCODE_LALT) == ModuleInput::KEY_REPEAT)) {
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == ModuleInput::KEY_REPEAT) {
-
-			//Calculate focus positon
-			//float3 boundingBoxCenter = targetModel->GetBoundingCenter();
-			//float3 focusPosition = boundingBoxCenter.Mul(targetModel->Scale()) + targetModel->Position();
-			float3 focusPosition = targetModel->CalculateGlobalPosition();
-
 
 			//Push camera position temporarily to focus position
 			frustumPosition -= focusPosition;
@@ -210,8 +213,8 @@ update_status ModuleEditorCamera::Update() {
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_F) == ModuleInput::KEY_DOWN) {
-		if (targetModel != nullptr) {
-			FocusOn(targetModel, focusDistance);
+		if (focusTarget != nullptr) {
+			FocusOn(focusTarget, focusDistance);
 		}
 	}
 
@@ -228,8 +231,15 @@ update_status ModuleEditorCamera::Update() {
 	return UPDATE_CONTINUE;
 }
 
-void ModuleEditorCamera::SetTargetModel(ComponentTransform* m) {
-	FocusOn(m, focusDistance);
+void ModuleEditorCamera::SetTargetGameObject(GameObject* m) {
+	ComponentTransform* transform = (ComponentTransform*)m->GetComponentOfType(Component::ComponentType::CTTransformation);
+	if (transform != nullptr) {
+		focusTarget = transform;
+	}
+	/*if (transform != nullptr) {
+		FocusOn(transform, focusDistance);
+	}*/
+
 }
 
 

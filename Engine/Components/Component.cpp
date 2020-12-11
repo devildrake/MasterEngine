@@ -51,3 +51,12 @@ void Component::OnNewParent(GameObject* prevParent, GameObject* newParent) {
 
 void Component::DrawGizmos() {
 }
+
+
+void Component::OnTransformModified(float3 newPos, Quat newRot) {
+
+}
+
+void Component::OnSave() {
+
+}

@@ -56,6 +56,7 @@ void SceneWindow::Draw() {
 	//This is a workaround for now, will try to restablish as main menu later on
 	App->editor->DrawMenu();
 
+	isHovered = ImGui::IsWindowHovered();
 
 	if (mustFocus) {
 		ImGui::SetNextWindowFocus();
@@ -90,5 +91,9 @@ void SceneWindow::Draw() {
 
 void SceneWindow::WindowFocused() {
 	mustFocus = true;
+}
+
+const bool& SceneWindow::IsHovered()const {
+	return isHovered;
 }
 

@@ -11,6 +11,7 @@ struct SDL_Renderer;
 struct SDL_Rect;
 
 class ComponentTransform;
+class GameObject;
 
 class ModuleEditorCamera : public Module {
 public:
@@ -34,7 +35,7 @@ public:
 	void SetFarPlane(float);
 	void SetAspectRatio(float);
 	void FocusOn(ComponentTransform* m, float);
-	void SetTargetModel(ComponentTransform* m);
+	void SetTargetGameObject(GameObject* m);
 
 private:
 	friend class ConfigWindow;
@@ -49,7 +50,9 @@ private:
 	float zoomSpeed;
 	float3 frustumPosition;
 	float nearPlaneDistance, farPlaneDistance;
-	ComponentTransform* targetModel = nullptr;
+
+	ComponentTransform* focusTarget = nullptr;
+	float3 focusPosition;
 private:
 	const float4x4 GetTransposedProjectionMatrix()const;
 	const float4x4 GetTransposedViewModelMatrix()const;

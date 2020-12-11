@@ -18,6 +18,7 @@
 #include "../ImGuiWindows/AboutWindow.h"
 #include "../ImGuiWindows/SceneWindow.h"
 #include "../ImGuiWindows/GameObjectHierarchyWindow.h"
+
 #include "../GameObject.h"
 #include "../EditorMainMenu.h"
 #include <Leaks.h>
@@ -111,6 +112,8 @@ void ModuleEditor::DrawMenu() {
 
 update_status ModuleEditor::PostUpdate() {
 
+	ImGui::ShowDemoWindow();
+
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -169,6 +172,7 @@ void ModuleEditor::WindowFocused()const {
 
 void ModuleEditor::SetTargetObject(GameObject* newTarget) {
 	currentTarget = newTarget;
+	App->editorCamera->SetTargetGameObject(newTarget);
 }
 
 GameObject* ModuleEditor::GetTargetObject()const {

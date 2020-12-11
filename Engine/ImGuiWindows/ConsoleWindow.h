@@ -11,7 +11,7 @@ private:
 public:
 	ConsoleWindow(const char* windowName);
 	~ConsoleWindow();
-	void Draw();
+	void Draw()override;
 	void Log(const char* msg);
 	friend class ModuleEditor;
 };
