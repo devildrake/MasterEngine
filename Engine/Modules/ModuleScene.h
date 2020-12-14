@@ -19,15 +19,15 @@ private:
 public:
 	ModuleScene();
 	~ModuleScene();
-	bool Init();
-	bool Start();
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
-	bool CleanUp();
+	bool Init() override;
+	bool Start() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update() override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp() override;
 	GameObject* CreateGameObject(const char* name, GameObject* parent = nullptr);
 	GameObject* GetRoot()const;
-	update_status UpdateGameObject(GameObject* target);
+	UpdateStatus UpdateGameObject(GameObject* target);
 	GameObject* LoadModel(std::string path);
 	GameObject* ProcessNode(aiNode* node, const aiScene* scene, std::string path);
 	Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene);

@@ -89,7 +89,7 @@ void ModuleWindow::SetFlag(SDL_WindowFlags flag) {
 
 
 
-void ModuleWindow::WindowResized(unsigned width, unsigned height) {
+void ModuleWindow::MainWindowResized(unsigned width, unsigned height) {
 	this->width = width;
 	this->height = height;
 }

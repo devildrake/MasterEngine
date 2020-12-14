@@ -21,7 +21,7 @@ private:
 	//String with all GPU capabilities added to it as strings
 	std::string caps;
 public:
-	ConfigWindow(const char* windowName);
+	ConfigWindow(const char* windowName, int id);
 	~ConfigWindow();
 	void Draw()override;
 	std::string GetCapsString();

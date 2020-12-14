@@ -6,7 +6,7 @@
 
 EditorMainMenu::EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutWindowOpen, bool& hierarchyOpen) : consoleOpen(&consoleWindowOpen), configOpen(&configWindowOpen), propertiesOpen(&propertiesWindowOpen), aboutOpen(&aboutWindowOpen), hierarchyOpen(&hierarchyOpen) {}
 
-update_status EditorMainMenu::Draw() {
+UpdateStatus EditorMainMenu::Draw() {
 	ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
 
 	//if (ImGui::BeginMainMenuBar()) {

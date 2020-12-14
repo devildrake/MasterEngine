@@ -33,7 +33,7 @@ bool ModuleEditorCamera::Init() {
 	return true;
 }
 
-update_status ModuleEditorCamera::PreUpdate() {
+UpdateStatus ModuleEditorCamera::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
@@ -134,15 +134,14 @@ void ModuleEditorCamera::FocusOn(ComponentTransform* m, float focusDistance) {
 			frustumPosition -= frustum.Front() * 10;
 			frustum.SetPos(frustumPosition);
 		}
-	}
-	else {
+	} else {
 		focusPosition = m->CalculateGlobalPosition();
 		frustumPosition = m->CalculateGlobalPosition() - frustum.Front() * focusDistance;
 	}
 }
 
 // Called every draw update
-update_status ModuleEditorCamera::Update() {
+UpdateStatus ModuleEditorCamera::Update() {
 	//Camera movement inputs will not be processed if the mouse is not over the scene editor view
 	if (!App->editor->GetScene()->IsHovered())return UPDATE_CONTINUE;
 	bool showCursor = true;
@@ -182,8 +181,7 @@ update_status ModuleEditorCamera::Update() {
 			frustum.SetUp((lookAtMat * frustum.Up()).Normalized());
 
 			showCursor = false;
-		}
-		else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == ModuleInput::KEY_REPEAT) {
+		} else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == ModuleInput::KEY_REPEAT) {
 			float totalMotion = mouseMotion.x + mouseMotion.y;
 			frustumPosition += frustum.Front() * totalMotion * speedFactor * App->GetDeltaTime();
 			showCursor = false;
@@ -232,6 +230,11 @@ update_status ModuleEditorCamera::Update() {
 }
 
 void ModuleEditorCamera::SetTargetGameObject(GameObject* m) {
+	if (m == nullptr) {
+		focusTarget = nullptr;
+		return;
+	}
+
 	ComponentTransform* transform = (ComponentTransform*)m->GetComponentOfType(Component::ComponentType::CTTransformation);
 	if (transform != nullptr) {
 		focusTarget = transform;
@@ -243,7 +246,7 @@ void ModuleEditorCamera::SetTargetGameObject(GameObject* m) {
 }
 
 
-update_status ModuleEditorCamera::PostUpdate() {
+UpdateStatus ModuleEditorCamera::PostUpdate() {
 	return UPDATE_CONTINUE;
 }
 
@@ -252,8 +255,12 @@ bool ModuleEditorCamera::CleanUp() {
 	return true;
 }
 
-void ModuleEditorCamera::WindowResized(unsigned width, unsigned height) {
-	SetAspectRatio((float)width / (float)height);
+//void ModuleEditorCamera::SceneWindowResized(unsigned width, unsigned height) {
+//	SetAspectRatio((float)width / (float)height);
+//}
+
+void ModuleEditorCamera::MainWindowResized(unsigned width, unsigned height) {
+	//SetAspectRatio((float)width / (float)height);
 }
 
 void ModuleEditorCamera::SetFrustumPos(float3 newPos) {
@@ -282,5 +289,7 @@ void ModuleEditorCamera::SetFarPlane(float n) {
 
 void ModuleEditorCamera::SetAspectRatio(float n) {
 	aspectRatio = n;
-	frustum.SetHorizontalFovAndAspectRatio((DEGTORAD * 90), n);
+
+	LOG("new aspect ratio %f", aspectRatio);
+	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90), n);
 }

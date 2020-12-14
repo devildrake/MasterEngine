@@ -9,7 +9,7 @@ private:
 	std::vector<std::string>msgs;
 	bool autoScroll, doScroll;
 public:
-	ConsoleWindow(const char* windowName);
+	ConsoleWindow(const char* windowName, int id);
 	~ConsoleWindow();
 	void Draw()override;
 	void Log(const char* msg);

@@ -24,7 +24,7 @@ public:
 	void DrawEditor() override;
 	void DrawGizmos()override;
 	void OnNewParent(GameObject* prevParent, GameObject* newParent)override;
-
+	void Reset();
 	float3 CalculateGlobalPosition()const;
 	Quat CalculateGlobalRotation()const;
 	float3 CalculateGlobalScale()const;

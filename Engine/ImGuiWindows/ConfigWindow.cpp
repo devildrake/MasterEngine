@@ -56,7 +56,7 @@ std::string ConfigWindow::GetCapsString() {
 	return capsString;
 }
 
-ConfigWindow::ConfigWindow(const char* aConfigName) : ImGuiWindow(aConfigName), hardwareHeaderActive(true), cameraHeaderActive(true), windowHeaderActive(true), applicationHeaderActive(true) {
+ConfigWindow::ConfigWindow(const char* aConfigName, int id) : ImGuiWindow(aConfigName, id), hardwareHeaderActive(true), cameraHeaderActive(true), windowHeaderActive(true), applicationHeaderActive(true) {
 	for (int i = 0; i < FRAMECOUNT; i++) {
 		times[i] = 0;
 		frames[i] = 0;
@@ -141,12 +141,14 @@ void ConfigWindow::Draw() {
 			}
 			if (ImGui::SliderInt("Width", &App->window->width, 640, 1920)) {
 				SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
-				App->renderer->WindowResized(App->window->width, App->window->height);
+				App->MainWindowResized(App->window->width, App->window->height);
+				//App->renderer->MainWindowResized(App->window->width, App->window->height);
 			}
 
 			if (ImGui::SliderInt("Height", &App->window->height, 480, 1080)) {
 				SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
-				App->renderer->WindowResized(App->window->width, App->window->height);
+				//App->renderer->MainWindowResized(App->window->width, App->window->height);
+				App->MainWindowResized(App->window->width, App->window->height);
 			}
 
 			ImGui::Text("Refresh rate: ");

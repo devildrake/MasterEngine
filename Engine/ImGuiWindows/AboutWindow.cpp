@@ -1,7 +1,7 @@
 #include "AboutWindow.h"
 #include <glew.h>
 
-AboutWindow::AboutWindow(const char* windowName) :ImGuiWindow(windowName) {
+AboutWindow::AboutWindow(const char* windowName, int id) :ImGuiWindow(windowName,id) {
 	SDL_GetVersion(&sdl_version);
 	imgui_version = ImGui::GetVersion();
 	isOpen = false;

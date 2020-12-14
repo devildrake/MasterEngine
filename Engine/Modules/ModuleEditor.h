@@ -18,6 +18,7 @@ class PropertiesWindow;
 class SceneWindow;
 class GameObjectHierarchyWindow;
 class GameObject;
+class ImGuiWindow;
 
 #define FRAMECOUNT 60
 #define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048
@@ -37,23 +38,22 @@ private:
 	float gridMinSquares, gridMaxSquares, gridPosY, gridStep;
 	float3 gridColor;
 	GameObject* currentTarget;
-
+	std::vector<ImGuiWindow*>windows;
 	int frameCap;
 public:
 	ModuleEditor();
 	~ModuleEditor();
 
-	bool Init();
-	bool Start()override;
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
-	bool CleanUp();
+	bool Init() override;
+	bool Start() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update()  override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp()  override;
 	friend class ConfigWindow;
 	ConsoleWindow* GetConsole()const;
 	PropertiesWindow* GetProperties()const;
 	SceneWindow* GetScene()const;
-	void WindowFocused()const;
 #ifdef _WIN32
 #include <shellapi.h>
 	static void open_url(const std::string& url) {

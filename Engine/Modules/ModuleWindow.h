@@ -8,17 +8,11 @@ class ModuleWindow : public Module {
 public:
 
 	ModuleWindow();
-
-	// Destructor
-	virtual ~ModuleWindow();
-
-	// Called before quitting
+	~ModuleWindow();
 	bool Init();
+	bool CleanUp() override;
 
-	// Called before quitting
-	bool CleanUp();
-
-	void WindowResized(unsigned width, unsigned height);
+	void MainWindowResized(unsigned width, unsigned height)override;
 	void SetBrightness(float newB);
 
 	int GetWidth()const;

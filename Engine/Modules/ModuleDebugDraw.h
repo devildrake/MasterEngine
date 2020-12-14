@@ -13,11 +13,11 @@ public:
 	ModuleDebugDraw();
 	~ModuleDebugDraw();
 
-	bool            Init();
-	update_status   PreUpdate();
-	update_status   Update();
-	update_status   PostUpdate();
-	bool            CleanUp();
+	bool Init() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update() override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp() override;
 
 	void DrawGrid(float gridMinSquares, float gridMaxSquares, float gridPos, float gridStep, float3 color);
 	void DrawAxisTriad(float4x4 axisTransform = float4x4::identity, float axisWidth = 0.3f, float axisLength = 3.0f);

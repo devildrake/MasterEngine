@@ -8,6 +8,7 @@
 #include "Modules/ModuleDebugDraw.h"
 #include "Modules/ModuleTextures.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleFileSystem.h"
 #include <Timer.h>
 #include <Leaks.h>
 
@@ -17,14 +18,14 @@ Application::Application() {
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(input = new ModuleInput());
+	modules.push_back(fileSystem = new ModuleFileSystem());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(editor = new ModuleEditor());
-
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(renderer = new ModuleRender());
-
 	modules.push_back(debugDraw = new ModuleDebugDraw());
+
 
 
 	capTimer = new Timer();
@@ -33,7 +34,7 @@ Application::Application() {
 
 Application::~Application() {
 	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end(); ++it) {
-		delete* it;
+		RELEASE(*it);
 	}
 }
 
@@ -72,10 +73,10 @@ bool Application::Start() {
 }
 
 
-update_status Application::Update() {
+UpdateStatus Application::Update() {
 	capTimer->Start();
 
-	update_status ret = UPDATE_CONTINUE;
+	UpdateStatus ret = UPDATE_CONTINUE;
 
 
 	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
@@ -100,11 +101,18 @@ update_status Application::Update() {
 	return ret;
 }
 
-void Application::WindowResized(unsigned newX, unsigned newY) {
+void Application::MainWindowResized(unsigned newX, unsigned newY) {
 	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end(); ++it) {
-		(*it)->WindowResized(newX, newY);
+		(*it)->MainWindowResized(newX, newY);
 	}
 }
+//
+//void Application::SceneWindowResized(unsigned newX, unsigned newY) {
+//	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end(); ++it) {
+//		(*it)->SceneWindowResized(newX, newY);
+//	}
+//}
+
 
 void Application::SetFrameCap(int newFrameCap) {
 	frameCap = newFrameCap;

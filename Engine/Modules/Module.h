@@ -25,15 +25,15 @@ public:
 		return true;
 	}
 
-	virtual update_status PreUpdate() {
+	virtual UpdateStatus PreUpdate() {
 		return UPDATE_CONTINUE;
 	}
 
-	virtual update_status Update() {
+	virtual UpdateStatus Update() {
 		return UPDATE_CONTINUE;
 	}
 
-	virtual update_status PostUpdate() {
+	virtual UpdateStatus PostUpdate() {
 		return UPDATE_CONTINUE;
 	}
 
@@ -41,9 +41,13 @@ public:
 		return true;
 	}
 
-	virtual void WindowResized(unsigned newW, unsigned newH) {
+	virtual void MainWindowResized(unsigned newW, unsigned newH) {
 
 	}
+
+	//virtual void SceneWindowResized(unsigned newW, unsigned newH) {
+
+	//}
 
 	const char* GetModuleName() {
 		return name;

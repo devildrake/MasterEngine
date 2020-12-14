@@ -21,9 +21,11 @@
 
 #include "../GameObject.h"
 #include "../EditorMainMenu.h"
+//#include "../EditorMainMenu.h"
+
 #include <Leaks.h>
 
-ModuleEditor::ModuleEditor() :Module("Editor"), currentTarget(nullptr), console(new ConsoleWindow("Console")), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr), aboutWindow(nullptr), hierarchyWindow(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
+ModuleEditor::ModuleEditor() :Module("Editor"), currentTarget(nullptr), console(new ConsoleWindow("Console", 0)), frameCap(60.0f), configWindow(nullptr), propertiesWindow(nullptr), mainMenu(nullptr), aboutWindow(nullptr), hierarchyWindow(nullptr), gridMinSquares(-200), gridMaxSquares(200), gridPosY(0), gridStep(1.0f), gridColor(float3(0.5f, 0.5f, 0.5f)) {
 
 }
 
@@ -36,6 +38,7 @@ bool ModuleEditor::Init() {
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	return true;
 }
 
@@ -47,16 +50,19 @@ bool ModuleEditor::Start() {
 		return false;
 	}
 
-	configWindow = new ConfigWindow("Configuration");
-	propertiesWindow = new PropertiesWindow("Properties");
-	aboutWindow = new AboutWindow("About");
-	sceneWindow = new SceneWindow("Scene");
-	hierarchyWindow = new GameObjectHierarchyWindow("Hierarchy", App->scene);
+
+	windows.push_back(console);
+	windows.push_back(configWindow = new ConfigWindow("Configuration", 1));
+	windows.push_back(propertiesWindow = new PropertiesWindow("Properties", 2));
+	windows.push_back(aboutWindow = new AboutWindow("About", 3));
+	windows.push_back(sceneWindow = new SceneWindow("Scene", 4));
+	windows.push_back(hierarchyWindow = new GameObjectHierarchyWindow("Hierarchy", 5, App->scene));
+
 	mainMenu = new EditorMainMenu(console->isOpen, configWindow->isOpen, propertiesWindow->isOpen, aboutWindow->isOpen, hierarchyWindow->isOpen);
 	return true;
 }
 
-update_status ModuleEditor::PreUpdate() {
+UpdateStatus ModuleEditor::PreUpdate() {
 
 	configWindow->AddFrame(App->GetDeltaTime());
 	ImGui_ImplOpenGL3_NewFrame();
@@ -65,7 +71,7 @@ update_status ModuleEditor::PreUpdate() {
 
 	return UPDATE_CONTINUE;
 }
-update_status ModuleEditor::Update() {
+UpdateStatus ModuleEditor::Update() {
 
 	if (App->input->GetKey(SDL_SCANCODE_LALT) == ModuleInput::KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RALT) == ModuleInput::KEY_REPEAT) {
 		if (App->input->GetKey(SDL_SCANCODE_Y) == ModuleInput::KEY_DOWN) {
@@ -93,26 +99,43 @@ update_status ModuleEditor::Update() {
 
 	DrawGizmos();
 
-	console->Draw();
-	configWindow->Draw();
-	propertiesWindow->Draw();
-	aboutWindow->Draw();
-	hierarchyWindow->Draw();
-
-
-	sceneWindow->Draw();
-	//mainMenu->Draw();
-
-	return update_status::UPDATE_CONTINUE;
+	return UpdateStatus::UPDATE_CONTINUE;
 }
 
 void ModuleEditor::DrawMenu() {
 	mainMenu->Draw();
 }
 
-update_status ModuleEditor::PostUpdate() {
+UpdateStatus ModuleEditor::PostUpdate() {
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->GetWorkPos());
+	ImGui::SetNextWindowSize(viewport->GetWorkSize());
+	ImGui::SetNextWindowViewport(viewport->ID);
+	int windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoTitleBar;
+
+	static bool dockSpace = true;
+	if (ImGui::Begin("Docking", &dockSpace, windowFlags)) {
+		DrawMenu();
+
+		//App->editor->DrawMenu();
+
+		ImGui::DockSpace(ImGui::GetID("Docking"));
+		for (std::vector<ImGuiWindow*>::iterator it = windows.begin(); it != windows.end(); ++it) {
+			(*it)->Draw();
+		}
+
+	}
+	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -146,6 +169,7 @@ bool ModuleEditor::CleanUp() {
 	RELEASE(aboutWindow);
 	RELEASE(hierarchyWindow);
 	RELEASE(sceneWindow);
+
 	RELEASE(mainMenu);
 
 	return true;
@@ -164,11 +188,6 @@ SceneWindow* ModuleEditor::GetScene() const {
 	return sceneWindow;
 }
 
-void ModuleEditor::WindowFocused()const {
-	if (sceneWindow != nullptr) {
-		sceneWindow->WindowFocused();
-	}
-}
 
 void ModuleEditor::SetTargetObject(GameObject* newTarget) {
 	currentTarget = newTarget;

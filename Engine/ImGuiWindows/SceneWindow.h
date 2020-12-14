@@ -6,16 +6,15 @@
 
 class SceneWindow :public ImGuiWindow {
 private:
-	std::pair<int, int> prevSize;
-	bool mustFocus;
+	ImVec2 prevSize;
 	bool isHovered;
 public:
-	SceneWindow(const char* windowName);
+	SceneWindow(const char* windowName, int id);
 	~SceneWindow();
 	void Draw()override;
 	bool IsMouseOverWindow()const;
 	const bool& IsHovered()const;
-	void WindowFocused();
+	ImVec2 GetSize()const;
 };
 
 

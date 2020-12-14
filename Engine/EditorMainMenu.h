@@ -14,7 +14,7 @@ private:
 	bool* hierarchyOpen = nullptr;
 public:
 	EditorMainMenu(bool& consoleWindowOpen, bool& configWindowOpen, bool& propertiesWindowOpen, bool& aboutOpen, bool& hierarchyOpen);
-	update_status Draw();
+	UpdateStatus Draw();
 };
 
 #endif

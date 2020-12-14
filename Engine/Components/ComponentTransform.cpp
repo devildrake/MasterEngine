@@ -64,6 +64,13 @@ void ComponentTransform::Disable() {
 void ComponentTransform::DrawEditor() {
 	if (ImGui::CollapsingHeader("Transform")) {
 
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem("Reset")) {
+				Reset();
+			}
+			ImGui::EndPopup();
+		}
+
 		ImGui::DragFloat3("position", localPosition.ptr());
 		//ImGui::DragFloat3("rotation", localPosition.ptr());
 
@@ -148,3 +155,8 @@ float4x4 ComponentTransform::GetWorldMatrix()const {
 	return transformationMatrix;
 }
 
+void ComponentTransform::Reset() {
+	localPosition = float3::zero;
+	quatRotation = Quat::identity;
+	localScale = float3::one;
+}

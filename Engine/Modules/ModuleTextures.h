@@ -17,11 +17,11 @@ public:
 	ModuleTextures();
 	~ModuleTextures();
 	void ReleaseTexture(std::string path);
-	bool Init();
-	update_status   PreUpdate();
-	update_status   Update();
-	update_status   PostUpdate();
-	bool            CleanUp();
+	bool Init() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update() override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp() override;
 	const bool LoadTexture(std::string path, GLuint& tex, std::pair<int, int>& texSize);
 	const bool LoadTexture(std::string path, GLuint& tex);
 	void SetWrapMode(GLenum anEnum);

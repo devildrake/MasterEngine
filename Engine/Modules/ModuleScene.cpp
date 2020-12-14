@@ -34,8 +34,13 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent) 
 }
 
 void ModuleScene::DestroyGameObject(GameObject* go) {
+	std::vector<GameObject*>::iterator it = std::find(gameObjects.begin(), gameObjects.end(), go);
+	if (it != gameObjects.end()) {
+		gameObjects.erase(it);
+	}
+
 	App->editor->SetTargetObject(nullptr);
-	gameObjects.erase(gameObjects.begin() + go->GetID());
+	//gameObjects.erase(gameObjects.begin() + go->GetSceneID());
 	if (go->parent != nullptr) {
 		go->parent->children.remove(go);
 	}
@@ -77,11 +82,11 @@ GameObject* ModuleScene::GetRoot()const {
 	return root;
 }
 
-update_status ModuleScene::PreUpdate() {
+UpdateStatus ModuleScene::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleScene::UpdateGameObject(GameObject* target) {
+UpdateStatus ModuleScene::UpdateGameObject(GameObject* target) {
 
 	target->Update();
 
@@ -147,7 +152,7 @@ GameObject* ModuleScene::LoadModel(std::string path) {
 	return (ProcessNode(scene->mRootNode, scene, path));
 }
 
-update_status ModuleScene::Update() {
+UpdateStatus ModuleScene::Update() {
 	//std::string lastFile = App->input->GetLastFileDroppedOnWindow();
 	/*if (lastFile.size() > 0) {
 		if (currentGameObject != nullptr) {
@@ -208,7 +213,7 @@ update_status ModuleScene::Update() {
 
 	return UPDATE_CONTINUE;
 }
-update_status ModuleScene::PostUpdate() {
+UpdateStatus ModuleScene::PostUpdate() {
 	return UPDATE_CONTINUE;
 }
 bool ModuleScene::CleanUp() {

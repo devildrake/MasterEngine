@@ -8,8 +8,7 @@
 class Shader;
 class Model;
 
-class ModuleRender : public Module
-{
+class ModuleRender : public Module {
 private:
 
 	void* context;
@@ -33,13 +32,13 @@ public:
 
 	ModuleRender();
 	~ModuleRender();
-	bool Init();
-	bool Start();
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
-	bool CleanUp();
-	void WindowResized(unsigned width, unsigned height);
+	bool Init() override;
+	bool Start() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update() override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp() override;
+	void MainWindowResized(unsigned width, unsigned height) override;
 	SDL_GLContext GetContext();
 	const unsigned GetDefaultShaderID()const;
 	void AddModel(Model* m);
@@ -49,6 +48,7 @@ public:
 	void ToggleWireFrameMode()const;
 	void RegenerateRenderBuffer();
 	unsigned GetRenderTextureID()const;
+	//void SceneWindowResized(unsigned, unsigned)override;
 public:
 	friend class ConfigWindow;
 	friend class SceneWindow;

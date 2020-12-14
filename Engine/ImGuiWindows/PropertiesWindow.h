@@ -12,7 +12,7 @@ class PropertiesWindow :public ImGuiWindow {
 private:
 
 public:
-	PropertiesWindow(const char* windowName);
+	PropertiesWindow(const char* windowName, int id);
 	~PropertiesWindow();
 	void Draw()override;
 

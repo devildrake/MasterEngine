@@ -12,7 +12,7 @@ public:
 	GameObject* parent;
 	std::list<GameObject*>children;
 private:
-	int id;
+	int hierarchyID;
 	std::vector<Component*>components;
 	ModuleScene* scene;
 public:

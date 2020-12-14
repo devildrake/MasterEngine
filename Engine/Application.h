@@ -12,11 +12,11 @@ class ModuleRenderExercise;
 class ModuleEditorCamera;
 class ModuleEditor;
 class ModuleDebugDraw;
+class ModuleFileSystem;
 class ModuleScene;
 class Timer;
 
-class Application
-{
+class Application {
 public:
 
 	Application();
@@ -24,9 +24,10 @@ public:
 
 	bool Init();
 	bool Start();
-	update_status Update();
+	UpdateStatus Update();
 	bool CleanUp();
-	void WindowResized(unsigned, unsigned);
+	void MainWindowResized(unsigned, unsigned);
+	//void SceneWindowResized(unsigned, unsigned);
 	float GetDeltaTime();
 	void SetFrameCap(int frameCap);
 	const int& GetFrameCap()const;
@@ -40,6 +41,7 @@ public:
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTextures* textures = nullptr;
+	ModuleFileSystem* fileSystem = nullptr;
 
 private:
 	unsigned int frameCap, millisPerFrame;

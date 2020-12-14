@@ -3,8 +3,10 @@
 #include "Module.h"
 
 class ModuleFileSystem :public Module {
+public:
 	ModuleFileSystem();
 	~ModuleFileSystem();
+	bool Init()override;
 	unsigned int Load(const char* path, const char* file, char** buffer)const;
 	unsigned int Save(const char* file, const void* buffer, unsigned int size, bool append = false)const;
 	bool Remove(const char* file);

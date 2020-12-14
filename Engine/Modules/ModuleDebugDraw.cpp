@@ -573,7 +573,7 @@ bool ModuleDebugDraw::CleanUp() {
 	return true;
 }
 
-update_status  ModuleDebugDraw::PreUpdate() {
+UpdateStatus  ModuleDebugDraw::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
@@ -590,12 +590,12 @@ void ModuleDebugDraw::DrawFrustum(const Frustum& frustum) {
 }
 
 
-update_status ModuleDebugDraw::Update() {
+UpdateStatus ModuleDebugDraw::Update() {
 	Draw(App->editorCamera->GetFrustum()->ViewMatrix(), App->editorCamera->GetFrustum()->ProjectionMatrix(), App->window->GetWidth(), App->window->GetHeight());
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleDebugDraw::PostUpdate() {
+UpdateStatus ModuleDebugDraw::PostUpdate() {
 	return UPDATE_CONTINUE;
 }
 

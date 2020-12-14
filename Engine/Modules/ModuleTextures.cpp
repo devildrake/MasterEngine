@@ -161,17 +161,17 @@ bool ModuleTextures::Init() {
 	return true;
 }
 
-update_status ModuleTextures::PreUpdate() {
-	return update_status::UPDATE_CONTINUE;
+UpdateStatus ModuleTextures::PreUpdate() {
+	return UpdateStatus::UPDATE_CONTINUE;
 }
 
 
-update_status ModuleTextures::Update() {
+UpdateStatus ModuleTextures::Update() {
 
-	return update_status::UPDATE_CONTINUE;
+	return UpdateStatus::UPDATE_CONTINUE;
 }
-update_status ModuleTextures::PostUpdate() {
-	return update_status::UPDATE_CONTINUE;
+UpdateStatus ModuleTextures::PostUpdate() {
+	return UpdateStatus::UPDATE_CONTINUE;
 }
 
 bool  ModuleTextures::CleanUp() {

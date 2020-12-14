@@ -8,7 +8,7 @@
 #include <Leaks.h>
 #include "../GameObject.h"
 
-PropertiesWindow::PropertiesWindow(const char* windowName) :ImGuiWindow(windowName){
+PropertiesWindow::PropertiesWindow(const char* windowName, int id) :ImGuiWindow(windowName, id) {
 
 }
 

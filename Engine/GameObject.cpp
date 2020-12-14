@@ -5,11 +5,11 @@
 #include "Modules/ModuleScene.h"
 #include "Utilities/Globals.h"
 
-GameObject::GameObject() :parent(nullptr), name(""), id(-1), scene(nullptr) {
+GameObject::GameObject() :parent(nullptr), name(""), hierarchyID(-1), scene(nullptr) {
 
 }
 
-GameObject::GameObject(const char* name, ModuleScene* scene, GameObject* parentObject) : parent(nullptr), name(name), id(-1), scene(scene) {
+GameObject::GameObject(const char* name, ModuleScene* scene, GameObject* parentObject) : parent(nullptr), name(name), hierarchyID(-1), scene(scene) {
 	SetNewParent(parentObject);
 }
 
@@ -106,7 +106,7 @@ void GameObject::SetNewParent(GameObject* newParent) {
 }
 
 void GameObject::UpdateID(int& id) {
-	this->id = id;
+	this->hierarchyID = id;
 	id++;
 	for (std::list<GameObject*>::iterator it = children.begin(); it != children.end(); ++it) {
 		(*it)->UpdateID(id);
@@ -119,7 +119,7 @@ void GameObject::SetScene(ModuleScene* newScene) {
 }
 
 int GameObject::GetID()const {
-	return id;
+	return hierarchyID;
 }
 
 bool GameObject::IsChild(GameObject* g)const {

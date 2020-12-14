@@ -11,7 +11,7 @@ private:
 	const char* imgui_version;
 	const char* glew_version;
 public:
-	AboutWindow(const char* windowName);
+	AboutWindow(const char* windowName, int id);
 	~AboutWindow();
 	void Draw() override;
 public:

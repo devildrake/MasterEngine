@@ -10,7 +10,7 @@
 
 int nodeClicked = -1;
 
-GameObjectHierarchyWindow::GameObjectHierarchyWindow(const char* windowName, ModuleScene* scene) :ImGuiWindow(windowName), currentScene(scene), prevNodeClicked(-1) {
+GameObjectHierarchyWindow::GameObjectHierarchyWindow(const char* windowName, int id, ModuleScene* scene) :ImGuiWindow(windowName,id), currentScene(scene), prevNodeClicked(-1) {
 }
 
 GameObjectHierarchyWindow::~GameObjectHierarchyWindow() {
@@ -128,7 +128,7 @@ std::pair<int, int> GameObjectHierarchyWindow::DrawChildren(GameObject* target) 
 		if (node_open) {
 
 			for (std::list<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
-				//id++;
+				//hierarchyID++;
 
 				if (ret.first == -1) {
 					ret = DrawChildren(*it);

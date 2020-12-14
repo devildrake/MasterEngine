@@ -7,9 +7,10 @@ class ImGuiWindow {
 protected:
 	bool isOpen;
 	const char* windowName;
+	int windowID;
 public:
 
-	ImGuiWindow(const char* aName) :windowName(aName), isOpen(true) {
+	ImGuiWindow(const char* aName, int id) :windowName(aName), windowID(id), isOpen(true) {
 
 	}
 

@@ -51,7 +51,7 @@ void ModuleInput::SetLastFileDroppedOnWindow(char* newF) {
 	lastFileDroppedOnWindow = newF;
 }
 
-update_status ModuleInput::PreUpdate() {
+UpdateStatus ModuleInput::PreUpdate() {
 	SDL_Event sdlEvent;
 	mouse_motion.x = 0;
 	mouse_motion.y = 0;
@@ -113,23 +113,28 @@ update_status ModuleInput::PreUpdate() {
 			return UPDATE_STOP;
 		case SDL_WINDOWEVENT:
 			if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-				//Hardcoded one for main window, will have to change it for an id detection
+				//Hardcoded one for main window, will have to change it for an hierarchyID detection
 				if (sdlEvent.window.windowID == 1) {
-					App->window->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-					App->editor->WindowFocused();
+					App->MainWindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+					//App->editor->WindowFocused();
 				}
+				//else if (sdlEvent.window.windowID == 1) {
+				//	App->SceneWindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+				//}
+
+
 				//LOG("%d", sdlEvent.window.windowID);
 
 			//	if (sdlEvent.window.windowID == App->editor->GetEditorWindowID()/*SDL_GetWindowID(App->window->window)*/) {
 			//		if (App->renderer != nullptr) {
-			//			App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+			//			App->renderer->MainWindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
 			//		}
 			//		if (App->window != nullptr) {
-			//			App->window->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+			//			App->window->MainWindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
 			//		}
 
 			//		if (App->editorCamera != nullptr) {
-			//			App->editorCamera->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+			//			App->editorCamera->MainWindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
 			//		}
 			//	}
 
@@ -137,15 +142,7 @@ update_status ModuleInput::PreUpdate() {
 			else if (sdlEvent.window.event == SDL_WINDOWEVENT_CLOSE) {
 				windowEvents[WE_QUIT] = true;
 			}
-			else if (sdlEvent.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
-				if (sdlEvent.window.windowID == 1)
-					App->editor->WindowFocused();
-			}
-			else if (sdlEvent.window.event == SDL_WINDOWEVENT_MOVED) {
-				if (sdlEvent.window.windowID == 1) {
-					App->editor->WindowFocused();
-				}
-			}
+
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			mouse_buttons[sdlEvent.button.button - 1] = KEY_DOWN;
@@ -186,7 +183,7 @@ update_status ModuleInput::PreUpdate() {
 }
 
 // Called every draw update
-update_status ModuleInput::Update() {
+UpdateStatus ModuleInput::Update() {
 	return UPDATE_CONTINUE;
 }
 

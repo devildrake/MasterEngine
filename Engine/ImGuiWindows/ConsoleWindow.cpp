@@ -2,7 +2,7 @@
 #include "../Application.h"
 #include "../Modules/ModuleWindow.h"
 #include <Leaks.h>
-ConsoleWindow::ConsoleWindow(const char* aConsoleName) : ImGuiWindow(aConsoleName), doScroll(false), autoScroll(true) {
+ConsoleWindow::ConsoleWindow(const char* aConsoleName, int id) : ImGuiWindow(aConsoleName,id), doScroll(false), autoScroll(true) {
 
 }
 
@@ -18,8 +18,6 @@ ConsoleWindow::~ConsoleWindow() {
 void ConsoleWindow::Draw()
 {
 	if (!isOpen)return;
-	ImGui::SetNextWindowSize(ImVec2((float)App->window->GetWidth(), (float)App->window->GetHeight() / 8.0f * 3.0f), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowPos(ImVec2((float)App->window->GetWidth() / 64.0f * 11.0f, (float)App->window->GetHeight() - App->window->GetHeight() / 8.0f * 2.0f), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin(windowName, &isOpen)) {
 		ImGui::End();

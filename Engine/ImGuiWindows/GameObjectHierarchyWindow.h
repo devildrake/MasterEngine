@@ -14,7 +14,7 @@ private:
 	int prevNodeClicked;
 public:
 
-	GameObjectHierarchyWindow(const char* windowName, ModuleScene* currentScene);
+	GameObjectHierarchyWindow(const char* windowName, int id, ModuleScene* currentScene);
 	~GameObjectHierarchyWindow();
 	void Draw()override;
 	const bool IsMouseOverWindow()const;

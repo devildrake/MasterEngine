@@ -41,16 +41,16 @@ bool ModuleHelloTriangleExcercise::Init() {
 	return true;
 }
 
-update_status ModuleHelloTriangleExcercise::PreUpdate() {
+UpdateStatus ModuleHelloTriangleExcercise::PreUpdate() {
 	return UPDATE_CONTINUE;
 
 }
-update_status ModuleHelloTriangleExcercise::Update() {
+UpdateStatus ModuleHelloTriangleExcercise::Update() {
 	RenderVBO(vbo);
 
 	return UPDATE_CONTINUE;
 }
-update_status ModuleHelloTriangleExcercise::PostUpdate() {
+UpdateStatus ModuleHelloTriangleExcercise::PostUpdate() {
 	return UPDATE_CONTINUE;
 
 }

@@ -66,7 +66,6 @@ bool ModuleRender::Init() {
 	quadShader = new Shader("renderQuad.vs", "renderQuad.fs");
 	glGenFramebuffers(1, &framebuffer);
 
-	RegenerateRenderBuffer();
 
 	//Quad VAO 
 
@@ -90,6 +89,12 @@ unsigned ModuleRender::GetRenderTextureID()const {
 	return texColorBuffer;
 }
 
+//void ModuleRender::SceneWindowResized(unsigned int newW, unsigned int newH) {
+//	RegenerateRenderBuffer();
+//}
+
+#include "../MathGeoLib/Math/float2.h"
+
 void ModuleRender::RegenerateRenderBuffer() {
 
 	if (rbo != 0)glDeleteRenderbuffers(1, &rbo);
@@ -100,6 +105,7 @@ void ModuleRender::RegenerateRenderBuffer() {
 
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 
+	//This may need to be the size of the Imguiwindow?
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, App->window->GetWidth(), App->window->GetHeight());
 
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -108,6 +114,9 @@ void ModuleRender::RegenerateRenderBuffer() {
 
 	// generate texture
 	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+
+	float2 size = float2(App->window->GetWidth(), App->window->GetHeight());
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, App->window->GetWidth(), App->window->GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -166,12 +175,14 @@ void ModuleRender::RemoveModel(Model* m) {
 }
 
 bool ModuleRender::Start() {
+	RegenerateRenderBuffer();
+
 	default_shader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
 	App->input->SetLastFileDroppedOnWindow("BakerHouse.fbx");
 	return true;
 }
 
-update_status ModuleRender::PreUpdate() {
+UpdateStatus ModuleRender::PreUpdate() {
 
 	//glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
 
@@ -193,7 +204,7 @@ const unsigned ModuleRender::GetDefaultShaderID() const {
 
 
 // Called every draw update
-update_status ModuleRender::Update() {
+UpdateStatus ModuleRender::Update() {
 
 	//for (std::list<Model*>::iterator it = models.begin(); it != models.end(); ++it) {
 	//	(*it)->Draw();
@@ -202,19 +213,19 @@ update_status ModuleRender::Update() {
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleRender::PostUpdate() {
+UpdateStatus ModuleRender::PostUpdate() {
+	//Clearing and binding buffer 0 happens in editor (Probably shouldn't)
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
-		 // clear all relevant buffers
-	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	//glUseProgram(quadShader->GetID());
-	//glBindVertexArray(quadVAO);
-	//glBindTexture(GL_TEXTURE_2D, texColorBuffer);	// use the color attachment texture as the texture of the quad plane
-	//glDrawArrays(GL_TRIANGLES, 0, 6);
+	//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//
+	//	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+	//		 // clear all relevant buffers
+	//	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
+	//	glClear(GL_COLOR_BUFFER_BIT);
+		//glUseProgram(quadShader->GetID());
+		//glBindVertexArray(quadVAO);
+		//glBindTexture(GL_TEXTURE_2D, texColorBuffer);	// use the color attachment texture as the texture of the quad plane
+		//glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
 	SDL_GL_SwapWindow(App->window->window);
@@ -251,7 +262,8 @@ bool ModuleRender::CleanUp() {
 	return true;
 }
 
-void ModuleRender::WindowResized(unsigned width, unsigned height) {
+void ModuleRender::MainWindowResized(unsigned width, unsigned height) {
+
 	SDL_GetWindowSize(App->window->window,
 		&App->window->screen_surface->w, &App->window->screen_surface->h);
 

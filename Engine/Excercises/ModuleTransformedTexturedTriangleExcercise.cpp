@@ -52,11 +52,11 @@ bool ModuleTransformedTexturedTriangleExcercise::Start() {
 	return success;
 }
 
-update_status ModuleTransformedTexturedTriangleExcercise::PreUpdate() {
+UpdateStatus ModuleTransformedTexturedTriangleExcercise::PreUpdate() {
 	return UPDATE_CONTINUE;
 
 }
-update_status ModuleTransformedTexturedTriangleExcercise::Update() {
+UpdateStatus ModuleTransformedTexturedTriangleExcercise::Update() {
 
 	RenderVBO(vbo);
 	iluGetImageInfo(info);
@@ -64,7 +64,7 @@ update_status ModuleTransformedTexturedTriangleExcercise::Update() {
 
 	return UPDATE_CONTINUE;
 }
-update_status ModuleTransformedTexturedTriangleExcercise::PostUpdate() {
+UpdateStatus ModuleTransformedTexturedTriangleExcercise::PostUpdate() {
 	return UPDATE_CONTINUE;
 
 }

@@ -19,12 +19,13 @@ public:
 	ModuleEditorCamera();
 	~ModuleEditorCamera();
 
-	bool Init();
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
-	bool CleanUp();
-	void WindowResized(unsigned width, unsigned height);
+	bool Init() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update() override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp() override;
+	void MainWindowResized(unsigned, unsigned) override;
+	//void SceneWindowResized(unsigned, unsigned)override;
 	void SendViewModelMatrix();
 	void SendProjectionMatrix();
 	void SetFrustumPos(float3 newPos);

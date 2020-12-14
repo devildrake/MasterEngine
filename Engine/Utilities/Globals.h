@@ -6,7 +6,7 @@
 
 void log(const char file[], int line, const char* format, ...);
 
-enum update_status
+enum UpdateStatus
 {
 	UPDATE_CONTINUE = 1,
 	UPDATE_STOP,

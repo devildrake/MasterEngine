@@ -1024,7 +1024,7 @@ struct FontCharSet
         #define DD_ALIGNED_BUFFER(name) __declspec(align(16)) static const std::uint8_t name[]
     #else // Unknown compiler
         #define DD_ALIGNED_BUFFER(name) static const std::uint8_t name[] /* hope for the best! */
-    #endif // Compiler id
+    #endif // Compiler hierarchyID
 #endif // DEBUG_DRAW_CXX11_SUPPORTED
 
 //

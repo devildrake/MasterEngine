@@ -51,16 +51,16 @@ bool ModuleTransformedTriangleExcercise::Init() {
 	return true;
 }
 
-update_status ModuleTransformedTriangleExcercise::PreUpdate() {
+UpdateStatus ModuleTransformedTriangleExcercise::PreUpdate() {
 	return UPDATE_CONTINUE;
 
 }
-update_status ModuleTransformedTriangleExcercise::Update() {
+UpdateStatus ModuleTransformedTriangleExcercise::Update() {
 	RenderVBO(vbo);
 
 	return UPDATE_CONTINUE;
 }
-update_status ModuleTransformedTriangleExcercise::PostUpdate() {
+UpdateStatus ModuleTransformedTriangleExcercise::PostUpdate() {
 	return UPDATE_CONTINUE;
 
 }
