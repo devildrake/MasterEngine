@@ -5,11 +5,11 @@
 #include "Modules/ModuleScene.h"
 #include "Utilities/Globals.h"
 
-GameObject::GameObject() :parent(nullptr), name(""), hierarchyID(-1), scene(nullptr) {
+GameObject::GameObject() :parent(nullptr), name(""), scene(nullptr), active(true) {
 
 }
 
-GameObject::GameObject(const char* name, ModuleScene* scene, GameObject* parentObject) : parent(nullptr), name(name), hierarchyID(-1), scene(scene) {
+GameObject::GameObject(const char* name, ModuleScene* scene, GameObject* parentObject) : parent(nullptr), name(name), scene(scene), active(true) {
 	SetNewParent(parentObject);
 }
 
@@ -97,29 +97,15 @@ void GameObject::SetNewParent(GameObject* newParent) {
 				(*it)->OnNewParent(prevParent, newParent);
 			}
 
-			scene->UpdateGameObjectHierarchy();
+			//scene->UpdateGameObjectHierarchy();
 		}
-	}
-	else {
+	} else {
 		parent = nullptr;
 	}
 }
 
-void GameObject::UpdateID(int& id) {
-	this->hierarchyID = id;
-	id++;
-	for (std::list<GameObject*>::iterator it = children.begin(); it != children.end(); ++it) {
-		(*it)->UpdateID(id);
-	}
-
-}
-
 void GameObject::SetScene(ModuleScene* newScene) {
 	scene = newScene;
-}
-
-int GameObject::GetID()const {
-	return hierarchyID;
 }
 
 bool GameObject::IsChild(GameObject* g)const {
@@ -128,8 +114,7 @@ bool GameObject::IsChild(GameObject* g)const {
 	for (std::list<GameObject*>::const_iterator it = children.begin(); it != children.end() && !isChild; ++it) {
 		if (*it == g) {
 			isChild = true;
-		}
-		else {
+		} else {
 			isChild = (*it)->IsChild(g);
 		}
 	}

@@ -28,6 +28,7 @@ public:
 	std::string Component::ComponentTypeToString(ComponentType type)const;
 	virtual void OnTransformModified(float3 newPos, Quat newRot);
 	virtual void OnSave();
+	bool GetGlobalEnabled()const;
 	//GameObject* owner;
 };
 

@@ -29,7 +29,6 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent) 
 	ret->SetScene(this);
 
 	gameObjects.push_back(ret);
-	UpdateGameObjectHierarchy();
 	return ret;
 }
 
@@ -68,13 +67,6 @@ bool ModuleScene::Start() {
 	GameObject* cameraObj = CreateGameObject("Camera", root);
 	ComponentTransform* cameraTrans = (ComponentTransform*)cameraObj->CreateComponent(Component::ComponentType::CTTransformation);
 	ComponentCamera* cameraComp = (ComponentCamera*)cameraObj->CreateComponent(Component::ComponentType::CTCamera);
-
-
-
-	UpdateGameObjectHierarchy();
-
-
-
 	return true;
 }
 
@@ -222,21 +214,4 @@ bool ModuleScene::CleanUp() {
 	}
 
 	return true;
-}
-
-void ModuleScene::UpdateGameObjectHierarchy() {
-	int id = 0;
-	if (root != nullptr) {
-		root->UpdateID(id);
-	}
-}
-
-GameObject* ModuleScene::GetGameObjectWithID(const int& id) const {
-	GameObject* ret = nullptr;
-	for (std::vector<GameObject*>::const_iterator it = gameObjects.begin(); it != gameObjects.end() && ret == nullptr; ++it) {
-		if ((*it)->GetID() == id) {
-			ret = *it;
-		}
-	}
-	return ret;
 }

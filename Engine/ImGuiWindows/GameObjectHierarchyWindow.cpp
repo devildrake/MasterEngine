@@ -7,27 +7,24 @@
 #include "../Application.h"
 #include "../Utilities/Leaks.h"
 
+GameObject* selectedNode;
+GameObject* movedGameObject;
 
-int nodeClicked = -1;
 
-GameObjectHierarchyWindow::GameObjectHierarchyWindow(const char* windowName, int id, ModuleScene* scene) :ImGuiWindow(windowName,id), currentScene(scene), prevNodeClicked(-1) {
+GameObjectHierarchyWindow::GameObjectHierarchyWindow(const char* windowName, int id, ModuleScene* scene) :ImGuiWindow(windowName, id), currentScene(scene), prevSelectedNode(nullptr)/*, movedGameObject(nullptr)*/ {
+
 }
 
 GameObjectHierarchyWindow::~GameObjectHierarchyWindow() {
 
 }
 
-static int selection_mask = (1 << 2);;
-
-
 void GameObjectHierarchyWindow::Draw() {
 
-	//ImGui::ShowDemoWindow();
 
 	if (!isOpen)return;
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-	//ImGui::ShowDemoWindow();
 	if (!ImGui::Begin(windowName, &isOpen)) {
 		ImGui::End();
 		return;
@@ -44,36 +41,26 @@ void GameObjectHierarchyWindow::Draw() {
 
 			if (ImGui::BeginPopupContextWindow()) {
 				if (ImGui::Selectable("Create GameObject")) {
-					currentScene->CreateGameObject("GameObject", nodeClicked > -1 ? currentScene->GetGameObjectWithID(nodeClicked) : currentScene->GetRoot());
+					currentScene->CreateGameObject("GameObject", selectedNode != nullptr ? selectedNode : currentScene->GetRoot());
 				}
 				ImGui::EndPopup();
 			}
 
-			std::pair<int, int>parentModifyingPair = DrawChildren(currentScene->GetRoot());
+			DrawChildren(currentScene->GetRoot(), false);
 
-			if (parentModifyingPair.first > -1) {
-				currentScene->GetGameObjectWithID(parentModifyingPair.first)->SetNewParent(currentScene->GetGameObjectWithID(parentModifyingPair.second));
-			}
-
-			if (nodeClicked != -1) {
+			if (selectedNode != nullptr) {
 
 				if (ImGui::BeginPopupContextWindow()) {
 					if (ImGui::Selectable("Destroy")) {
-						currentScene->DestroyGameObject(currentScene->GetGameObjectWithID(nodeClicked));
+						currentScene->DestroyGameObject(selectedNode);
+						selectedNode = nullptr;
 					}
 					ImGui::EndPopup();
 				}
 
-				// Update selection state
-				// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
-				if (App->input->GetKey(SDL_SCANCODE_LCTRL) == ModuleInput::KEY_REPEAT)
-					selection_mask ^= (1 << nodeClicked);          // CTRL+click to toggle
-				else if (!(selection_mask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
-					selection_mask = (1 << nodeClicked);           // Click to single-select
-
-				if (nodeClicked != prevNodeClicked) {
-					prevNodeClicked = nodeClicked;
-					App->editor->SetTargetObject(currentScene->GetGameObjectWithID(nodeClicked));
+				if (selectedNode != prevSelectedNode) {
+					prevSelectedNode = selectedNode;
+					App->editor->SetTargetObject(selectedNode);
 				}
 			}
 
@@ -91,79 +78,149 @@ const bool GameObjectHierarchyWindow::IsMouseOverWindow()const {
 
 //This method recursively draws every GameObject on scene (starting from rootNode) on the hierarchy as nodetrees.
 //it returns a pair of integers that represent the indexes of the gameobjects that the drag/drop feature has happened on
-std::pair<int, int> GameObjectHierarchyWindow::DrawChildren(GameObject* target) const {
-	std::pair<int, int>ret(-1, -1);
+//std::pair<int, int> GameObjectHierarchyWindow::DrawChildren(GameObject* target) const {
+//	std::pair<int, int>ret(-1, -1);
+//	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+//	const int& id = target->GetID();
+//	const bool is_selected = (selection_mask & (1 << id)) != 0;
+//	if (is_selected)
+//		node_flags |= ImGuiTreeNodeFlags_Selected;
+//
+//	if (target->children.size() > 0) {
+//
+//		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)id, node_flags, target->name.c_str(), id);
+//
+//
+//
+//		if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
+//			nodeClicked = id;
+//		}
+//		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+//			ImGui::SetDragDropPayload("GOBJ", &id, sizeof(int));
+//			//ImGui::Text("This is a drag and drop source");
+//			ImGui::EndDragDropSource();
+//		}
+//		if (ImGui::BeginDragDropTarget()) {
+//
+//			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GOBJ")) {
+//
+//				int payload_n = *(const int*)payload->Data;
+//
+//				ret = std::pair<int, int>(payload_n, id);
+//			}
+//			ImGui::EndDragDropTarget();
+//		}
+//
+//
+//		if (node_open) {
+//
+//			for (std::list<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
+//				//hierarchyID++;
+//
+//				if (ret.first == -1) {
+//					ret = DrawChildren(*it);
+//				}
+//				else {
+//					DrawChildren(*it);
+//				}
+//
+//			}
+//
+//			ImGui::TreePop();
+//		}
+//	}
+//	else {
+//
+//		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
+//		ImGui::TreeNodeEx((void*)(intptr_t)id, node_flags, target->name.c_str());
+//
+//		if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
+//			nodeClicked = id;
+//		}
+//		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+//			ImGui::SetDragDropPayload("GOBJ", &id, sizeof(int));
+//			//ImGui::Text("This is a drag and drop source");
+//			ImGui::EndDragDropSource();
+//		}
+//		if (ImGui::BeginDragDropTarget()) {
+//
+//			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GOBJ")) {
+//
+//				int payload_n = *(const int*)payload->Data;
+//				ret = std::pair<int, int>(payload_n, id);
+//			}
+//			ImGui::EndDragDropTarget();
+//		}
+//	}
+//	return ret;
+//}
+
+
+
+void GameObjectHierarchyWindow::DrawChildren(GameObject* target, bool drawSelf) const {
 	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-	const int& id = target->GetID();
-	const bool is_selected = (selection_mask & (1 << id)) != 0;
+	const bool is_selected = selectedNode == target;
 	if (is_selected)
 		node_flags |= ImGuiTreeNodeFlags_Selected;
-
+	bool node_open = false;
 	if (target->children.size() > 0) {
+		if (drawSelf) {
+			node_open = ImGui::TreeNodeEx((void*)(intptr_t)target, node_flags, target->name.c_str());
 
-		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)id, node_flags, target->name.c_str(), id);
-
-
-
-		if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
-			nodeClicked = id;
-		}
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-			ImGui::SetDragDropPayload("GOBJ", &id, sizeof(int));
-			//ImGui::Text("This is a drag and drop source");
-			ImGui::EndDragDropSource();
-		}
-		if (ImGui::BeginDragDropTarget()) {
-
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GOBJ")) {
-
-				int payload_n = *(const int*)payload->Data;
-
-				ret = std::pair<int, int>(payload_n, id);
+			if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
+				selectedNode = target;
 			}
-			ImGui::EndDragDropTarget();
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+				ImGui::SetDragDropPayload("GOBJ", &selectedNode, sizeof(GameObject*));
+				movedGameObject = target;
+				//ImGui::Text("This is a drag and drop source");
+				ImGui::EndDragDropSource();
+			}
+
+			if (ImGui::BeginDragDropTarget()) {
+
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GOBJ")) {
+
+					movedGameObject->SetNewParent(target);
+
+					LOG("tryna move %s into %s", movedGameObject->name.c_str(), target->name.c_str());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 		}
-
-
-		if (node_open) {
+		if (node_open || !drawSelf) {
 
 			for (std::list<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
-				//hierarchyID++;
-
-				if (ret.first == -1) {
-					ret = DrawChildren(*it);
-				}
-				else {
-					DrawChildren(*it);
-				}
-
+				DrawChildren(*it);
 			}
-
-			ImGui::TreePop();
+			if (drawSelf)
+				ImGui::TreePop();
 		}
-	}
-	else {
+
+	} else {
+
+		if (!drawSelf)return;
 
 		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
-		ImGui::TreeNodeEx((void*)(intptr_t)id, node_flags, target->name.c_str());
+		ImGui::TreeNodeEx((void*)(intptr_t)target, node_flags, target->name.c_str());
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
-			nodeClicked = id;
+			selectedNode = target;
 		}
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-			ImGui::SetDragDropPayload("GOBJ", &id, sizeof(int));
-			//ImGui::Text("This is a drag and drop source");
+			ImGui::SetDragDropPayload("GOBJ", &selectedNode, sizeof(GameObject*));
+			movedGameObject = target;
 			ImGui::EndDragDropSource();
 		}
+
 		if (ImGui::BeginDragDropTarget()) {
 
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GOBJ")) {
-
-				int payload_n = *(const int*)payload->Data;
-				ret = std::pair<int, int>(payload_n, id);
+				movedGameObject->SetNewParent(target);
 			}
 			ImGui::EndDragDropTarget();
 		}
 	}
-	return ret;
 }

@@ -10,8 +10,8 @@ class GameObject;
 class GameObjectHierarchyWindow :public ImGuiWindow {
 private:
 	ModuleScene* currentScene;
-	std::pair<int, int> DrawChildren(GameObject* targets)const;
-	int prevNodeClicked;
+	void DrawChildren(GameObject* targets, bool drawSelf = true)const;
+	GameObject* prevSelectedNode;
 public:
 
 	GameObjectHierarchyWindow(const char* windowName, int id, ModuleScene* currentScene);

@@ -1,7 +1,7 @@
 #include "AboutWindow.h"
 #include <glew.h>
 
-AboutWindow::AboutWindow(const char* windowName, int id) :ImGuiWindow(windowName,id) {
+AboutWindow::AboutWindow(const char* windowName, int id) :ImGuiWindow(windowName, id) {
 	SDL_GetVersion(&sdl_version);
 	imgui_version = ImGui::GetVersion();
 	isOpen = false;
@@ -18,14 +18,12 @@ void AboutWindow::Draw() {
 		return;
 	}
 
-
 	if (ImGui::BeginPopupContextItem()) {
 		if (ImGui::MenuItem("Close Window")) {
 			isOpen = false;
 		}
 		ImGui::EndPopup();
 	}
-
 
 	static char engineNameBuff[32] = "Master Engine";
 	static char descBuff[128] = "Engine made for the master's degree at UPC";

@@ -31,8 +31,6 @@ public:
 	GameObject* LoadModel(std::string path);
 	GameObject* ProcessNode(aiNode* node, const aiScene* scene, std::string path);
 	Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	void UpdateGameObjectHierarchy();
-	GameObject* GetGameObjectWithID(const int& id) const;
 	void DestroyGameObject(GameObject* go);
 
 public:

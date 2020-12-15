@@ -54,7 +54,6 @@ void ComponentTransform::GenerateWorldMatrix() {
 			((ComponentTransform*)(*it)->GetComponentOfType(ComponentType::CTTransformation))->GenerateWorldMatrix();
 		}
 	}
-
 }
 
 void ComponentTransform::Disable() {
@@ -117,8 +116,8 @@ void ComponentTransform::OnNewParent(GameObject* prevParent, GameObject* newPare
 		Quat globalRot = CalculateGlobalRotation();
 
 		//We inverse so that it is subtracted and not added (multiplication order may need to be switched)
-		//globalRot.Inverse();
-		//quatRotation = prevGlobalRot * globalRot;
+		globalRot.Inverse();
+		quatRotation = globalRot * prevGlobalRot * quatRotation;
 
 	}
 }

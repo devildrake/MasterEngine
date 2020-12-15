@@ -11,8 +11,8 @@ public:
 	std::string name;
 	GameObject* parent;
 	std::list<GameObject*>children;
+	bool active;
 private:
-	int hierarchyID;
 	std::vector<Component*>components;
 	ModuleScene* scene;
 public:
@@ -23,7 +23,6 @@ public:
 	Component* CreateComponent(Component::ComponentType type);
 	Component* GetComponentOfType(Component::ComponentType type);
 	void GameObject::SetNewParent(GameObject* newParent);
-	void UpdateID(int& id);
 	void SetScene(ModuleScene* newScene);
 	int GetID()const;
 	bool IsChild(GameObject* g)const;
