@@ -93,7 +93,6 @@ void ComponentTransform::DrawEditor() {
 
 void ComponentTransform::DrawGizmos() {
 	App->debugDraw->DrawAxisTriad(transformationMatrix);
-	//App->debugDraw->DrawAxisTriad(transformationMatrix);
 }
 
 void ComponentTransform::OnNewParent(GameObject* prevParent, GameObject* newParent) {

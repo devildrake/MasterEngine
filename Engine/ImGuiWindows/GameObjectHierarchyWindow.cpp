@@ -190,13 +190,16 @@ void GameObjectHierarchyWindow::DrawChildren(GameObject* target, bool drawSelf) 
 			}
 
 		}
-		if (node_open || !drawSelf) {
 
+		if (node_open) {
 			for (std::list<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
 				DrawChildren(*it);
 			}
-			if (drawSelf)
-				ImGui::TreePop();
+			ImGui::TreePop();
+		}else if(!drawSelf) {
+			for (std::list<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
+				DrawChildren(*it);
+			}
 		}
 
 	} else {

@@ -47,8 +47,6 @@ const AABB& ComponentMeshRenderer::GetAABB()const {
 void ComponentMeshRenderer::SetMesh(Mesh* aMesh) {
 	mesh = aMesh;
 	GenerateAABB();
-	//localOrientedBoundingBox.pos
-
 }
 
 void ComponentMeshRenderer::SetMaterial(Material* aMat) {
@@ -79,18 +77,12 @@ void ComponentMeshRenderer::DrawEditor() {
 
 		ImGui::Image(ImTextureID(material->GetTextureID()), ImVec2(material->GetTextureSize().first / 16, material->GetTextureSize().second / 16), uv_min, uv_max, tint_col, border_col);
 		ImGui::Text("%d x %d", material->GetTextureSize().first, material->GetTextureSize().second);
-		//ImGui::Image();
 
 	}
 }
 
 void ComponentMeshRenderer::DrawGizmos() {
 	if (App->debugDraw != nullptr) {
-		//localOrientedBoundingBox.pos = transform->CalculateGlobalPosition();
-		//localOrientedBoundingBox.Scale(localOrientedBoundingBox.CenterPoint(), transform->CalculateGlobalScale());
-		//localOrientedBoundingBox.
-
-		//localAxisAlignedBoundingBox.Transform(transform->GetWorldMatrix());
 		App->debugDraw->DrawAABB(localAxisAlignedBoundingBox);
 	}
 }

@@ -3,6 +3,7 @@
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include "ModuleScene.h"
 #include <glew.h>
 //#include "../Rendering/Model.h"
 #include "../Rendering/Shader.h"
@@ -137,8 +138,7 @@ void ModuleRender::RegenerateRenderBuffer() {
 void ModuleRender::ToggleWireFrameMode()const {
 	if (wireFramePolygonMode) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else {
+	} else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
@@ -146,8 +146,7 @@ void ModuleRender::ToggleWireFrameMode()const {
 void ModuleRender::ToggleDepthTest()const {
 	if (depthTest) {
 		glEnable(GL_DEPTH_TEST); // Enable cull backward faces
-	}
-	else {
+	} else {
 		glDisable(GL_DEPTH_TEST); // Enable cull backward faces
 	}
 }
@@ -156,8 +155,7 @@ void ModuleRender::ToggleDepthTest()const {
 void ModuleRender::ToggleFaceCulling()const {
 	if (faceCulling) {
 		glEnable(GL_CULL_FACE); // Enable cull backward faces
-	}
-	else {
+	} else {
 		glDisable(GL_CULL_FACE); // Enable cull backward faces
 	}
 
@@ -191,9 +189,12 @@ UpdateStatus ModuleRender::PreUpdate() {
 
 	glEnable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
 
+	//In case there's no skybox, which manages clearing, we need to manually clear buffers
+	if (!App->scene->DrawSkyBox()) {
+		//glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+	}
 
-	glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	return UPDATE_CONTINUE;
 }
 

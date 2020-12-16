@@ -13,25 +13,7 @@ GameObject::GameObject(const char* name, ModuleScene* scene, GameObject* parentO
 	SetNewParent(parentObject);
 }
 
-
-
 GameObject::~GameObject() {
-
-	/*	for (std::list<GameObject*>::iterator it = children.begin(); it != children.end(); ++it) {
-		RELEASE(*it);
-	}
-
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
-		RELEASE(*it);
-	}
-
-	if (parent != nullptr) {
-		parent->children.remove(this);
-	}
-
-
-	scene->UpdateGameObjectHierarchy();*/
-
 
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
 		RELEASE(*it);

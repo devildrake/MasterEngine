@@ -137,6 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Components\ComponentDirectionalLight.h" />
+    <ClInclude Include="Components\ComponentLight.h" />
     <ClInclude Include="Components\Component.h" />
     <ClInclude Include="Components\ComponentCamera.h" />
     <ClInclude Include="GameObject.h" />
@@ -234,6 +236,7 @@
     <ClInclude Include="ImGuiWindows\SceneWindow.h" />
     <ClInclude Include="Modules\ModuleFileSystem.h" />
     <ClInclude Include="Rendering\Mesh.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="Utilities\Leaks.h" />
     <ClInclude Include="Rendering\Material.h" />
     <ClInclude Include="Modules\ModuleScene.h" />
@@ -339,6 +342,8 @@
     <ClInclude Include="Utilities\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Components\ComponentDirectionalLight.cpp" />
+    <ClCompile Include="Components\ComponentLight.cpp" />
     <ClCompile Include="Components\Component.cpp" />
     <ClCompile Include="Components\ComponentCamera.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -366,6 +371,7 @@
     <ClCompile Include="ImGuiWindows\PropertiesWindow.cpp" />
     <ClCompile Include="Rendering\Shader.cpp" />
     <ClCompile Include="Components\ComponentTransform.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Utilities\log.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MathGeoLib\Algorithm\GJK.cpp" />

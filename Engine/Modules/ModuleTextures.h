@@ -24,6 +24,9 @@ public:
 	bool CleanUp() override;
 	const bool LoadTexture(std::string path, GLuint& tex, std::pair<int, int>& texSize);
 	const bool LoadTexture(std::string path, GLuint& tex);
+	const bool LoadDevilImage(std::string path, GLuint& img);
+	unsigned int LoadCubeMap(std::string files[6]);
+	void ReleaseCubeMap(unsigned int id);
 	void SetWrapMode(GLenum anEnum);
 	void SetMinMode(GLenum anEnum);
 	void SetMagMode(GLenum anEnum);

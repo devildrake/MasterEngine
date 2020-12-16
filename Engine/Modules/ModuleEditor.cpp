@@ -4,6 +4,7 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleInput.h";
 #include "ModuleDebugDraw.h"
+#include "ModuleScene.h"
 
 #include "../Application.h"
 
@@ -109,6 +110,8 @@ void ModuleEditor::DrawMenu() {
 UpdateStatus ModuleEditor::PostUpdate() {
 
 	//ImGui::ShowDemoWindow();
+
+
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

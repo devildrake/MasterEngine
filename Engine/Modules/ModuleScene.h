@@ -8,14 +8,14 @@
 
 class GameObject;
 class Mesh;
-
+class Skybox;
+typedef unsigned int uint;
 class ModuleScene :public Module {
 private:
 	GameObject* currentGameObject;
 	GameObject* root;
-
 	std::vector<GameObject*>gameObjects;
-
+	Skybox* skybox;
 public:
 	ModuleScene();
 	~ModuleScene();
@@ -31,8 +31,8 @@ public:
 	GameObject* LoadModel(std::string path);
 	GameObject* ProcessNode(aiNode* node, const aiScene* scene, std::string path);
 	Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene);
+	bool DrawSkyBox();
 	void DestroyGameObject(GameObject* go);
-
 public:
 	friend class PropertiesWindow;
 };

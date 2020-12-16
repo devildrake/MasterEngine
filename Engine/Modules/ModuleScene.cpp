@@ -13,7 +13,9 @@
 #include "../Rendering/Material.h"
 #include "ModuleEditor.h"
 #include "../ImGuiWindows/PropertiesWindow.h"
-ModuleScene::ModuleScene() : Module("Scene"), currentGameObject(nullptr), root(nullptr) {
+#include "../Skybox.h"
+
+ModuleScene::ModuleScene() : Module("Scene"), currentGameObject(nullptr), root(nullptr), skybox(nullptr) {
 	//root = CreateGameObject("Root");
 	//root->CreateComponent(Component::ComponentType::CTTransformation);
 }
@@ -53,6 +55,18 @@ Mesh* ModuleScene::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 
 bool ModuleScene::Start() {
 
+	std::string faces[6] =
+	{
+		"Resources\\Skybox\\right.jpg",
+			"Resources\\Skybox\\left.jpg",
+			"Resources\\Skybox\\top.jpg",
+			"Resources\\Skybox\\bottom.jpg",
+			"Resources\\Skybox\\front.jpg",
+			"Resources\\Skybox\\back.jpg"
+	};
+
+	skybox = new Skybox(faces, "Resources\\Shaders\\cubemap.vs", "Resources\\Shaders\\cubemap.fs");
+
 	root = CreateGameObject("Root");
 
 	ComponentTransform* firstTransform = (ComponentTransform*)root->CreateComponent(Component::ComponentType::CTTransformation);
@@ -90,6 +104,15 @@ UpdateStatus ModuleScene::UpdateGameObject(GameObject* target) {
 
 }
 
+bool ModuleScene::DrawSkyBox() {
+	if (skybox != nullptr) {
+		skybox->Draw(App->editorCamera->GetFrustum()->ViewMatrix(), App->editorCamera->GetFrustum()->ProjectionMatrix());
+		return true;
+	}
+	return false;
+}
+
+
 GameObject* ModuleScene::ProcessNode(aiNode* node, const aiScene* scene, std::string path) {
 
 
@@ -97,7 +120,7 @@ GameObject* ModuleScene::ProcessNode(aiNode* node, const aiScene* scene, std::st
 
 	ComponentTransform* transform = (ComponentTransform*)newObj->CreateComponent(Component::ComponentType::CTTransformation);
 
-	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+	for (uint i = 0u; i < node->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		Mesh* newMesh = ProcessMesh(mesh, scene);
 
@@ -123,7 +146,7 @@ GameObject* ModuleScene::ProcessNode(aiNode* node, const aiScene* scene, std::st
 	//newObj->children.reserve(node->mNumChildren);
 
 	// then do the same for each of its children
-	for (unsigned int i = 0; i < node->mNumChildren; i++) {
+	for (uint i = 0u; i < node->mNumChildren; i++) {
 		GameObject* newChild = ProcessNode(node->mChildren[i], scene, path);
 		newObj->children.push_back(newChild);
 		newChild->parent = newObj;
@@ -203,6 +226,8 @@ UpdateStatus ModuleScene::Update() {
 
 	UpdateGameObject(root);
 
+
+
 	return UPDATE_CONTINUE;
 }
 UpdateStatus ModuleScene::PostUpdate() {
@@ -212,6 +237,6 @@ bool ModuleScene::CleanUp() {
 	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); ++it) {
 		RELEASE(*it);
 	}
-
+	RELEASE(skybox);
 	return true;
 }
