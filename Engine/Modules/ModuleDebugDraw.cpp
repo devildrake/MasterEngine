@@ -10,7 +10,7 @@
 #include <debugdraw.h>// Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
 
 #include <Leaks.h>
-
+#include <Brofiler.h>
 class DDRenderInterfaceCoreGL final
 	: public dd::RenderInterface {
 public:
@@ -33,8 +33,7 @@ public:
 
 		if (depthEnabled) {
 			glEnable(GL_DEPTH_TEST);
-		}
-		else {
+		} else {
 			glDisable(GL_DEPTH_TEST);
 		}
 
@@ -52,8 +51,7 @@ public:
 
 		if (already) {
 			glEnable(GL_DEPTH_TEST);
-		}
-		else {
+		} else {
 			glDisable(GL_DEPTH_TEST);
 		}
 
@@ -73,8 +71,7 @@ public:
 
 		if (depthEnabled) {
 			glEnable(GL_DEPTH_TEST);
-		}
-		else {
+		} else {
 			glDisable(GL_DEPTH_TEST);
 		}
 
@@ -92,8 +89,7 @@ public:
 
 		if (already) {
 			glEnable(GL_DEPTH_TEST);
-		}
-		else {
+		} else {
 			glDisable(GL_DEPTH_TEST);
 		}
 
@@ -596,7 +592,9 @@ UpdateStatus ModuleDebugDraw::Update() {
 }
 
 UpdateStatus ModuleDebugDraw::PostUpdate() {
-	return UPDATE_CONTINUE;
+	BROFILER_CATEGORY("DebugDraw Post Update", Profiler::Color::Orchid)
+
+		return UPDATE_CONTINUE;
 }
 
 void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height) {

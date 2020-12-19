@@ -19,11 +19,12 @@ bool ModuleWindow::Init() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
-	}
-	else {
+	} else {
 		//Create window
 		SDL_DisplayMode dm;
 		SDL_GetDesktopDisplayMode(0, &dm);
+
+		SDL_GL_SetSwapInterval(VSYNC);
 
 		width = dm.w / 8 * 6;
 		height = dm.h / 8 * 6;
@@ -40,8 +41,7 @@ bool ModuleWindow::Init() {
 		if (window == NULL) {
 			LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			ret = false;
-		}
-		else {
+		} else {
 			//Get window surface
 
 			screen_surface = SDL_GetWindowSurface(window);
@@ -64,6 +64,15 @@ bool ModuleWindow::CleanUp() {
 	SDL_Quit();
 	return true;
 }
+
+bool ModuleWindow::IsVsyncOn()const {
+	return SDL_GL_GetSwapInterval() == 1;
+}
+
+void ModuleWindow::SetVSync(bool should) {
+	SDL_GL_SetSwapInterval(should ? 1 : 0);
+}
+
 
 
 void ModuleWindow::SetFlag(SDL_WindowFlags flag) {

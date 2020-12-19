@@ -43,7 +43,7 @@ void ModuleScene::DestroyGameObject(GameObject* go) {
 	App->editor->SetTargetObject(nullptr);
 	//gameObjects.erase(gameObjects.begin() + go->GetSceneID());
 	if (go->parent != nullptr) {
-		go->parent->children.remove(go);
+		go->RemoveFromParentsChildren();
 	}
 	RELEASE(go);
 }
@@ -96,7 +96,7 @@ UpdateStatus ModuleScene::UpdateGameObject(GameObject* target) {
 
 	target->Update();
 
-	for (std::list<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
+	for (std::vector<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
 		UpdateGameObject((*it));
 	}
 

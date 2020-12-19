@@ -6,8 +6,7 @@
 
 void log(const char file[], int line, const char* format, ...);
 
-enum UpdateStatus
-{
+enum UpdateStatus {
 	UPDATE_CONTINUE = 1,
 	UPDATE_STOP,
 	UPDATE_ERROR
@@ -36,5 +35,5 @@ enum UpdateStatus
 
 #define DEGTORAD 3.14159/180
 #define FULLSCREEN false
-#define VSYNC true
+#define VSYNC false
 #define TITLE "Super Awesome Engine"

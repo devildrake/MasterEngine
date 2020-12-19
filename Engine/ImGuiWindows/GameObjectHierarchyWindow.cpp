@@ -3,24 +3,25 @@
 #include "../GameObject.h"
 #include "../Modules/ModuleInput.h"
 #include "../Modules/ModuleEditor.h"
+#include "../Modules/ModuleEditorCamera.h"
 #include "../ImGuiWindows/PropertiesWindow.h"
 #include "../Application.h"
 #include "../Utilities/Leaks.h"
+#include <Brofiler.h>
 
 GameObject* selectedNode;
 GameObject* movedGameObject;
 
 
 GameObjectHierarchyWindow::GameObjectHierarchyWindow(const char* windowName, int id, ModuleScene* scene) :ImGuiWindow(windowName, id), currentScene(scene), prevSelectedNode(nullptr)/*, movedGameObject(nullptr)*/ {
-
+	dragDropTargets = new std::pair<GameObject*, GameObject*>();
 }
 
 GameObjectHierarchyWindow::~GameObjectHierarchyWindow() {
-
+	delete dragDropTargets;
 }
 
 void GameObjectHierarchyWindow::Draw() {
-
 
 	if (!isOpen)return;
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
@@ -47,6 +48,10 @@ void GameObjectHierarchyWindow::Draw() {
 			}
 
 			DrawChildren(currentScene->GetRoot(), false);
+			if (dragDropTargets->first != nullptr) {
+				OnDroppedObjectOverOther();
+			}
+
 
 			if (selectedNode != nullptr) {
 
@@ -158,6 +163,7 @@ const bool GameObjectHierarchyWindow::IsMouseOverWindow()const {
 
 
 void GameObjectHierarchyWindow::DrawChildren(GameObject* target, bool drawSelf) const {
+	dragDropTargets->first = dragDropTargets->second = nullptr;
 	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	const bool is_selected = selectedNode == target;
 	if (is_selected)
@@ -167,7 +173,17 @@ void GameObjectHierarchyWindow::DrawChildren(GameObject* target, bool drawSelf) 
 		if (drawSelf) {
 			node_open = ImGui::TreeNodeEx((void*)(intptr_t)target, node_flags, target->name.c_str());
 
-			if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
+			if (ImGui::IsItemClicked(ImGuiMouseButton(0))) {
+				selectedNode = target;
+				if (ImGui::IsMouseDoubleClicked(0)) {
+					ComponentTransform* transform = (ComponentTransform*)selectedNode->GetComponentOfType(Component::ComponentType::CTTransformation);
+					if (transform != nullptr) {
+						if (App->editorCamera != nullptr) {
+							App->editorCamera->FocusOn(transform);
+						}
+					}
+				}
+			} else if (ImGui::IsItemClicked(ImGuiMouseButton(1))) {
 				selectedNode = target;
 			}
 
@@ -182,23 +198,27 @@ void GameObjectHierarchyWindow::DrawChildren(GameObject* target, bool drawSelf) 
 
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GOBJ")) {
 
-					movedGameObject->SetNewParent(target);
-
+					//movedGameObject->SetNewParent(target);
+					dragDropTargets->first = movedGameObject;
+					dragDropTargets->second = target;
 					LOG("tryna move %s into %s", movedGameObject->name.c_str(), target->name.c_str());
 				}
 				ImGui::EndDragDropTarget();
 			}
 
 		}
-
 		if (node_open) {
-			for (std::list<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
-				DrawChildren(*it);
+			for (std::vector<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
+				if (dragDropTargets->first == nullptr) {
+					DrawChildren(*it);
+				}
 			}
 			ImGui::TreePop();
-		}else if(!drawSelf) {
-			for (std::list<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
-				DrawChildren(*it);
+		} else if (!drawSelf) {
+			for (std::vector<GameObject*>::iterator it = target->children.begin(); it != target->children.end(); ++it) {
+				if (dragDropTargets->first == nullptr) {
+					DrawChildren(*it);
+				}
 			}
 		}
 
@@ -209,9 +229,21 @@ void GameObjectHierarchyWindow::DrawChildren(GameObject* target, bool drawSelf) 
 		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 		ImGui::TreeNodeEx((void*)(intptr_t)target, node_flags, target->name.c_str());
 
-		if (ImGui::IsItemClicked(ImGuiMouseButton(0)) || ImGui::IsItemClicked(ImGuiMouseButton(1))) {
+		if (ImGui::IsItemClicked(ImGuiMouseButton(0))) {
+			selectedNode = target;
+			if (ImGui::IsMouseDoubleClicked(0)) {
+				ComponentTransform* transform = (ComponentTransform*)selectedNode->GetComponentOfType(Component::ComponentType::CTTransformation);
+				if (transform != nullptr) {
+					if (App->editorCamera != nullptr) {
+						App->editorCamera->FocusOn(transform);
+					}
+				}
+			}
+		} else if (ImGui::IsItemClicked(ImGuiMouseButton(1))) {
 			selectedNode = target;
 		}
+
+
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
 			ImGui::SetDragDropPayload("GOBJ", &selectedNode, sizeof(GameObject*));
 			movedGameObject = target;
@@ -221,9 +253,18 @@ void GameObjectHierarchyWindow::DrawChildren(GameObject* target, bool drawSelf) 
 		if (ImGui::BeginDragDropTarget()) {
 
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GOBJ")) {
-				movedGameObject->SetNewParent(target);
+				//movedGameObject->SetNewParent(target);
+				dragDropTargets->first = movedGameObject;
+				dragDropTargets->second = target;
 			}
 			ImGui::EndDragDropTarget();
 		}
+	}
+}
+
+
+void GameObjectHierarchyWindow::OnDroppedObjectOverOther() {
+	if (dragDropTargets->first != nullptr) {
+		dragDropTargets->first->SetNewParent(dragDropTargets->second);
 	}
 }

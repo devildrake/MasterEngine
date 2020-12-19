@@ -35,7 +35,7 @@ public:
 	void SetNearPlane(float);
 	void SetFarPlane(float);
 	void SetAspectRatio(float);
-	void FocusOn(ComponentTransform* m, float);
+	void FocusOn(ComponentTransform* m, float focusDistance = 1.0f);
 	void SetTargetGameObject(GameObject* m);
 
 private:

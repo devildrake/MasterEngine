@@ -37,7 +37,7 @@ bool ModuleEditor::Init() {
 	ImGui::CreateContext();
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	return true;
@@ -143,13 +143,13 @@ UpdateStatus ModuleEditor::PostUpdate() {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable | ImGuiConfigFlags_DockingEnable) {
-		SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();
-		SDL_GLContext backupCurrentContext = SDL_GL_GetCurrentContext();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-		SDL_GL_MakeCurrent(backupCurrentWindow, backupCurrentContext);
-	}
+	//if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable | ImGuiConfigFlags_DockingEnable) {
+	//	SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();
+	//	SDL_GLContext backupCurrentContext = SDL_GL_GetCurrentContext();
+	//	ImGui::UpdatePlatformWindows();
+	//	ImGui::RenderPlatformWindowsDefault();
+	//	SDL_GL_MakeCurrent(backupCurrentWindow, backupCurrentContext);
+	//}
 
 	return UPDATE_CONTINUE;
 

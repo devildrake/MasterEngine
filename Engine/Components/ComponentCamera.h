@@ -8,7 +8,7 @@ private:
 	float aspectRatio;
 	float nearPlaneDistance, farPlaneDistance;
 public:
-	ComponentCamera(GameObject* anOwner);
+	ComponentCamera(GameObject* anOwner, float aNearPDistance, float aFarPDistance);
 	void Enable() override;
 	void Update()override;
 	void Disable()override;
@@ -16,7 +16,7 @@ public:
 	void DrawGizmos() override;
 	void OnNewParent(GameObject* prevParent, GameObject* newParent)override;
 	void OnTransformModified(float3 newPos, Quat newRot)override;
-
+	Frustum& GetFrustum();
 
 
 };

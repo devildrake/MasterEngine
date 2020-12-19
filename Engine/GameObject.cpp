@@ -38,7 +38,7 @@ Component* GameObject::CreateComponent(Component::ComponentType type) {
 	case Component::CTLight:
 		break;
 	case Component::CTCamera:
-		ret = new ComponentCamera(this);
+		ret = new ComponentCamera(this, 0, 200);
 		break;
 	default:
 		break;
@@ -62,15 +62,28 @@ Component* GameObject::GetComponentOfType(Component::ComponentType type) {
 	return nullptr;
 }
 
+void GameObject::RemoveFromParentsChildren() {
+	std::vector<GameObject*>::iterator myItAtParent;
+	bool found = false;
+	for (std::vector<GameObject*>::iterator it = parent->children.begin(); it != parent->children.end() && !found; ++it) {
+		if (*it == this) {
+			myItAtParent = it;
+			found = true;
+		}
+	}
+
+	if (parent != nullptr) {
+		parent->children.erase(myItAtParent);
+	}
+}
+
 void GameObject::SetNewParent(GameObject* newParent) {
 	if (newParent != nullptr) {
 		if (!IsChild(newParent)) {
 			GameObject* prevParent = parent;
-
-			if (parent != nullptr) {
-				parent->children.remove(this);
+			if (prevParent != nullptr) {
+				RemoveFromParentsChildren();
 			}
-
 			parent = &(*newParent);
 
 			parent->children.push_back(this);
@@ -93,7 +106,7 @@ void GameObject::SetScene(ModuleScene* newScene) {
 bool GameObject::IsChild(GameObject* g)const {
 	bool isChild = false;
 
-	for (std::list<GameObject*>::const_iterator it = children.begin(); it != children.end() && !isChild; ++it) {
+	for (std::vector<GameObject*>::const_iterator it = children.begin(); it != children.end() && !isChild; ++it) {
 		if (*it == g) {
 			isChild = true;
 		} else {

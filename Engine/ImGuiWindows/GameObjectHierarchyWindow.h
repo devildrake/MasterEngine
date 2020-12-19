@@ -9,9 +9,14 @@ class GameObject;
 
 class GameObjectHierarchyWindow :public ImGuiWindow {
 private:
+	std::pair<GameObject*, GameObject*>* dragDropTargets;
 	ModuleScene* currentScene;
-	void DrawChildren(GameObject* targets, bool drawSelf = true)const;
 	GameObject* prevSelectedNode;
+
+private:
+	void DrawChildren(GameObject* targets, bool drawSelf = true)const;
+	void OnDroppedObjectOverOther();
+
 public:
 
 	GameObjectHierarchyWindow(const char* windowName, int id, ModuleScene* currentScene);

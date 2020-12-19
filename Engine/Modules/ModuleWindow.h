@@ -20,6 +20,9 @@ public:
 	std::pair<int, int>GetWindowPos()const;
 	void SetFlag(SDL_WindowFlags flag);
 
+	bool IsVsyncOn()const;
+	void SetVSync(bool should);
+
 public:
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;

@@ -120,6 +120,10 @@ void ConfigWindow::Draw() {
 					App->SetFrameCap(App->editor->frameCap);
 				}
 			}
+			bool vsyncOn = App->window->IsVsyncOn();
+			if (ImGui::Checkbox("VSync", &vsyncOn)) {
+				App->window->SetVSync(vsyncOn);
+			}
 
 			ImGui::PlotHistogram("##framerate", frames, IM_ARRAYSIZE(frames), 0, NULL, 0.0f, 140, ImVec2(310, 100));
 			ImGui::SameLine();
@@ -239,7 +243,7 @@ void ConfigWindow::Draw() {
 		if (ImGui::Checkbox("Depth Test", &App->renderer->depthTest)) {
 			App->renderer->ToggleDepthTest();
 		}
-		ImGui::SameLine();
+
 		if (ImGui::Checkbox("WireFrame Mode", &App->renderer->wireFramePolygonMode)) {
 			App->renderer->ToggleWireFrameMode();
 		}
@@ -281,13 +285,13 @@ void ConfigWindow::Draw() {
 				ImGui::DragFloat("Camera Focus distance", &App->editorCamera->focusDistance, 0.1f, 0.1f, 4.0f);
 				ImGui::DragFloat("Camera Orbit Speed", &App->editorCamera->orbitSpeed, 0.1f, 0.1f, 36.0f);
 
-				if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
-					App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);
-				}
+				//if (ImGui::InputFloat("Near Plane", &App->editorCamera->nearPlaneDistance)) {
+				//	App->editorCamera->SetNearPlane(App->editorCamera->nearPlaneDistance);
+				//}
 
-				if (ImGui::InputFloat("Far Plane", &App->editorCamera->farPlaneDistance)) {
-					App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
-				}
+				//if (ImGui::InputFloat("Far Plane", &App->editorCamera->farPlaneDistance)) {
+				//	App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
+				//}
 
 				if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
 					App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);

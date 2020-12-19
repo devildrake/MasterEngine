@@ -9,7 +9,7 @@
 #include "../Rendering/Shader.h"
 #include <assimp/cimport.h>
 #include <Leaks.h>
-
+#include <Brofiler.h>
 ModuleRender::ModuleRender() :Module("Renderer"), bgColor(0.2f, 0.2f, 0.2f), context(nullptr), default_shader(nullptr), glcontext(nullptr), faceCulling(true), depthTest(true), wireFramePolygonMode(false), quadShader(nullptr) {
 
 }
@@ -228,7 +228,7 @@ UpdateStatus ModuleRender::PostUpdate() {
 		//glBindTexture(GL_TEXTURE_2D, texColorBuffer);	// use the color attachment texture as the texture of the quad plane
 		//glDrawArrays(GL_TRIANGLES, 0, 6);
 
-
+	BROFILER_CATEGORY("Renderer Post Update", Profiler::Color::Orchid);
 	SDL_GL_SwapWindow(App->window->window);
 	return UPDATE_CONTINUE;
 }

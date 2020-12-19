@@ -50,7 +50,7 @@ void ComponentTransform::GenerateWorldMatrix() {
 			}
 		}
 
-		for (std::list<GameObject*>::iterator it = owner->children.begin(); it != owner->children.end(); ++it) {
+		for (std::vector<GameObject*>::iterator it = owner->children.begin(); it != owner->children.end(); ++it) {
 			((ComponentTransform*)(*it)->GetComponentOfType(ComponentType::CTTransformation))->GenerateWorldMatrix();
 		}
 	}
@@ -96,27 +96,28 @@ void ComponentTransform::DrawGizmos() {
 }
 
 void ComponentTransform::OnNewParent(GameObject* prevParent, GameObject* newParent) {
-	//Get previous parent's transform
-	ComponentTransform* prevParentGlobal = (ComponentTransform*)prevParent->GetComponentOfType(ComponentType::CTTransformation);
-	if (prevParentGlobal != nullptr) {
+	//Get previous and new parents' transform
+	ComponentTransform* prevParentTransform = (ComponentTransform*)prevParent->GetComponentOfType(ComponentType::CTTransformation);
+	ComponentTransform* newParentTransform = (ComponentTransform*)newParent->GetComponentOfType(ComponentType::CTTransformation);
+	if (prevParentTransform != nullptr) {
 
-		//Calculate new localPosition to keep the world position it had when attached to prevParent, but with the new parent
-		float3 prevGlobalPos = prevParentGlobal->CalculateGlobalPosition() + localPosition;
+		//To keep the local values untouched, we add the previous parent's global position to the localPosition and remove the current's global position from the localPosition
+		float3 prevGlobalPos = prevParentTransform->CalculateGlobalPosition() + localPosition;
 		float3 globalPos = CalculateGlobalPosition() - localPosition;
 		localPosition = prevGlobalPos - globalPos;
 
 		//Same for scale
-		float3 prevGlobalScale = prevParentGlobal->CalculateGlobalScale().Mul(localScale);
+		float3 prevGlobalScale = prevParentTransform->CalculateGlobalScale().Mul(localScale);
 		float3 globalScale = CalculateGlobalScale().Div(localScale);
 		localScale = prevGlobalScale.Div(globalScale);
 
 		//Same for rotation
-		Quat prevGlobalRot = prevParentGlobal->CalculateGlobalRotation() * quatRotation;
-		Quat globalRot = CalculateGlobalRotation();
+		Quat prevGlobalRot = prevParentTransform->CalculateGlobalRotation();
+		Quat newGlobalRot = newParentTransform->CalculateGlobalRotation();
 
 		//We inverse so that it is subtracted and not added (multiplication order may need to be switched)
-		globalRot.Inverse();
-		quatRotation = globalRot * prevGlobalRot * quatRotation;
+		newGlobalRot.Inverse();
+		quatRotation = newGlobalRot * prevGlobalRot * quatRotation;
 
 	}
 }
@@ -125,7 +126,9 @@ void ComponentTransform::OnNewParent(GameObject* prevParent, GameObject* newPare
 Quat ComponentTransform::CalculateGlobalRotation()const {
 	if (owner->parent != nullptr) {
 		Component* c = owner->parent->GetComponentOfType(ComponentType::CTTransformation);
-		return (quatRotation * ((ComponentTransform*)c)->CalculateGlobalRotation());
+		if (c != nullptr) {
+			return (quatRotation * ((ComponentTransform*)c)->CalculateGlobalRotation());
+		}
 	}
 	return quatRotation;
 }
@@ -134,7 +137,9 @@ float3 ComponentTransform::CalculateGlobalScale()const {
 
 	if (owner->parent != nullptr) {
 		Component* c = owner->parent->GetComponentOfType(ComponentType::CTTransformation);
-		return localScale.Mul(((ComponentTransform*)c)->CalculateGlobalScale());
+		if (c != nullptr) {
+			return localScale.Mul(((ComponentTransform*)c)->CalculateGlobalScale());
+		}
 	}
 	return localScale;
 }
@@ -143,7 +148,9 @@ float3 ComponentTransform::CalculateGlobalPosition()const {
 
 	if (owner->parent != nullptr) {
 		Component* c = owner->parent->GetComponentOfType(ComponentType::CTTransformation);
-		return ((ComponentTransform*)c)->CalculateGlobalPosition() + localPosition;
+		if (c != nullptr) {
+			return ((ComponentTransform*)c)->CalculateGlobalPosition() + localPosition;
+		}
 	}
 
 	return localPosition;

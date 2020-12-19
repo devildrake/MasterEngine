@@ -27,7 +27,12 @@ void ComponentCamera::OnNewParent(GameObject* prevParent, GameObject* newParent)
 
 }
 
-ComponentCamera::ComponentCamera(GameObject* anOwner) : Component(ComponentType::CTCamera, anOwner), nearPlaneDistance(0.1f), farPlaneDistance(200.0f), aspectRatio(1.77f) {
+Frustum& ComponentCamera::GetFrustum() {
+	return frustum;
+}
+
+
+ComponentCamera::ComponentCamera(GameObject* anOwner, float aNearPDistance, float aFarPDistance) : Component(ComponentType::CTCamera, anOwner), nearPlaneDistance(aNearPDistance), farPlaneDistance(aFarPDistance), aspectRatio(1.77f) {
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	frustum.SetViewPlaneDistances(nearPlaneDistance, farPlaneDistance);
 	frustum.SetPos(((ComponentTransform*)(owner->GetComponentOfType(ComponentType::CTTransformation)))->CalculateGlobalPosition());

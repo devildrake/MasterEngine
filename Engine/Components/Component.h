@@ -9,6 +9,7 @@ public:
 	GameObject* owner;
 	std::string name;
 	enum ComponentType {
+		INVALID,
 		CTTransformation,
 		CTMeshRenderer,
 		CTCamera,

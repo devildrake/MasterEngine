@@ -11,6 +11,7 @@
 #include "Modules/ModuleFileSystem.h"
 #include <Timer.h>
 #include <Leaks.h>
+#include <Brofiler.h>
 
 
 Application::Application() {
@@ -74,27 +75,31 @@ bool Application::Start() {
 
 
 UpdateStatus Application::Update() {
+
 	capTimer->Start();
 
 	UpdateStatus ret = UPDATE_CONTINUE;
 
+	BROFILER_CATEGORY("Pre Update", Profiler::Color::Orchid)
+		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			ret = (*it)->PreUpdate();
 
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->PreUpdate();
+	BROFILER_CATEGORY("Update", Profiler::Color::Orchid)
+		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			ret = (*it)->Update();
 
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->Update();
+	BROFILER_CATEGORY("Post Update", Profiler::Color::Orchid)
+		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			ret = (*it)->PostUpdate();
 
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->PostUpdate();
+	BROFILER_CATEGORY("WaitForEndOfFrame", Profiler::Color::Orchid)
+		if (millisPerFrame > (Uint32)0) {
+			Uint32 frameMillis = capTimer->Read();
 
-	if (millisPerFrame > (Uint32)0) {
-		Uint32 frameMillis = capTimer->Read();
-
-		if (frameMillis < millisPerFrame) {
-			SDL_Delay(millisPerFrame - frameMillis);
+			if (frameMillis < millisPerFrame) {
+				SDL_Delay(millisPerFrame - frameMillis);
+			}
 		}
-	}
 
 	lastDeltaTime = capTimer->Read() / 1000;
 
