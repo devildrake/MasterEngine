@@ -36,13 +36,13 @@ Frustum& ComponentCamera::GetFrustum() {
 ComponentCamera::~ComponentCamera() {
 }
 //
-void ComponentCamera::SetUpFrustum() {
+void ComponentCamera::SetUpFrustum(float nearDistance, float farDistance) {
 	ComponentTransform* transform = (ComponentTransform*)owner->GetComponentOfType(Component::ComponentType::CTTransformation);
 
 	//aspectRatio = (float)App->window->GetWidth() / (float)App->window->GetHeight();
 
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
-	frustum.SetViewPlaneDistances(0.1f, 200);
+	frustum.SetViewPlaneDistances(nearDistance, farDistance);
 	//SetAspectRatio(aspectRatio);
 	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90), 1.77f);
 	frustum.SetPos(transform->localPosition);
@@ -73,7 +73,7 @@ void ComponentCamera::SetUpFrustum() {
 
 ComponentCamera::ComponentCamera(GameObject* anOwner, float aNearPDistance, float aFarPDistance) : Component(ComponentType::CTCamera, anOwner) {
 
-	SetUpFrustum();
+	SetUpFrustum(aNearPDistance, aFarPDistance);
 
 
 	//LOG("Created Camera with planes %f %f, position %f, front %f, up %f, right %f, fov %f and ar %f", aNearPDistance, aFarPDistance, frustum.Pos(), frustum.Front().ptr(), frustum.Up().ptr(), frustum.WorldRight().ptr(), DEGTORAD * 90, 1.77f);
@@ -86,8 +86,11 @@ void ComponentCamera::DrawGizmos() {
 	}
 }
 
-void ComponentCamera::OnTransformModified(float3 newPos, Quat newRot) {
-	//frustum.SetPos(newPos);
-	//frustum.SetFront(newRot * float3::unitZ);
-	//frustum.SetUp(newRot * float3::unitY);
+void ComponentCamera::OnTransformModified() {
+
+	ComponentTransform* transform = (ComponentTransform*)owner->GetComponentOfType(Component::ComponentType::CTCamera);
+
+	frustum.SetPos(transform->CalculateGlobalPosition());
+	frustum.SetFront(transform->CalculateGlobalRotation() * float3::unitZ);
+	frustum.SetUp(transform->CalculateGlobalRotation() * float3::unitY);
 }

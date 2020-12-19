@@ -13,7 +13,7 @@ public:
 	void DrawEditor() override;
 	void DrawGizmos() override;
 	void OnNewParent(GameObject* prevParent, GameObject* newParent)override;
-	void OnTransformModified(float3 newPos, Quat newRot)override;
+	void OnTransformModified()override;
 
 };
 

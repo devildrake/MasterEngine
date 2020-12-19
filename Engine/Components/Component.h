@@ -27,7 +27,7 @@ public:
 	virtual void DrawGizmos();
 	virtual void OnNewParent(GameObject* prevParent, GameObject* newParent);
 	std::string Component::ComponentTypeToString(ComponentType type)const;
-	virtual void OnTransformModified(float3 newPos, Quat newRot);
+	virtual void OnTransformModified();
 	virtual void OnSave();
 	bool GetGlobalEnabled()const;
 	//GameObject* owner;

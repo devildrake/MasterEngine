@@ -29,7 +29,10 @@ void ComponentTransform::Update() {
 		) {
 		GenerateLocalMatrix();
 		GenerateWorldMatrix();
-		owner->OnTransformChanged(CalculateGlobalPosition(), CalculateGlobalRotation());
+		owner->OnTransformChanged();
+
+
+
 	}
 }
 

@@ -87,6 +87,6 @@ void ComponentMeshRenderer::DrawGizmos() {
 	}
 }
 
-void ComponentMeshRenderer::OnTransformModified(float3 newPos, Quat newRot) {
+void ComponentMeshRenderer::OnTransformModified() {
 	GenerateAABB();
 }

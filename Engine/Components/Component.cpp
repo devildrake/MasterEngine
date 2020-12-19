@@ -53,7 +53,7 @@ void Component::DrawGizmos() {
 }
 
 
-void Component::OnTransformModified(float3 newPos, Quat newRot) {
+void Component::OnTransformModified() {
 
 }
 

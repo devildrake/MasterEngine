@@ -40,7 +40,7 @@ Component* GameObject::CreateComponent(Component::ComponentType type) {
 		ret = new ComponentLight(this);
 		break;
 	case Component::CTCamera:
-		ret = new ComponentCamera(this, 0, 200);
+		ret = new ComponentCamera(this, 0.1f, 200);
 		break;
 	default:
 		break;
@@ -164,8 +164,14 @@ void GameObject::DrawGizmos()const {
 }
 
 
-void GameObject::OnTransformChanged(float3 newPos, Quat newRot) {
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
-		(*it)->OnTransformModified(newPos, newRot);
+void GameObject::OnTransformChanged() {
+
+	for (std::vector<GameObject*>::iterator it = children.begin(); it != children.end(); ++it) {
+		(*it)->OnTransformChanged();
 	}
+
+	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
+		(*it)->OnTransformModified();
+	}
+
 }

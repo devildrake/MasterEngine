@@ -32,6 +32,6 @@ void ComponentDirectionalLight::OnNewParent(GameObject* prevParent, GameObject* 
 
 }
 
-void ComponentDirectionalLight::OnTransformModified(float3 newPos, Quat newRot) {
+void ComponentDirectionalLight::OnTransformModified() {
 
 }

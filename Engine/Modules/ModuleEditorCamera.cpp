@@ -148,20 +148,21 @@ void ModuleEditorCamera::FocusOn(ComponentTransform* m, float focusDistance) {
 			if (meshAABB.maxPoint.z > absoluteMax.z) {
 				absoluteMax.z = meshAABB.maxPoint.z;
 			}
-
-			generalAABB.minPoint = absoluteMin;
-			generalAABB.maxPoint = absoluteMax;
-
-			focusPosition = generalAABB.CenterPoint();
-			transform->localPosition = focusPosition;
-			camera->GetFrustum().SetPos(transform->localPosition);
-
-			//Dangerous while over here. Big distances may cause problems, emergency exit at 1000 iterations may be required(?)
-			while (!camera->GetFrustum().Contains(generalAABB)) {
-				transform->localPosition -= camera->GetFrustum().Front() * 10;
-				camera->GetFrustum().SetPos(transform->localPosition);
-			}
 		}
+
+		generalAABB.minPoint = absoluteMin;
+		generalAABB.maxPoint = absoluteMax;
+
+		focusPosition = generalAABB.CenterPoint();
+		transform->localPosition = focusPosition;
+		camera->GetFrustum().SetPos(transform->localPosition);
+
+		//Dangerous while over here. Big distances may cause problems, emergency exit at 1000 iterations may be required(?)
+		while (!camera->GetFrustum().Contains(generalAABB)) {
+			transform->localPosition -= camera->GetFrustum().Front() * 10;
+			camera->GetFrustum().SetPos(transform->localPosition);
+		}
+
 	}
 }
 //

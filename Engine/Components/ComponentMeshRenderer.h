@@ -16,7 +16,7 @@ public:
 	void Disable() override;
 	void DrawEditor() override;
 	void DrawGizmos() override;
-	void OnTransformModified(float3 newPos, Quat newRot)override;
+	void OnTransformModified()override;
 	void SetMesh(Mesh* mesh);
 	void SetMaterial(Material* mat);
 	void GenerateAABB();

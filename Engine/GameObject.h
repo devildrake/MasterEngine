@@ -37,7 +37,7 @@ public:
 	void SetScene(ModuleScene* newScene);
 	bool IsChild(GameObject* g)const;
 	void DrawGizmos()const;
-	void OnTransformChanged(float3 newPos, Quat newRot);
+	void OnTransformChanged();
 
 public:
 	friend class PropertiesWindow;
