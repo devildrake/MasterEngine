@@ -228,8 +228,6 @@
     <ClInclude Include="DevIL\include\IL\ilu_region.h" />
     <ClInclude Include="DevIL\include\IL\il_wrap.h" />
     <ClInclude Include="EditorMainMenu.h" />
-    <ClInclude Include="Excercises\ModuleTransformedTexturedTriangleExcercise.h" />
-    <ClInclude Include="Excercises\ModuleTransformedTriangleExcercise.h" />
     <ClInclude Include="ImGuiWindows\GameObjectHierarchyWindow.h" />
     <ClInclude Include="ImGuiWindows\ImGuiWindow.h" />
     <ClInclude Include="Components\ComponentMeshRenderer.h" />
@@ -333,7 +331,6 @@
     <ClInclude Include="Modules\Module.h" />
     <ClInclude Include="Modules\ModuleEditor.h" />
     <ClInclude Include="Modules\ModuleEditorCamera.h" />
-    <ClInclude Include="Excercises\ModuleHelloTriangleExcerise.h" />
     <ClInclude Include="Modules\ModuleInput.h" />
     <ClInclude Include="Modules\ModuleRender.h" />
     <ClInclude Include="Modules\ModuleWindow.h" />
@@ -352,8 +349,6 @@
     <ClCompile Include="ImGuiWindows\ConfigWindow.cpp" />
     <ClCompile Include="ImGuiWindows\ConsoleWindow.cpp" />
     <ClCompile Include="EditorMainMenu.cpp" />
-    <ClCompile Include="Excercises\ModuleTransformedTexturedTriangleExcercise.cpp" />
-    <ClCompile Include="Excercises\ModuleTransformedTriangleExcercise.cpp" />
     <ClCompile Include="ImGuiWindows\GameObjectHierarchyWindow.cpp" />
     <ClCompile Include="Components\ComponentMeshRenderer.cpp" />
     <ClCompile Include="ImGuiWindows\SceneWindow.cpp" />
@@ -418,7 +413,6 @@
     <ClCompile Include="MathGeoLib\Time\Clock.cpp" />
     <ClCompile Include="Modules\ModuleEditor.cpp" />
     <ClCompile Include="Modules\ModuleEditorCamera.cpp" />
-    <ClCompile Include="Excercises\ModuleHelloTriangleExcerise.cpp" />
     <ClCompile Include="Modules\ModuleInput.cpp" />
     <ClCompile Include="Modules\ModuleRender.cpp" />
     <ClCompile Include="Modules\ModuleWindow.cpp" />

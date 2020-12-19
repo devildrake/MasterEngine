@@ -2,13 +2,14 @@
 #define COMPONENT_CAMERA_H
 #include "Component.h"
 #include "../MathGeoLib/Geometry/Frustum.h"
+#include "../MathGeoLib/Math/float3x3.h"
+
 class ComponentCamera :public Component {
 private:
 	Frustum frustum;
-	float aspectRatio;
-	float nearPlaneDistance, farPlaneDistance;
 public:
 	ComponentCamera(GameObject* anOwner, float aNearPDistance, float aFarPDistance);
+	~ComponentCamera();
 	void Enable() override;
 	void Update()override;
 	void Disable()override;
@@ -17,6 +18,7 @@ public:
 	void OnNewParent(GameObject* prevParent, GameObject* newParent)override;
 	void OnTransformModified(float3 newPos, Quat newRot)override;
 	Frustum& GetFrustum();
+	void ComponentCamera::SetUpFrustum();
 
 
 };

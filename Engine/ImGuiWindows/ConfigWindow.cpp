@@ -10,6 +10,7 @@
 #include "../Application.h"
 #include <glew.h>
 #include <Leaks.h>
+#include "../Components/ComponentCamera.h"
 
 std::string ConfigWindow::GetCapsString() {
 	std::string capsString = "";
@@ -263,18 +264,18 @@ void ConfigWindow::Draw() {
 
 			if (cameraHeaderActive) {
 				// Front and Up are READ ONLY values, thus the dummy float3
-				float3 dummyFront = App->editorCamera->GetFrustum()->Front();
+				float3 dummyFront = App->editorCamera->GetFrustum().Front();
 				if (ImGui::InputFloat3("Front", dummyFront.ptr())) {
 					//dummyFront.Normalize();
 					//App->editorCamera->GetFrustum()->SetFront(dummyFront);
 				}
 
-				dummyFront = App->editorCamera->GetFrustum()->Up();
+				dummyFront = App->editorCamera->GetFrustum().Up();
 				if (ImGui::InputFloat3("Up", dummyFront.ptr())) {
 					//dummyFront.Normalize();
 					//App->editorCamera->GetFrustum()->SetUp(dummyFront);
 				}
-				float3 pos = App->editorCamera->GetFrustum()->Pos();
+				float3 pos = App->editorCamera->GetFrustum().Pos();
 				if (ImGui::InputFloat3("Pos", pos.ptr())) {
 					App->editorCamera->SetFrustumPos(pos);
 				}
@@ -293,9 +294,32 @@ void ConfigWindow::Draw() {
 				//	App->editorCamera->SetFarPlane(App->editorCamera->farPlaneDistance);
 				//}
 
-				if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
-					App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
+				//if (ImGui::InputFloat("Aspect Ratio", &App->editorCamera->aspectRatio)) {
+				//	App->editorCamera->SetAspectRatio(App->editorCamera->aspectRatio);
+				//}
+
+
+
+				//App->editorCamera->camera->GetFrustum()->FarPlaneDistance();
+
+
+				float dummyFarPlane = App->editorCamera->camera->GetFrustum().FarPlaneDistance();
+				float dummyNearPlane = App->editorCamera->camera->GetFrustum().NearPlaneDistance();
+				float dummyAspectRatio = App->editorCamera->camera->GetFrustum().AspectRatio();
+				if (ImGui::InputFloat("Near Plane", &dummyNearPlane)) {
+					App->editorCamera->SetNearPlane(dummyNearPlane);
 				}
+
+				if (ImGui::InputFloat("Far Plane", &dummyFarPlane)) {
+					App->editorCamera->SetFarPlane(dummyFarPlane);
+				}
+
+
+				if (ImGui::InputFloat("Aspect Ratio", &dummyAspectRatio)) {
+					App->editorCamera->SetAspectRatio(dummyAspectRatio);
+				}
+
+
 
 				ImGui::ColorEdit3("BG Color", App->renderer->bgColor.ptr());
 

@@ -2,6 +2,7 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentLight.h"
 #include "Modules/ModuleScene.h"
 #include "Utilities/Globals.h"
 
@@ -36,6 +37,7 @@ Component* GameObject::CreateComponent(Component::ComponentType type) {
 		ret = new ComponentMeshRenderer(this);
 		break;
 	case Component::CTLight:
+		ret = new ComponentLight(this);
 		break;
 	case Component::CTCamera:
 		ret = new ComponentCamera(this, 0, 200);
@@ -49,6 +51,44 @@ Component* GameObject::CreateComponent(Component::ComponentType type) {
 	}
 
 	return ret;
+}
+
+std::vector<Component*>GameObject::GetComponentsInChildrenOfType(Component::ComponentType type) {
+	std::vector<Component*> retVec;
+
+	Component* mySelf = GetComponentOfType(type);
+	if (mySelf != nullptr) {
+		retVec.push_back(mySelf);
+	}
+
+	if (children.size() > 0) {
+		std::vector<Component*> currChildRet;
+		for (std::vector<GameObject*>::const_iterator it = children.begin(); it != children.end(); ++it) {
+			currChildRet = (*it)->GetComponentsInChildrenOfType(type);
+
+			if (currChildRet.size() > 0) {
+				retVec.insert(retVec.end(), currChildRet.begin(), currChildRet.end());
+			}
+		}
+
+	}
+
+	return retVec;
+}
+
+
+Component* GameObject::GetComponentInChildrenOfType(Component::ComponentType type) {
+	Component* retComp = nullptr;
+
+	if (components.size() > 0)
+		retComp = GetComponentOfType(type);
+
+	if (retComp == nullptr && children.size() > 0) {
+		for (std::vector<GameObject*>::const_iterator it = children.begin(); it != children.end() && retComp == nullptr; ++it) {
+			retComp = GetComponentInChildrenOfType(type);
+		}
+	}
+	return retComp;
 }
 
 Component* GameObject::GetComponentOfType(Component::ComponentType type) {

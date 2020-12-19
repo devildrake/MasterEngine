@@ -9,6 +9,7 @@
 #include "assimp/postprocess.h"
 #include "../Components/ComponentTransform.h"
 #include "../Components/ComponentCamera.h"
+#include "../Components/ComponentLight.h"
 #include "../Rendering/Mesh.h"
 #include "../Rendering/Material.h"
 #include "ModuleEditor.h"
@@ -78,9 +79,40 @@ bool ModuleScene::Start() {
 	currentGameObject = root;
 	App->editorCamera->SetTargetGameObject(firstChild);
 
-	GameObject* cameraObj = CreateGameObject("Camera", root);
-	ComponentTransform* cameraTrans = (ComponentTransform*)cameraObj->CreateComponent(Component::ComponentType::CTTransformation);
-	ComponentCamera* cameraComp = (ComponentCamera*)cameraObj->CreateComponent(Component::ComponentType::CTCamera);
+	//GameObject* cameraObj = CreateGameObject("Camera", root);
+	//ComponentTransform* cameraTrans = (ComponentTransform*)cameraObj->CreateComponent(Component::ComponentType::CTTransformation);
+	//ComponentCamera* cameraComp = (ComponentCamera*)cameraObj->CreateComponent(Component::ComponentType::CTCamera);
+
+
+	GameObject* newObjParent = CreateGameObject("parent", root);
+
+	newObjParent->CreateComponent(Component::ComponentType::CTLight);
+
+	std::string newName = "child" + std::to_string(0);
+	GameObject* firstChildA = CreateGameObject(newName.c_str(), newObjParent);
+	firstChildA->CreateComponent(Component::ComponentType::CTLight);
+
+	//newName = "grandChild" + std::to_string(0);
+	//GameObject* grandfirstChildA = CreateGameObject(newName.c_str(), firstChildA);
+	//grandfirstChildA->CreateComponent(Component::ComponentType::CTLight);
+
+
+	for (uint i = 0u; i < 4u; ++i) {
+		newName = "child" + std::to_string(i + 1);
+		GameObject* newObj = CreateGameObject(newName.c_str(), newObjParent);
+		newObj->CreateComponent(Component::ComponentType::CTLight);
+	}
+
+	for (uint i = 0u; i < 4u; ++i) {
+		newName = "child" + std::to_string(i + 1);
+		GameObject* newObj = CreateGameObject(newName.c_str(), firstChildA);
+		newObj->CreateComponent(Component::ComponentType::CTLight);
+	}
+
+	std::vector<Component*>lights = newObjParent->GetComponentsInChildrenOfType(Component::ComponentType::CTLight);
+
+	LOG("Found %d lightComponents", lights.size());
+
 	return true;
 }
 
@@ -106,7 +138,7 @@ UpdateStatus ModuleScene::UpdateGameObject(GameObject* target) {
 
 bool ModuleScene::DrawSkyBox() {
 	if (skybox != nullptr) {
-		skybox->Draw(App->editorCamera->GetFrustum()->ViewMatrix(), App->editorCamera->GetFrustum()->ProjectionMatrix());
+		skybox->Draw(App->editorCamera->GetFrustum().ViewMatrix(), App->editorCamera->GetFrustum().ProjectionMatrix());
 		return true;
 	}
 	return false;

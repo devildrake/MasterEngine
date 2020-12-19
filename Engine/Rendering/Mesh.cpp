@@ -147,8 +147,8 @@ void Mesh::CreateVAO() {
 
 void Mesh::Draw(const Material& mat, float4x4 transformationMatrix) {
 	unsigned program = App->renderer->GetDefaultShaderID();
-	const float4x4& view = App->editorCamera->GetFrustum()->ViewMatrix();
-	const float4x4& proj = App->editorCamera->GetFrustum()->ProjectionMatrix();
+	const float4x4& view = App->editorCamera->GetFrustum().ViewMatrix();
+	const float4x4& proj = App->editorCamera->GetFrustum().ProjectionMatrix();
 	//float4x4 model = float4x4::identity;
 	//model = float4x4::RotateX(DegToRad(transform.rotation.x)) * float4x4::RotateY(DegToRad(transform.rotation.y)) * float4x4::RotateZ(DegToRad(transform.rotation.z)) * float4x4::Translate(transform.position) * float4x4::Scale(transform.localScale) * model;
 	//model = float4x4::Translate(transform.CalculateGlobalPosition()) * float4x4::RotateX(DegToRad(transform.rotation.x)) * float4x4::RotateY(DegToRad(transform.rotation.y)) * float4x4::RotateZ(DegToRad(transform.rotation.z)) * float4x4::Scale(transform.localScale) * model;

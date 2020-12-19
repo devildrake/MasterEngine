@@ -30,6 +30,8 @@ public:
 	void Update();
 	Component* CreateComponent(Component::ComponentType type);
 	Component* GetComponentOfType(Component::ComponentType type);
+	Component* GetComponentInChildrenOfType(Component::ComponentType type);
+	std::vector<Component*> GetComponentsInChildrenOfType(Component::ComponentType type);
 	void GameObject::RemoveFromParentsChildren();
 	void GameObject::SetNewParent(GameObject* newParent);
 	void SetScene(ModuleScene* newScene);

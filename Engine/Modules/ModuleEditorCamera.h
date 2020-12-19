@@ -11,12 +11,17 @@ struct SDL_Renderer;
 struct SDL_Rect;
 
 class ComponentTransform;
+class ComponentCamera;
 class GameObject;
 
 class ModuleEditorCamera : public Module {
+private:
+	GameObject* gameObject;
+	ComponentTransform* transform;
+	ComponentCamera* camera;
 public:
 
-	ModuleEditorCamera();
+	ModuleEditorCamera(float3 aPos = float3::zero);
 	~ModuleEditorCamera();
 
 	bool Init() override;
@@ -29,7 +34,7 @@ public:
 	void SendViewModelMatrix();
 	void SendProjectionMatrix();
 	void SetFrustumPos(float3 newPos);
-	Frustum* GetFrustum();
+	Frustum& GetFrustum();
 	const float GetNearPlane()const;
 	const float GetFarPlane()const;
 	void SetNearPlane(float);
@@ -40,7 +45,7 @@ public:
 
 private:
 	friend class ConfigWindow;
-	Frustum frustum;
+	Frustum* frustum;
 	float pitch, yaw;
 	float focusDistance;
 	void* context;
@@ -49,7 +54,7 @@ private:
 	float aspectRatio;
 	float cameraSpeed, rotationSpeed, orbitSpeed;
 	float zoomSpeed;
-	float3 frustumPosition;
+	//float3 frustumPosition;
 	float nearPlaneDistance, farPlaneDistance;
 
 	ComponentTransform* focusTarget = nullptr;

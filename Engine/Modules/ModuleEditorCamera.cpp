@@ -7,28 +7,27 @@
 #include "../ImGuiWindows/SceneWindow.h"
 #include "../GameObject.h"
 #include "../Components/ComponentTransform.h"
+#include "../Components/ComponentCamera.h"
 #include "../Components/ComponentMeshRenderer.h"
 //#include "../Rendering/Model.h"
 #include <Leaks.h>
 
-ModuleEditorCamera::ModuleEditorCamera() :Module("Editor Camera"), nearPlaneDistance(0.1f), farPlaneDistance(200.0f), frustumPosition(0, 5, -3),
-cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f), context(nullptr), glcontext(nullptr), aspectRatio(1.77f) {
+ModuleEditorCamera::ModuleEditorCamera(float3 aPos) :Module("Editor Camera"),
+cameraSpeed(6), rotationSpeed(15), pitch(0), yaw(0), zoomSpeed(10), focusDistance(2.0f), orbitSpeed(20.0f), context(nullptr), glcontext(nullptr) {
+
+	gameObject = new GameObject("EditorCamera");
+	transform = (ComponentTransform*)gameObject->CreateComponent(Component::ComponentType::CTTransformation);
+	transform->localPosition = aPos;
 }
 
 // Destructor
 ModuleEditorCamera::~ModuleEditorCamera() {
+	delete gameObject;
 }
 
 // Called before render is available
 bool ModuleEditorCamera::Init() {
-	aspectRatio = (float)App->window->GetWidth() / (float)App->window->GetHeight();
-
-	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
-	frustum.SetViewPlaneDistances(nearPlaneDistance, farPlaneDistance);
-	SetAspectRatio(aspectRatio);
-	frustum.SetPos(frustumPosition);
-	frustum.SetFront(float3::unitZ);
-	frustum.SetUp(float3::unitY);
+	camera = (ComponentCamera*)gameObject->CreateComponent(Component::ComponentType::CTCamera);
 
 	return true;
 }
@@ -39,11 +38,11 @@ UpdateStatus ModuleEditorCamera::PreUpdate() {
 
 
 const float4x4 ModuleEditorCamera::GetTransposedProjectionMatrix() const {
-	return frustum.ProjectionMatrix().Transposed();
+	return camera->GetFrustum().ProjectionMatrix().Transposed();
 }
 
 const float4x4 ModuleEditorCamera::GetTransposedViewModelMatrix()const {
-	float4x4 viewMatrix = frustum.ViewMatrix();
+	float4x4 viewMatrix = camera->GetFrustum().ViewMatrix();
 	return viewMatrix.Transposed();
 }
 
@@ -61,27 +60,27 @@ const float3 ModuleEditorCamera::GetCameraMovementInput() const {
 	float3 val = float3(0, 0, 0);
 
 	if (App->input->GetKey(SDL_SCANCODE_W) == ModuleInput::KEY_REPEAT) {
-		val += frustum.Front();
+		val += camera->GetFrustum().Front();
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_S) == ModuleInput::KEY_REPEAT) {
-		val -= frustum.Front();
+		val -= camera->GetFrustum().Front();
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_A) == ModuleInput::KEY_REPEAT) {
-		val -= frustum.WorldRight();
+		val -= camera->GetFrustum().WorldRight();
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_D) == ModuleInput::KEY_REPEAT) {
-		val += frustum.WorldRight();
+		val += camera->GetFrustum().WorldRight();
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_E) == ModuleInput::KEY_REPEAT) {
-		val += frustum.Up();
+		val += camera->GetFrustum().Up();
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_Q) == ModuleInput::KEY_REPEAT) {
-		val -= frustum.Up();
+		val -= camera->GetFrustum().Up();
 	}
 	return val;
 }
@@ -109,36 +108,83 @@ void ModuleEditorCamera::ApplyUpdatedPitchYawToFrustum() {
 	float relativePitch = UpdateCameraPitch(mouseMotion);
 
 	float3x3 yawRotation = float3x3::RotateAxisAngle(float3(0, 1, 0), DEGTORAD * relativeYaw);
-	float3x3 pitchRotation = float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), DEGTORAD * relativePitch);
+	float3x3 pitchRotation = float3x3::RotateAxisAngle(camera->GetFrustum().WorldRight().Normalized(), DEGTORAD * relativePitch);
 
-	float3 newUp = yawRotation * pitchRotation * frustum.Up().Normalized();
-	float3 newFront = yawRotation * pitchRotation * frustum.Front().Normalized();
+	float3 newUp = yawRotation * pitchRotation * camera->GetFrustum().Up().Normalized();
+	float3 newFront = yawRotation * pitchRotation * camera->GetFrustum().Front().Normalized();
 
-	frustum.SetUp(newUp.Normalized());
-	frustum.SetFront(newFront.Normalized());
+	camera->GetFrustum().SetUp(newUp.Normalized());
+	camera->GetFrustum().SetFront(newFront.Normalized());
 }
 
 //FocusPosition is recalculated here, frustum is also repositioned so that targeted AABB (if found) fits inside frustum
 void ModuleEditorCamera::FocusOn(ComponentTransform* m, float focusDistance) {
+	std::vector<Component*>meshRenderers = m->owner->GetComponentsInChildrenOfType(Component::ComponentType::CTMeshRenderer);
+	if (meshRenderers.size() > 0) {
+		AABB generalAABB;
 
-	ComponentMeshRenderer* meshRenderer = ((ComponentMeshRenderer*)m->owner->GetComponentOfType(Component::ComponentType::CTMeshRenderer));
+		float3 absoluteMax = math::vec(-10000, -10000, -10000);
+		float3 absoluteMin = float3(100000, 100000, 10000);
 
-	if (meshRenderer != nullptr) {
+		for (std::vector<Component*>::const_iterator it = meshRenderers.begin(); it != meshRenderers.end(); ++it) {
+			AABB meshAABB = ((ComponentMeshRenderer*)(*it))->GetAABB();
 
-		focusPosition = meshRenderer->GetAABB().CenterPoint();
-		frustumPosition = focusPosition;
-		frustum.SetPos(frustumPosition);
+			if (meshAABB.minPoint.x < absoluteMin.x) {
+				absoluteMin.x = meshAABB.minPoint.x;
+			}
+			if (meshAABB.minPoint.y < absoluteMin.y) {
+				absoluteMin.y = meshAABB.minPoint.y;
+			}
+			if (meshAABB.minPoint.z < absoluteMin.z) {
+				absoluteMin.z = meshAABB.minPoint.z;
+			}
 
-		//Dangerous while over here. Big distances may cause problems, emergency exit at 1000 iterations may be required(?)
-		while (!frustum.Contains(meshRenderer->GetAABB())) {
-			frustumPosition -= frustum.Front() * 10;
-			frustum.SetPos(frustumPosition);
+			if (meshAABB.maxPoint.x > absoluteMax.x) {
+				absoluteMax.x = meshAABB.maxPoint.x;
+			}
+			if (meshAABB.maxPoint.y > absoluteMax.y) {
+				absoluteMax.y = meshAABB.maxPoint.y;
+			}
+			if (meshAABB.maxPoint.z > absoluteMax.z) {
+				absoluteMax.z = meshAABB.maxPoint.z;
+			}
+
+			generalAABB.minPoint = absoluteMin;
+			generalAABB.maxPoint = absoluteMax;
+
+			focusPosition = generalAABB.CenterPoint();
+			transform->localPosition = focusPosition;
+			camera->GetFrustum().SetPos(transform->localPosition);
+
+			//Dangerous while over here. Big distances may cause problems, emergency exit at 1000 iterations may be required(?)
+			while (!camera->GetFrustum().Contains(generalAABB)) {
+				transform->localPosition -= camera->GetFrustum().Front() * 10;
+				camera->GetFrustum().SetPos(transform->localPosition);
+			}
 		}
-	} else {
-		focusPosition = m->CalculateGlobalPosition();
-		frustumPosition = m->CalculateGlobalPosition() - frustum.Front() * focusDistance;
 	}
 }
+//
+//void ModuleEditorCamera::FocusOn_Old(ComponentTransform* m, float focusDistance) {
+//
+//	ComponentMeshRenderer* meshRenderer = ((ComponentMeshRenderer*)m->owner->GetComponentOfType(Component::ComponentType::CTMeshRenderer));
+//
+//	if (meshRenderer != nullptr) {
+//
+//		focusPosition = meshRenderer->GetAABB().CenterPoint();
+//		transform->localPosition = focusPosition;
+//		camera->GetFrustum()->SetPos(transform->localPosition);
+//
+//		//Dangerous while over here. Big distances may cause problems, emergency exit at 1000 iterations may be required(?)
+//		while (!camera->GetFrustum()->Contains(meshRenderer->GetAABB())) {
+//			transform->localPosition -= camera->GetFrustum()->Front() * 10;
+//			camera->GetFrustum()->SetPos(transform->localPosition);
+//		}
+//	} else {
+//		focusPosition = m->CalculateGlobalPosition();
+//		transform->localPosition = m->CalculateGlobalPosition() - camera->GetFrustum()->Front() * focusDistance;
+//	}
+//}
 
 // Called every draw update
 UpdateStatus ModuleEditorCamera::Update() {
@@ -154,36 +200,36 @@ UpdateStatus ModuleEditorCamera::Update() {
 		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == ModuleInput::KEY_REPEAT) {
 
 			//Push camera position temporarily to focus position
-			frustumPosition -= focusPosition;
+			transform->localPosition -= focusPosition;
 
 			//Generate rotation matrices
 			float newYaw = mouseMotion.x * App->GetDeltaTime() * orbitSpeed;
 			float newPitch = -mouseMotion.y * App->GetDeltaTime() * orbitSpeed;
 
-			float3x3 rotMatYaw = float3x3::RotateAxisAngle(frustum.Up(), DEGTORAD * newYaw);
-			float3x3 rotMatPitch = float3x3::RotateAxisAngle(frustum.WorldRight(), DEGTORAD * newPitch);
+			float3x3 rotMatYaw = float3x3::RotateAxisAngle(camera->GetFrustum().Up(), DEGTORAD * newYaw);
+			float3x3 rotMatPitch = float3x3::RotateAxisAngle(camera->GetFrustum().WorldRight(), DEGTORAD * newPitch);
 
 			//Rotate camera frustum with focus position as origin
-			frustumPosition = rotMatPitch * rotMatYaw * frustumPosition;
+			transform->localPosition = rotMatPitch * rotMatYaw * transform->localPosition;
 
 
 			//Pop camera position back from focusPosition
-			frustumPosition += focusPosition;
+			transform->localPosition += focusPosition;
 
 			//Calculate Look at matrix
-			float3 newVecToItem = (focusPosition - frustumPosition);
+			float3 newVecToItem = (focusPosition - transform->localPosition);
 			newVecToItem.Normalize();
 
-			float3x3 lookAtMat = float3x3::LookAt(frustum.Front(), newVecToItem, frustum.Up(), float3::unitY);
+			float3x3 lookAtMat = float3x3::LookAt(camera->GetFrustum().Front(), newVecToItem, camera->GetFrustum().Up(), float3::unitY);
 
 			//Apply Look at matrix
-			frustum.SetFront((lookAtMat * frustum.Front()).Normalized());
-			frustum.SetUp((lookAtMat * frustum.Up()).Normalized());
+			camera->GetFrustum().SetFront((lookAtMat * camera->GetFrustum().Front()).Normalized());
+			camera->GetFrustum().SetUp((lookAtMat * camera->GetFrustum().Up()).Normalized());
 
 			showCursor = false;
 		} else if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == ModuleInput::KEY_REPEAT) {
 			float totalMotion = mouseMotion.x + mouseMotion.y;
-			frustumPosition += frustum.Front() * totalMotion * speedFactor * App->GetDeltaTime();
+			transform->localPosition += camera->GetFrustum().Front() * totalMotion * speedFactor * App->GetDeltaTime();
 			showCursor = false;
 		}
 	}
@@ -193,7 +239,7 @@ UpdateStatus ModuleEditorCamera::Update() {
 			showCursor = false;
 			ApplyUpdatedPitchYawToFrustum();
 
-			frustumPosition += GetCameraMovementInput() * speedFactor * App->GetDeltaTime();
+			transform->localPosition += GetCameraMovementInput() * speedFactor * App->GetDeltaTime();
 		}
 
 		else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == ModuleInput::KEY_REPEAT) {
@@ -202,10 +248,10 @@ UpdateStatus ModuleEditorCamera::Update() {
 
 			if (App->editor->GetScene()->IsMouseOverWindow()) {
 				const float3 mouseMotion = App->input->GetMouseMotion();
-				cameraMovementInput = -frustum.WorldRight() * mouseMotion.x * rotationSpeed * App->GetDeltaTime();
-				cameraMovementInput += frustum.Up() * mouseMotion.y * rotationSpeed * App->GetDeltaTime();
+				cameraMovementInput = -camera->GetFrustum().WorldRight() * mouseMotion.x * rotationSpeed * App->GetDeltaTime();
+				cameraMovementInput += camera->GetFrustum().Up() * mouseMotion.y * rotationSpeed * App->GetDeltaTime();
 
-				frustumPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
+				transform->localPosition += cameraMovementInput * speedFactor * App->GetDeltaTime();
 			}
 		}
 	}
@@ -220,10 +266,10 @@ UpdateStatus ModuleEditorCamera::Update() {
 
 	const float mouseWheelMotion = App->input->GetMouseWheelMotion();
 	//if (mouseWheelMotion != 0 && !App->input->IsMouseOverImGuiWindow()) {
-	frustumPosition += mouseWheelMotion * frustum.Front() * zoomSpeed * App->GetDeltaTime();
+	transform->localPosition += mouseWheelMotion * camera->GetFrustum().Front() * zoomSpeed * App->GetDeltaTime();
 	//}
 
-	frustum.SetPos(frustumPosition);
+	camera->GetFrustum().SetPos(transform->localPosition);
 	SendViewModelMatrix();
 	SendProjectionMatrix();
 	return UPDATE_CONTINUE;
@@ -264,32 +310,35 @@ void ModuleEditorCamera::MainWindowResized(unsigned width, unsigned height) {
 }
 
 void ModuleEditorCamera::SetFrustumPos(float3 newPos) {
-	frustumPosition = newPos;
-	frustum.SetPos(newPos);
+	transform->localPosition = newPos;
+	camera->GetFrustum().SetPos(newPos);
 }
 
-Frustum* ModuleEditorCamera::GetFrustum() {
-	return &frustum;
+Frustum& ModuleEditorCamera::GetFrustum() {
+	return camera->GetFrustum();
 }
+
+
 
 const float ModuleEditorCamera::GetNearPlane()const {
-	return nearPlaneDistance;
+	return camera->GetFrustum().NearPlaneDistance();
 }
 const float ModuleEditorCamera::GetFarPlane()const {
-	return farPlaneDistance;
+	return camera->GetFrustum().FarPlaneDistance();
 }
 void ModuleEditorCamera::SetNearPlane(float n) {
-	nearPlaneDistance = n;
-	frustum.SetViewPlaneDistances(n, farPlaneDistance);
+	//nearPlaneDistance = n;
+	camera->GetFrustum().SetViewPlaneDistances(n, camera->GetFrustum().FarPlaneDistance());
 }
 void ModuleEditorCamera::SetFarPlane(float n) {
-	farPlaneDistance = n;
-	frustum.SetViewPlaneDistances(nearPlaneDistance, n);
+	//farPlaneDistance = n;
+	camera->GetFrustum().SetViewPlaneDistances(camera->GetFrustum().NearPlaneDistance(), n);
 }
 
 void ModuleEditorCamera::SetAspectRatio(float n) {
-	aspectRatio = n;
+	//aspectRatio = n;
 
-	LOG("new aspect ratio %f", aspectRatio);
-	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90), n);
+	//LOG("new aspect ratio %f", aspectRatio);
+	//frustum->SetHorizontalFovAndAspectRatio(DegToRad(90), n);
+	camera->GetFrustum().SetHorizontalFovAndAspectRatio(DegToRad(90), n);
 }

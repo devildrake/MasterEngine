@@ -153,10 +153,7 @@
     <ClCompile Include="Modules\ModuleRender.cpp" />
     <ClCompile Include="Modules\ModuleWindow.cpp" />
     <ClCompile Include="Utilities\log.cpp" />
-    <ClCompile Include="Excercises\ModuleHelloTriangleExcerise.cpp" />
-    <ClCompile Include="Excercises\ModuleTransformedTriangleExcercise.cpp" />
     <ClCompile Include="Modules\ModuleDebugDraw.cpp" />
-    <ClCompile Include="Excercises\ModuleTransformedTexturedTriangleExcercise.cpp" />
     <ClCompile Include="Modules\ModuleTextures.cpp" />
     <ClCompile Include="EditorMainMenu.cpp" />
     <ClCompile Include="Modules\ModuleScene.cpp" />
@@ -439,8 +436,6 @@
     <ClInclude Include="Modules\ModuleInput.h" />
     <ClInclude Include="Modules\ModuleRender.h" />
     <ClInclude Include="Utilities\Globals.h" />
-    <ClInclude Include="Excercises\ModuleHelloTriangleExcerise.h" />
-    <ClInclude Include="Excercises\ModuleTransformedTriangleExcercise.h" />
     <ClInclude Include="Utilities\debug_draw.hpp" />
     <ClInclude Include="Utilities\debugdraw.h" />
     <ClInclude Include="Modules\ModuleDebugDraw.h" />
@@ -452,7 +447,6 @@
     <ClInclude Include="DevIL\include\IL\ilu_region.h" />
     <ClInclude Include="DevIL\include\IL\ilut.h" />
     <ClInclude Include="DevIL\include\IL\ilut_config.h" />
-    <ClInclude Include="Excercises\ModuleTransformedTexturedTriangleExcercise.h" />
     <ClInclude Include="Assimp\include\assimp\aabb.h" />
     <ClInclude Include="Assimp\include\assimp\ai_assert.h" />
     <ClInclude Include="Assimp\include\assimp\anim.h" />

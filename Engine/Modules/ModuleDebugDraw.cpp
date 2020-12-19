@@ -587,7 +587,7 @@ void ModuleDebugDraw::DrawFrustum(const Frustum& frustum) {
 
 
 UpdateStatus ModuleDebugDraw::Update() {
-	Draw(App->editorCamera->GetFrustum()->ViewMatrix(), App->editorCamera->GetFrustum()->ProjectionMatrix(), App->window->GetWidth(), App->window->GetHeight());
+	Draw(App->editorCamera->GetFrustum().ViewMatrix(), App->editorCamera->GetFrustum().ProjectionMatrix(), App->window->GetWidth(), App->window->GetHeight());
 	return UPDATE_CONTINUE;
 }
 
