@@ -1,44 +1,43 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 #include <string>
-#include "Components/Component.h"
-#include "Components/ComponentTransform.h"
 #include <vector>
+#include "../Components/Component.h"
 
-class ModuleScene;
 class GameObject {
 public:
 	std::string name;
-	GameObject* parent;
 	std::vector<GameObject*>children;
-	bool active;
 
-	//private:
-	//	ComponentTransform* transform_;
-	//public:
-	//	ComponentTransform* transform() const { return transform_; }
-	//	void transform(ComponentTransform* transform) {
-	//		transform_ = std::move(transform);
-	//	}
 private:
+	GameObject* parent;
 	std::vector<Component*>components;
-	ModuleScene* scene;
+	bool active;
+	void _GetComponentsInChildrenOfType(Component::ComponentType type, std::vector<Component*>& retVec);
+
 public:
 	GameObject();
-	GameObject(const char* name, ModuleScene* scene = nullptr, GameObject* parentObject = nullptr);
+	GameObject(const char* name, GameObject* parentObject = nullptr);
+	GameObject(const char* name, float3 pos, Quat rot, float3 scale, GameObject* parentObject = nullptr);
+
 	~GameObject();
 	void Update();
-	Component* CreateComponent(Component::ComponentType type);
+	Component* CreateComponent(Component::ComponentType type, int additionalParam = 0);
 	Component* GetComponentOfType(Component::ComponentType type);
 	Component* GetComponentInChildrenOfType(Component::ComponentType type);
 	std::vector<Component*> GetComponentsInChildrenOfType(Component::ComponentType type);
+
+	//This method is used to remove myself from my parent's children list when I'm destroyed
 	void GameObject::RemoveFromParentsChildren();
+
+
 	void GameObject::SetNewParent(GameObject* newParent);
-	void SetScene(ModuleScene* newScene);
 	bool IsChild(GameObject* g)const;
+	bool IsActive()const;
+	void SetActive(bool a);
 	void DrawGizmos()const;
 	void OnTransformChanged();
-
+	GameObject* GetParent();
 public:
 	friend class PropertiesWindow;
 

@@ -20,6 +20,7 @@ public:
 	void SetMesh(Mesh* mesh);
 	void SetMaterial(Material* mat);
 	void GenerateAABB();
+	void Draw();
 	const AABB& GetAABB()const;
 private:
 	Mesh* mesh;

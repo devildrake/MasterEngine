@@ -16,7 +16,7 @@
 #include "../ImGuiWindows/PropertiesWindow.h"
 #include "../Skybox.h"
 
-ModuleScene::ModuleScene() : Module("Scene"), currentGameObject(nullptr), root(nullptr), skybox(nullptr) {
+ModuleScene::ModuleScene() : Module("Scene"), root(nullptr), skybox(nullptr) {
 	//root = CreateGameObject("Root");
 	//root->CreateComponent(Component::ComponentType::CTTransformation);
 }
@@ -28,8 +28,8 @@ bool ModuleScene::Init() {
 }
 
 GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent) {
-	GameObject* ret = new GameObject(name, this, parent);
-	ret->SetScene(this);
+	GameObject* ret = new GameObject(name, parent);
+	//ret->SetScene(this);
 
 	gameObjects.push_back(ret);
 	return ret;
@@ -43,7 +43,7 @@ void ModuleScene::DestroyGameObject(GameObject* go) {
 
 	App->editor->SetTargetObject(nullptr);
 	//gameObjects.erase(gameObjects.begin() + go->GetSceneID());
-	if (go->parent != nullptr) {
+	if (go->GetParent() != nullptr) {
 		go->RemoveFromParentsChildren();
 	}
 	RELEASE(go);
@@ -55,7 +55,7 @@ Mesh* ModuleScene::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 }
 
 bool ModuleScene::Start() {
-
+	//LOAD SCENE
 	std::string faces[6] =
 	{
 		"Resources\\Skybox\\right.jpg",
@@ -73,15 +73,15 @@ bool ModuleScene::Start() {
 	ComponentTransform* firstTransform = (ComponentTransform*)root->CreateComponent(Component::ComponentType::CTTransformation);
 
 	GameObject* firstChild = LoadModel("Resources\\Models\\BakerHouse.fbx");
-	root->children.push_back(firstChild);
-	firstChild->parent = root;
+	firstChild->SetNewParent(root);
+	//root->children.push_back(firstChild);
+	//firstChild->parent = root;
 
-	currentGameObject = root;
 	App->editorCamera->SetTargetGameObject(firstChild);
 
-	//GameObject* cameraObj = CreateGameObject("Camera", root);
-	//ComponentTransform* cameraTrans = (ComponentTransform*)cameraObj->CreateComponent(Component::ComponentType::CTTransformation);
-	//ComponentCamera* cameraComp = (ComponentCamera*)cameraObj->CreateComponent(Component::ComponentType::CTCamera);
+	GameObject* cameraObj = CreateGameObject("Camera", root);
+	ComponentTransform* cameraTrans = (ComponentTransform*)cameraObj->CreateComponent(Component::ComponentType::CTTransformation);
+	ComponentCamera* cameraComp = (ComponentCamera*)cameraObj->CreateComponent(Component::ComponentType::CTCamera);
 
 
 	GameObject* newObjParent = CreateGameObject("parent", root);
@@ -100,7 +100,7 @@ bool ModuleScene::Start() {
 	for (uint i = 0u; i < 4u; ++i) {
 		newName = "child" + std::to_string(i + 1);
 		GameObject* newObj = CreateGameObject(newName.c_str(), newObjParent);
-		newObj->CreateComponent(Component::ComponentType::CTLight);
+		newObj->CreateComponent(Component::ComponentType::CTLight, ComponentLight::LightType::POINT);
 	}
 
 	for (uint i = 0u; i < 4u; ++i) {
@@ -180,8 +180,8 @@ GameObject* ModuleScene::ProcessNode(aiNode* node, const aiScene* scene, std::st
 	// then do the same for each of its children
 	for (uint i = 0u; i < node->mNumChildren; i++) {
 		GameObject* newChild = ProcessNode(node->mChildren[i], scene, path);
-		newObj->children.push_back(newChild);
-		newChild->parent = newObj;
+		//newObj->children.push_back(newChild);
+		newChild->SetNewParent(newObj);
 	}
 	return newObj;
 }
@@ -200,65 +200,8 @@ GameObject* ModuleScene::LoadModel(std::string path) {
 }
 
 UpdateStatus ModuleScene::Update() {
-	//std::string lastFile = App->input->GetLastFileDroppedOnWindow();
-	/*if (lastFile.size() > 0) {
-		if (currentGameObject != nullptr) {
-			//If a new file has been dropped and it doesn't share the name with the current model, try to load it as model or texture
-			if (currentGameObject->GetFileName() != lastFile) {
-				Model* newModel = new Model();
-				const aiScene* tempScene = nullptr;
-				//Scene Found will tell wether or not a model could be loaded
-				if (Model::SceneFound(lastFile.c_str(), tempScene)) {
-
-					App->renderer->RemoveModel(currentGameObject);
-					delete currentGameObject;
-					if (newModel->Load(lastFile.c_str(), tempScene)) {
-						currentGameObject = newModel;
-						App->renderer->AddModel(currentGameObject);
-						App->editorCamera->SetTargetGameObject(currentGameObject);
-					}
-					else {
-						currentGameObject = nullptr;
-						delete newModel;
-					}
-				}
-				else {
-					LOG("%s couldn't be loaded as a model", lastFile.c_str());
-
-					delete newModel;
-					GLuint possibleTexture;
-					std::pair<int, int>possibleSize;
-					if (lastFile != currentGameObject->GetMaterials()[0].GetTexturePath()) {
-						if (App->textures->LoadTexture(lastFile, possibleTexture, possibleSize)) {
-							LOG("%s was found to be a texture-compatible file, loading as diffuse for currentGameObject", lastFile.c_str());
-							currentGameObject->ReleaseTextures();
-
-							int lastSlash = 0;
-
-							for (int i = lastFile.size(); i > 0 && lastSlash == 0; i--) {
-								if (lastFile[i] == '\\') {
-									lastSlash = i;
-								}
-							}
-
-							currentGameObject->LoadMaterial(lastFile.substr(lastSlash, lastFile.size() - 1).c_str(), lastFile, possibleTexture, possibleSize);
-						}
-					}
-					else {
-						LOG("INFO --> The same file won't be loaded twice, Application will do nothing.");
-					}
-				}
-			}
-			else {
-				LOG("INFO --> The same file won't be loaded twice, Application will do nothing.");
-			}
-		}
-	}
-	*/
 
 	UpdateGameObject(root);
-
-
 
 	return UPDATE_CONTINUE;
 }
@@ -266,9 +209,10 @@ UpdateStatus ModuleScene::PostUpdate() {
 	return UPDATE_CONTINUE;
 }
 bool ModuleScene::CleanUp() {
-	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); ++it) {
-		RELEASE(*it);
-	}
+	RELEASE(root);
+	//for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); ++it) {
+	//	RELEASE(*it);
+	//}
 	RELEASE(skybox);
 	return true;
 }

@@ -2,19 +2,31 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentCamera.h"
-#include "Components/ComponentLight.h"
+#include "Components/ComponentDirectionalLight.h"
+#include "Components/ComponentPointLight.h"
+#include "Components/ComponentSpotLight.h"
 #include "Modules/ModuleScene.h"
 #include "Utilities/Globals.h"
 
-GameObject::GameObject() :parent(nullptr), name(""), scene(nullptr), active(true) {
+GameObject::GameObject() :parent(nullptr), name(""), active(true) {
 
 }
 
-GameObject::GameObject(const char* name, ModuleScene* scene, GameObject* parentObject) : parent(nullptr), name(name), scene(scene), active(true) {
+GameObject::GameObject(const char* name, GameObject* parentObject) : parent(nullptr), name(name), active(true) {
 	SetNewParent(parentObject);
 }
 
+GameObject::GameObject(const char* name, float3 pos, Quat rot, float3 scale, GameObject* parentObject) {
+	SetNewParent(parentObject);
+	//TO DO CREATE TRANSFORM
+}
+
+
 GameObject::~GameObject() {
+
+	for (std::vector<GameObject*>::iterator it = children.begin(); it != children.end(); ++it) {
+		RELEASE(*it);
+	}
 
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
 		RELEASE(*it);
@@ -22,12 +34,14 @@ GameObject::~GameObject() {
 }
 
 void GameObject::Update() {
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
-		(*it)->Update();
+	if (active) {
+		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
+			(*it)->Update();
+		}
 	}
 }
 
-Component* GameObject::CreateComponent(Component::ComponentType type) {
+Component* GameObject::CreateComponent(Component::ComponentType type, int additionalParam) {
 	Component* ret = nullptr;
 	switch (type) {
 	case Component::CTTransformation:
@@ -37,7 +51,21 @@ Component* GameObject::CreateComponent(Component::ComponentType type) {
 		ret = new ComponentMeshRenderer(this);
 		break;
 	case Component::CTLight:
-		ret = new ComponentLight(this);
+		switch ((ComponentLight::LightType)additionalParam) {
+		case ComponentLight::LightType::DIRECTIONAL:
+			ret = new ComponentDirectionalLight(this, -float3::unitY);
+			break;
+		case ComponentLight::LightType::POINT:
+			ret = new ComponentPointLight(this);
+			break;
+		case ComponentLight::LightType::SPOT:
+			//ret = new ComponentSpotLight(this);
+			ret = nullptr;
+			break;
+		default:
+			ret = nullptr;
+			break;
+		}
 		break;
 	case Component::CTCamera:
 		ret = new ComponentCamera(this, 0.1f, 200);
@@ -52,9 +80,35 @@ Component* GameObject::CreateComponent(Component::ComponentType type) {
 
 	return ret;
 }
+//
+////TO DO TRY TO NOT GENERATE N VECTORS FOR N CHILDREN
+//std::vector<Component*>GameObject::GetComponentsInChildrenOfType(Component::ComponentType type) {
+//	std::vector<Component*> retVec;
+//
+//	Component* mySelf = GetComponentOfType(type);
+//	if (mySelf != nullptr) {
+//		retVec.push_back(mySelf);
+//	}
+//
+//	if (children.size() > 0) {
+//		std::vector<Component*> currChildRet;
+//		for (std::vector<GameObject*>::const_iterator it = children.begin(); it != children.end(); ++it) {
+//			currChildRet = (*it)->GetComponentsInChildrenOfType(type);
+//
+//			if (currChildRet.size() > 0) {
+//				retVec.insert(retVec.end(), currChildRet.begin(), currChildRet.end());
+//			}
+//		}
+//
+//	}
+//
+//	return retVec;
+//}
 
-std::vector<Component*>GameObject::GetComponentsInChildrenOfType(Component::ComponentType type) {
-	std::vector<Component*> retVec;
+
+
+
+void GameObject::_GetComponentsInChildrenOfType(Component::ComponentType type, std::vector<Component*>& retVec) {
 
 	Component* mySelf = GetComponentOfType(type);
 	if (mySelf != nullptr) {
@@ -62,19 +116,21 @@ std::vector<Component*>GameObject::GetComponentsInChildrenOfType(Component::Comp
 	}
 
 	if (children.size() > 0) {
-		std::vector<Component*> currChildRet;
 		for (std::vector<GameObject*>::const_iterator it = children.begin(); it != children.end(); ++it) {
-			currChildRet = (*it)->GetComponentsInChildrenOfType(type);
-
-			if (currChildRet.size() > 0) {
-				retVec.insert(retVec.end(), currChildRet.begin(), currChildRet.end());
-			}
+			(*it)->_GetComponentsInChildrenOfType(type, retVec);
 		}
-
 	}
+}
 
+
+
+std::vector<Component*>GameObject::GetComponentsInChildrenOfType(Component::ComponentType type) {
+	std::vector<Component*>retVec;
+	_GetComponentsInChildrenOfType(type, retVec);
 	return retVec;
 }
+
+
 
 
 Component* GameObject::GetComponentInChildrenOfType(Component::ComponentType type) {
@@ -139,10 +195,6 @@ void GameObject::SetNewParent(GameObject* newParent) {
 	}
 }
 
-void GameObject::SetScene(ModuleScene* newScene) {
-	scene = newScene;
-}
-
 bool GameObject::IsChild(GameObject* g)const {
 	bool isChild = false;
 
@@ -174,4 +226,8 @@ void GameObject::OnTransformChanged() {
 		(*it)->OnTransformModified();
 	}
 
+}
+
+GameObject* GameObject::GetParent() {
+	return parent;
 }

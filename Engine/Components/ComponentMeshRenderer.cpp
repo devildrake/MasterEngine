@@ -26,7 +26,7 @@ void ComponentMeshRenderer::Enable() {
 }
 
 void ComponentMeshRenderer::Update() {
-	mesh->Draw(*material, ((ComponentTransform*)(owner->GetComponentOfType(ComponentType::CTTransformation)))->GetWorldMatrix());
+	Draw();
 }
 
 void ComponentMeshRenderer::Disable() {
@@ -75,8 +75,8 @@ void ComponentMeshRenderer::DrawEditor() {
 		ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);   // No tint
 		ImVec4 border_col = ImVec4(1.0f, 1.0f, 1.0f, 0.5f); // 50% opaque white
 
-		ImGui::Image(ImTextureID(material->GetTextureID()), ImVec2(material->GetTextureSize().first / 16, material->GetTextureSize().second / 16), uv_min, uv_max, tint_col, border_col);
-		ImGui::Text("%d x %d", material->GetTextureSize().first, material->GetTextureSize().second);
+		ImGui::Image(ImTextureID(material->GetTextureID()), ImVec2(material->GetTextureSize().x / 16.0f, material->GetTextureSize().y / 16.0f), uv_min, uv_max, tint_col, border_col);
+		ImGui::Text("%.0f x %.0f", material->GetTextureSize().x, material->GetTextureSize().y);
 
 	}
 }
@@ -89,4 +89,8 @@ void ComponentMeshRenderer::DrawGizmos() {
 
 void ComponentMeshRenderer::OnTransformModified() {
 	GenerateAABB();
+}
+
+void ComponentMeshRenderer::Draw() {
+	mesh->Draw(*material, ((ComponentTransform*)(owner->GetComponentOfType(ComponentType::CTTransformation)))->GetWorldMatrix());
 }

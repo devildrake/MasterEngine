@@ -11,8 +11,7 @@ class Material;
 class Mesh {
 private:
 	unsigned vbo, ebo, vao;
-	int num_vertices, num_indices, material_index, num_faces;
-	std::string texture_path;
+	int num_vertices, num_indices, num_faces;
 	AABB aabb;
 public:
 
@@ -25,7 +24,6 @@ public:
 	void CreateVAO();
 	//void Draw(const std::vector<Material>& model_textures, float4x4 transformationMat);
 	void Draw(const Material& model_textures, float4x4 transformationMat);
-	void SetTexture(int index, std::string path);
 	const int& GetTris()const;
 	const int& GetVertices()const;
 	const AABB& GetAABB()const;

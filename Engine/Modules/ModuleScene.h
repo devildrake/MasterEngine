@@ -9,10 +9,11 @@
 class GameObject;
 class Mesh;
 class Skybox;
+
 typedef unsigned int uint;
+
 class ModuleScene :public Module {
 private:
-	GameObject* currentGameObject;
 	GameObject* root;
 	std::vector<GameObject*>gameObjects;
 	Skybox* skybox;

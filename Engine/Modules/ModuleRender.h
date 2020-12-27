@@ -15,13 +15,15 @@ private:
 	float3 bgColor;
 	std::list<Model*> models;
 	SDL_GLContext glcontext;
-	Shader* default_shader;
+	Shader* unlitShader;
+	Shader* defaultShader;
 	bool faceCulling;
 	bool depthTest;
 	bool wireFramePolygonMode;
 
 	Shader* quadShader;
 	unsigned int quadVAO, quadVBO;
+	unsigned int cubeVAO, cubeVBO;
 	unsigned int framebuffer;
 	unsigned int texColorBuffer;
 	unsigned int rbo;
@@ -40,7 +42,9 @@ public:
 	bool CleanUp() override;
 	void MainWindowResized(unsigned width, unsigned height) override;
 	SDL_GLContext GetContext();
-	const unsigned GetDefaultShaderID()const;
+	const unsigned& GetDefaultShaderID()const;
+	const unsigned& GetUnlitShaderID()const;
+	const unsigned& GetCubeVAO()const;
 	void AddModel(Model* m);
 	void RemoveModel(Model* m);
 	void ToggleFaceCulling()const;

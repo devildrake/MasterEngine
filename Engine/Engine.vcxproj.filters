@@ -177,6 +177,8 @@
     <ClCompile Include="Components\ComponentLight.cpp" />
     <ClCompile Include="Components\ComponentDirectionalLight.cpp" />
     <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Components\ComponentPointLight.cpp" />
+    <ClCompile Include="Components\ComponentSpotLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -545,6 +547,8 @@
     <ClInclude Include="Components\ComponentLight.h" />
     <ClInclude Include="Components\ComponentDirectionalLight.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Components\ComponentPointLight.h" />
+    <ClInclude Include="Components\ComponentSpotLight.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

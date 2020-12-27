@@ -18,7 +18,6 @@ Mesh::Mesh(const aiMesh* mesh) {
 }
 
 Mesh::Mesh(const aiMesh* mesh, const char* matname) {
-	texture_path = std::string(matname);
 	LoadAABB(mesh);
 	LoadVBO(mesh);
 	LoadEBO(mesh);
@@ -30,13 +29,6 @@ Mesh::~Mesh() {
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);
-}
-
-
-
-void Mesh::SetTexture(int index, std::string path) {
-	texture_path = path;
-	material_index = index;
 }
 
 const int& Mesh::GetTris()const {

@@ -38,37 +38,13 @@ ComponentCamera::~ComponentCamera() {
 //
 void ComponentCamera::SetUpFrustum(float nearDistance, float farDistance) {
 	ComponentTransform* transform = (ComponentTransform*)owner->GetComponentOfType(Component::ComponentType::CTTransformation);
-
-	//aspectRatio = (float)App->window->GetWidth() / (float)App->window->GetHeight();
-
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	frustum.SetViewPlaneDistances(nearDistance, farDistance);
-	//SetAspectRatio(aspectRatio);
 	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90), 1.77f);
 	frustum.SetPos(transform->localPosition);
 	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
-
-	//camera->SetFrustum(frustum);
-	//frustum = nullptr;
 }
-
-
-//void ComponentCamera::SetUpFrustum() {
-//	//aspectRatio = (float)App->window->GetWidth() / (float)App->window->GetHeight();
-//	frustum = new Frustum();
-//	frustum->SetKind(FrustumSpaceGL, FrustumRightHanded);
-//	frustum->SetViewPlaneDistances(0, 200);
-//	frustum->SetHorizontalFovAndAspectRatio(DegToRad(90.0f), 1.77f);
-//	//SetAspectRatio(aspectRatio);
-//	ComponentTransform* transform = (ComponentTransform*)owner->GetComponentOfType(Component::ComponentType::CTTransformation);
-//
-//	frustum->SetPos(transform->localPosition);
-//	frustum->SetFront(float3::unitZ);
-//	frustum->SetUp(float3::unitY);
-//	//camera->GetFrustum() = &frustum;
-//}
-
 
 
 ComponentCamera::ComponentCamera(GameObject* anOwner, float aNearPDistance, float aFarPDistance) : Component(ComponentType::CTCamera, anOwner) {
@@ -78,6 +54,7 @@ ComponentCamera::ComponentCamera(GameObject* anOwner, float aNearPDistance, floa
 
 	//LOG("Created Camera with planes %f %f, position %f, front %f, up %f, right %f, fov %f and ar %f", aNearPDistance, aFarPDistance, frustum.Pos(), frustum.Front().ptr(), frustum.Up().ptr(), frustum.WorldRight().ptr(), DEGTORAD * 90, 1.77f);
 }
+
 //frustum.SetPos(((ComponentTransform*)(owner->GetComponentOfType(ComponentType::CTTransformation)))->CalculateGlobalPosition());
 
 void ComponentCamera::DrawGizmos() {

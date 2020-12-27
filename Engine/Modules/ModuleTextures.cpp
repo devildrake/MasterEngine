@@ -83,12 +83,21 @@ std::string ModuleTextures::GetTexturesFolderName() {
 
 
 
-const bool ModuleTextures::LoadTexture(std::string name, GLuint& tex, std::pair<int, int>& texSize) {
+const bool ModuleTextures::LoadTexture(std::string name, GLuint& tex, float2& texSize) {
 	LOG("-----Trying to load texture with specified path----- (%s)", name.c_str());
 	ILboolean success;
 
 	if (textureMap[name] != NULL) {
 		tex = textureMap[name];
+
+		int dummyWidth, dummyHeight;
+
+		//TO DO assign texSize;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &dummyWidth);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &dummyHeight);
+		texSize.x = dummyWidth;
+		texSize.y = dummyHeight;
+
 		return true;
 	} else {
 		textureMap.erase(name);
@@ -105,8 +114,8 @@ const bool ModuleTextures::LoadTexture(std::string name, GLuint& tex, std::pair<
 	if (success) /* If no error occured: */
 	{
 
-		texSize.first = ilGetInteger(IL_IMAGE_WIDTH);
-		texSize.second = ilGetInteger(IL_IMAGE_HEIGHT);
+		texSize.x = ilGetInteger(IL_IMAGE_WIDTH);
+		texSize.y = ilGetInteger(IL_IMAGE_HEIGHT);
 
 		success = GenTexture(name, newTextureID);
 	}

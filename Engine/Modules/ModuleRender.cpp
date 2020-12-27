@@ -10,14 +10,14 @@
 #include <assimp/cimport.h>
 #include <Leaks.h>
 #include <Brofiler.h>
-ModuleRender::ModuleRender() :Module("Renderer"), bgColor(0.2f, 0.2f, 0.2f), context(nullptr), default_shader(nullptr), glcontext(nullptr), faceCulling(true), depthTest(true), wireFramePolygonMode(false), quadShader(nullptr) {
+ModuleRender::ModuleRender() :Module("Renderer"), bgColor(0.2f, 0.2f, 0.2f), context(nullptr), defaultShader(nullptr), glcontext(nullptr), faceCulling(true), depthTest(true), wireFramePolygonMode(false), quadShader(nullptr) {
 
 }
 
 // Destructor
 ModuleRender::~ModuleRender() {
-	if (default_shader != nullptr)
-		delete default_shader;
+	if (defaultShader != nullptr)
+		delete defaultShader;
 }
 
 void myCallback(const char* msg, char* userData) {
@@ -33,6 +33,46 @@ float quadVertices[] = { // vertex attributes for a quad that fills the entire s
 -1.0f,  1.0f,  0.0f, 1.0f,
  1.0f, -1.0f,  1.0f, 0.0f,
  1.0f,  1.0f,  1.0f, 1.0f
+};
+
+
+float cubeVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f
 };
 
 // Called before render is available
@@ -67,6 +107,16 @@ bool ModuleRender::Init() {
 	quadShader = new Shader("renderQuad.vs", "renderQuad.fs");
 	glGenFramebuffers(1, &framebuffer);
 
+	unlitShader = new Shader("Resources\\Shaders\\unlit.vs", "Resources\\Shaders\\unlit.fs");
+
+	//Cube VAO
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
+	glBindVertexArray(cubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 	//Quad VAO 
 
@@ -80,6 +130,9 @@ bool ModuleRender::Init() {
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 	glGenTextures(1, &texColorBuffer);
+
+
+
 
 
 
@@ -175,7 +228,7 @@ void ModuleRender::RemoveModel(Model* m) {
 bool ModuleRender::Start() {
 	RegenerateRenderBuffer();
 
-	default_shader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
+	defaultShader = new Shader("texturedModelVert.vs", "texturedModelFrag.fs");
 	App->input->SetLastFileDroppedOnWindow("BakerHouse.fbx");
 	return true;
 }
@@ -198,11 +251,17 @@ UpdateStatus ModuleRender::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
-const unsigned ModuleRender::GetDefaultShaderID() const {
-	return default_shader->GetID();
+const unsigned& ModuleRender::GetDefaultShaderID() const {
+	return defaultShader->GetID();
 }
 
+const unsigned& ModuleRender::GetUnlitShaderID() const {
+	return unlitShader->GetID();
+}
 
+const unsigned& ModuleRender::GetCubeVAO()const {
+	return cubeVAO;
+}
 
 // Called every draw update
 UpdateStatus ModuleRender::Update() {
@@ -244,14 +303,16 @@ bool ModuleRender::CleanUp() {
 	}
 	models.clear();
 
-	if (default_shader != nullptr) {
-		delete default_shader;
-		default_shader = nullptr;
+	if (defaultShader != nullptr) {
+		RELEASE(defaultShader);
 	}
 
 	if (quadShader != nullptr) {
-		delete quadShader;
-		quadShader = nullptr;
+		RELEASE(quadShader);
+	}
+
+	if (unlitShader != nullptr) {
+		RELEASE(unlitShader);
 	}
 
 	glDeleteRenderbuffers(1, &rbo);

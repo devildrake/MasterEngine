@@ -46,8 +46,8 @@ void ComponentTransform::GenerateLocalMatrix() {
 void ComponentTransform::GenerateWorldMatrix() {
 	transformationMatrix = localTransformationMatrix;
 	if (owner != nullptr) {
-		if (owner->parent != nullptr) {
-			ComponentTransform* parentTransform = (ComponentTransform*)owner->parent->GetComponentOfType(ComponentType::CTTransformation);
+		if (owner->GetParent() != nullptr) {
+			ComponentTransform* parentTransform = (ComponentTransform*)owner->GetParent()->GetComponentOfType(ComponentType::CTTransformation);
 			if (parentTransform != nullptr) {
 				transformationMatrix = parentTransform->transformationMatrix * localTransformationMatrix;
 			}
@@ -100,6 +100,7 @@ void ComponentTransform::DrawGizmos() {
 
 void ComponentTransform::OnNewParent(GameObject* prevParent, GameObject* newParent) {
 	//Get previous and new parents' transform
+	if (prevParent == nullptr)return;
 	ComponentTransform* prevParentTransform = (ComponentTransform*)prevParent->GetComponentOfType(ComponentType::CTTransformation);
 	ComponentTransform* newParentTransform = (ComponentTransform*)newParent->GetComponentOfType(ComponentType::CTTransformation);
 	if (prevParentTransform != nullptr) {
@@ -127,8 +128,8 @@ void ComponentTransform::OnNewParent(GameObject* prevParent, GameObject* newPare
 
 
 Quat ComponentTransform::CalculateGlobalRotation()const {
-	if (owner->parent != nullptr) {
-		Component* c = owner->parent->GetComponentOfType(ComponentType::CTTransformation);
+	if (owner->GetParent() != nullptr) {
+		Component* c = owner->GetParent()->GetComponentOfType(ComponentType::CTTransformation);
 		if (c != nullptr) {
 			return (quatRotation * ((ComponentTransform*)c)->CalculateGlobalRotation());
 		}
@@ -138,8 +139,8 @@ Quat ComponentTransform::CalculateGlobalRotation()const {
 
 float3 ComponentTransform::CalculateGlobalScale()const {
 
-	if (owner->parent != nullptr) {
-		Component* c = owner->parent->GetComponentOfType(ComponentType::CTTransformation);
+	if (owner->GetParent() != nullptr) {
+		Component* c = owner->GetParent()->GetComponentOfType(ComponentType::CTTransformation);
 		if (c != nullptr) {
 			return localScale.Mul(((ComponentTransform*)c)->CalculateGlobalScale());
 		}
@@ -149,8 +150,8 @@ float3 ComponentTransform::CalculateGlobalScale()const {
 
 float3 ComponentTransform::CalculateGlobalPosition()const {
 
-	if (owner->parent != nullptr) {
-		Component* c = owner->parent->GetComponentOfType(ComponentType::CTTransformation);
+	if (owner->GetParent() != nullptr) {
+		Component* c = owner->GetParent()->GetComponentOfType(ComponentType::CTTransformation);
 		if (c != nullptr) {
 			return ((ComponentTransform*)c)->CalculateGlobalPosition() + localPosition;
 		}
@@ -159,7 +160,7 @@ float3 ComponentTransform::CalculateGlobalPosition()const {
 	return localPosition;
 }
 
-float4x4 ComponentTransform::GetWorldMatrix()const {
+const float4x4& ComponentTransform::GetWorldMatrix()const {
 	return transformationMatrix;
 }
 
@@ -167,4 +168,12 @@ void ComponentTransform::Reset() {
 	localPosition = float3::zero;
 	quatRotation = Quat::identity;
 	localScale = float3::one;
+}
+
+void ComponentTransform::SetPosition(float3 newGlobalPos) {
+	float3 globalPos = CalculateGlobalPosition();
+	float3 globalMovement = newGlobalPos - globalPos;
+
+	localPosition += globalMovement;
+
 }

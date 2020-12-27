@@ -4,6 +4,7 @@
 #include <glew.h>
 #include <map>
 #include <string>
+#include "../MathGeoLib/Math/float2.h"
 
 class ModuleTextures :public Module {
 private:
@@ -22,7 +23,7 @@ public:
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
-	const bool LoadTexture(std::string path, GLuint& tex, std::pair<int, int>& texSize);
+	const bool LoadTexture(std::string path, GLuint& tex, float2& texSize);
 	const bool LoadTexture(std::string path, GLuint& tex);
 	const bool LoadDevilImage(std::string path, GLuint& img);
 	unsigned int LoadCubeMap(std::string files[6]);

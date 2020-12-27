@@ -31,7 +31,8 @@ public:
 
 	void GenerateWorldMatrix();
 	void GenerateLocalMatrix();
-	float4x4 GetWorldMatrix()const;
+	const float4x4& GetWorldMatrix()const;
+	void SetPosition(float3 newGlobalPos);
 private:
 	//Editor values (may be discarded)
 	float3 prevRotDummy;
